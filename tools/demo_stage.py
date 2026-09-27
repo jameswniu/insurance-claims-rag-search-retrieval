@@ -61,7 +61,24 @@ APP_LIGHT = {
     "--muted": "#435363",
     "--subtle": "#5d6b79",
     "--accent": "#245b85",
+    "--on-accent": "#ffffff",
 }
+# Dev mode's dark theme, by the same names, from the :root[data-mode="dev"] block. The one clip that turns dev mode on
+# has its chrome drawn in these, and a test holds each to the stylesheet too.
+APP_DARK = {
+    "--background": "#141a21",
+    "--surface": "#1d252e",
+    "--surface-raised": "#293440",
+    "--border": "#43515f",
+    "--control": "#8293a3",
+    "--chart-grid": "#34414e",
+    "--foreground": "#e9eef3",
+    "--muted": "#bcc7d2",
+    "--subtle": "#a0adba",
+    "--accent": "#8cb4df",
+    "--on-accent": "#141a21",
+}
+THEMES = {"light": APP_LIGHT, "dark": APP_DARK}
 
 
 def rgb(color: str) -> tuple[int, int, int]:
@@ -110,6 +127,33 @@ CURSOR_SPRITE_SCALE = 4
 CURSOR_TIP = (3.0, 3.0)  # in CSS pixels of the sprite's own box, before scaling
 RIPPLE_COLOR = rgb(APP_LIGHT["--accent"])  # for the ring; its fill is white, so it shows on an accent button
 RIPPLE_RADIUS = (6.0, 26.0)
+
+
+@dataclass(frozen=True)
+class Look:
+    """What the moves drawn over the page take from its theme: the colour the spotlight dims towards, the background
+    the floor fades into, and the ring of a click."""
+
+    tint: tuple[int, int, int]
+    canvas: tuple[int, int, int]
+    ripple: tuple[int, int, int]
+
+
+# The dark page's text is its light colour, so there the spotlight dims towards black, darkening what it leaves out
+# the way it greys the light page.
+LOOKS = {
+    "light": Look(SPOT_TINT, CANVAS, RIPPLE_COLOR),
+    "dark": Look((0, 0, 0), rgb(APP_DARK["--background"]), rgb(APP_DARK["--accent"])),
+}
+
+
+def theme_at(changes: Sequence[tuple[float, str]], t: float) -> str:
+    """The page's theme at t, from the changes the page logged: the last at or before t, or the first when none was.
+    A page that logged none is light."""
+    if not changes:
+        return "light"
+    index = bisect_right([at for at, _ in changes], t) - 1
+    return changes[max(0, index)][1]
 
 
 def ease(t: float) -> float:
@@ -240,7 +284,9 @@ class CursorTrack:
         for began, ended, kind in moves:
             cut = next((at for at, _ in typing if start is not None and last <= at <= began), None)
             if start is not None and (cut is not None or began > last + CURSOR_IDLE_S):
-                spans.append((start, cut if cut is not None else last + CURSOR_IDLE_S))
+                # Left alone, it fades after CURSOR_IDLE_S, even when a reading pause comes long after that.
+                idle = last + CURSOR_IDLE_S
+                spans.append((start, min(cut, idle) if cut is not None else idle))
                 start = None
             if start is None:
                 if kind != "glide":
@@ -362,16 +408,33 @@ BRAND_PATHS = (
 CAPTION_ROOM_PX = 24  # the least room between a caption and the mode label beside it
 
 
-def tint(token: str, alpha: float) -> str:
-    """One of the app's light colours at alpha, as CSS, for a shadow."""
-    red, green, blue = rgb(APP_LIGHT[token])
+def tint(token: str, alpha: float, theme: str = "light") -> str:
+    """One of a theme's colours at alpha, as CSS, for a shadow."""
+    red, green, blue = rgb(THEMES[theme][token])
     return f"rgb({red} {green} {blue} / {alpha})"
 
 
-# The chrome names the app's own tokens, which this sets from APP_LIGHT.
-TOKENS_CSS = ":root { " + " ".join(f"{token}: {color};" for token, color in APP_LIGHT.items()) + " }"
-BASE_CSS = f"""
-{TOKENS_CSS}
+def tokens_css(theme: str = "light") -> str:
+    """A theme's tokens on :root. The chrome names the app's own tokens, so this is all that changes with the theme."""
+    return ":root { " + " ".join(f"{token}: {color};" for token, color in THEMES[theme].items()) + " }"
+
+
+def window_shadow(theme: str = "light") -> str:
+    """The window's edge and drop shadow: the text colour on the light stage, and on the dark one a faint light edge
+    over black, since a shadow in the light text colour would glow."""
+    if theme == "dark":
+        return (
+            "0 0 0 1px rgb(255 255 255 / 0.08), 0 1px 2px rgb(0 0 0 / 0.3), "
+            "0 10px 24px -6px rgb(0 0 0 / 0.35), 0 30px 70px -18px rgb(0 0 0 / 0.6)"
+        )
+    return (
+        f"0 0 0 1px {tint('--foreground', 0.1)}, 0 1px 2px {tint('--foreground', 0.05)}, "
+        f"0 10px 24px -6px {tint('--foreground', 0.1)}, 0 30px 70px -18px {tint('--foreground', 0.22)}"
+    )
+
+
+TOKENS_CSS = tokens_css()
+BASE_RULES = f"""
 * {{ box-sizing: border-box; }}
 html, body {{ margin: 0; }}
 body {{ position: relative; overflow: hidden; font-family: {FONT}; -webkit-font-smoothing: antialiased; }}
@@ -382,7 +445,12 @@ body {{ position: relative; overflow: hidden; font-family: {FONT}; -webkit-font-
   justify-content: center; background: var(--surface-raised); color: var(--subtle); letter-spacing: 0.01em;
 }}
 """
-STAGE_CSS = f"""
+BASE_CSS = f"\n{TOKENS_CSS}{BASE_RULES}"
+
+
+def stage_css(theme: str = "light") -> str:
+    """The mp4's stage, its window and caption line, and the title card, in a theme."""
+    return f"""
 body {{
   width: {STAGE_W}px; height: {STAGE_H}px;
   background: linear-gradient(165deg, color-mix(in srgb, var(--surface-raised) 80%, var(--border)), var(--background));
@@ -390,8 +458,7 @@ body {{
 .window {{
   position: absolute; left: {WINDOW_X}px; top: {WINDOW_Y}px; width: {CONTENT_W}px; height: {BAR_H + CONTENT_H}px;
   border-radius: {WINDOW_RADIUS}px; overflow: hidden; background: var(--background);
-  box-shadow: 0 0 0 1px {tint("--foreground", 0.1)}, 0 1px 2px {tint("--foreground", 0.05)},
-    0 10px 24px -6px {tint("--foreground", 0.1)}, 0 30px 70px -18px {tint("--foreground", 0.22)};
+  box-shadow: {window_shadow(theme)};
 }}
 .bar {{
   position: relative; height: {BAR_H}px; display: flex; align-items: center; padding: 0 18px;
@@ -414,12 +481,15 @@ body {{
 .mark {{ display: flex; align-items: center; gap: 20px; }}
 .icon {{
   display: grid; place-items: center; width: 64px; height: 64px; border-radius: 18px; background: var(--accent);
-  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.14), 0 10px 24px -8px {tint("--accent", 0.5)};
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.14), 0 10px 24px -8px {tint("--accent", 0.5, theme)};
 }}
 .icon svg {{ width: 40px; height: 40px; }}
 .name {{ font-size: 68px; font-weight: 700; letter-spacing: -0.02em; color: var(--foreground); }}
 .line {{ margin: 0; font-size: 32px; color: var(--muted); }}
 """
+
+
+STAGE_CSS = stage_css()
 GIF_CSS = f"""
 .gif-bar {{
   position: relative; width: {GIF_W}px; height: {GIF_BAR_H}px; background: var(--surface);
@@ -447,9 +517,9 @@ CAPTION_FITS_JS = f"""() => {{
 }}"""
 
 
-def _page(css: str, body: str, body_class: str = "") -> str:
+def _page(css: str, body: str, body_class: str = "", theme: str = "light") -> str:
     attribute = f' class="{body_class}"' if body_class else ""
-    head = f'<head><meta charset="utf-8"><style>{BASE_CSS}{css}</style></head>'
+    head = f'<head><meta charset="utf-8"><style>\n{tokens_css(theme)}{BASE_RULES}{css}</style></head>'
     return f"<!doctype html><html>{head}<body{attribute}>{body}</body></html>"
 
 
@@ -461,7 +531,7 @@ def _line(caption: str, mode: str) -> str:
     return f'<span class="text">{html.escape(caption)}</span><span class="mode">{html.escape(mode)}</span>'
 
 
-def stage_html(caption: str | None, mode: str, *, window: bool = True) -> str:
+def stage_html(caption: str | None, mode: str, *, window: bool = True, theme: str = "light") -> str:
     """The mp4's stage: the backdrop, the app's window frame with an empty page area, and the caption line under it.
     With window False it is the bare backdrop a clip opens and ends on."""
     parts = []
@@ -469,26 +539,28 @@ def stage_html(caption: str | None, mode: str, *, window: bool = True) -> str:
         parts.append(f'<div class="window"><div class="bar">{_bar()}</div></div>')
     if window and caption is not None:
         parts.append(f'<div class="caption">{_line(caption, mode)}</div>')
-    return _page(STAGE_CSS, "".join(parts))
+    return _page(stage_css(theme), "".join(parts), theme=theme)
 
 
-def title_html(line: str) -> str:
-    """The title card: the app's name and mark, and one line on what the clip shows, on the bare backdrop."""
+def title_html(line: str, theme: str = "light") -> str:
+    """The title card: the app's name and mark, and one line on what the clip shows, on the bare backdrop. The mark's
+    bubble is drawn in the on-accent colour, as the app's header draws it in each theme."""
     paths = "".join(f'<path d="{path}"/>' for path in BRAND_PATHS)
     icon = (
-        '<svg viewBox="0 0 16 16" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" '
-        f'stroke-linejoin="round">{paths}</svg>'
+        f'<svg viewBox="0 0 16 16" fill="none" stroke="{THEMES[theme]["--on-accent"]}" stroke-width="1.5" '
+        f'stroke-linecap="round" stroke-linejoin="round">{paths}</svg>'
     )
     mark = f'<div class="mark"><span class="icon">{icon}</span><span class="name">Claims Q&amp;A</span></div>'
-    return _page(STAGE_CSS, f'<div class="title">{mark}<p class="line">{html.escape(line)}</p></div>')
+    body = f'<div class="title">{mark}<p class="line">{html.escape(line)}</p></div>'
+    return _page(stage_css(theme), body, theme=theme)
 
 
-def gif_bar_html() -> str:
-    return _page(GIF_CSS, f'<div class="gif-bar">{_bar()}</div>')
+def gif_bar_html(theme: str = "light") -> str:
+    return _page(GIF_CSS, f'<div class="gif-bar">{_bar()}</div>', theme=theme)
 
 
-def gif_footer_html(caption: str, mode: str) -> str:
-    return _page(GIF_CSS, f'<div class="gif-footer">{_line(caption, mode)}</div>')
+def gif_footer_html(caption: str, mode: str, theme: str = "light") -> str:
+    return _page(GIF_CSS, f'<div class="gif-footer">{_line(caption, mode)}</div>', theme=theme)
 
 
 def cursor_html() -> str:

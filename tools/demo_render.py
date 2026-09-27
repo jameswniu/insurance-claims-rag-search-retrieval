@@ -14,7 +14,7 @@ import json
 import subprocess
 import tempfile
 from collections.abc import Iterator, Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
@@ -51,7 +51,8 @@ class RenderError(Exception):
 
 @dataclass(frozen=True)
 class Plan:
-    """A recorded clip's log, as the recorder wrote it, with times in seconds from the clip's start."""
+    """A recorded clip's log, as the recorder wrote it, with times in seconds from the clip's start. themes is each
+    change of the page's theme, light or dark, which the moves drawn over the page follow; a log without it is light."""
 
     length_s: float
     mode: str
@@ -59,6 +60,7 @@ class Plan:
     captions: list[tuple[float, str]]
     spot: list[tuple[float, str, stage.Rect | None, float | None]]
     cursor: list[list[Any]]
+    themes: list[tuple[float, str]] = field(default_factory=list)
 
     @classmethod
     def load(cls, log: dict[str, Any], length_s: float) -> "Plan":
@@ -72,6 +74,7 @@ class Plan:
             captions=[(float(at), str(text)) for at, text in log["captions"]],
             spot=[spot_entry(entry) for entry in log["spot"]],
             cursor=[list(event) for event in log["cursor"]],
+            themes=[(float(at), str(name)) for at, name in log.get("themes", [])],
         )
 
 
@@ -146,23 +149,34 @@ def rounded_cover(width: int, height: int, rect: stage.Rect, radius: float) -> C
     return cover
 
 
-def shade(pixels: Pixels, cover: Cover, opacity: float) -> Pixels:
-    """The spotlight: everything the cutout doesn't cover darkened by SPOT_DIM times opacity towards SPOT_TINT."""
+def shade(pixels: Pixels, cover: Cover, opacity: float, tint: tuple[int, int, int] = stage.SPOT_TINT) -> Pixels:
+    """The spotlight: everything the cutout doesn't cover darkened by SPOT_DIM times opacity towards tint, the page
+    theme's (stage.LOOKS)."""
     amount = (opacity * stage.SPOT_DIM) * (1 - cover)
-    tint = np.array(stage.SPOT_TINT, np.float32)
-    mixed = pixels.astype(np.float32) * (1 - amount[..., None]) + tint * amount[..., None]
+    towards = np.array(tint, np.float32)
+    mixed = pixels.astype(np.float32) * (1 - amount[..., None]) + towards * amount[..., None]
     return np.rint(mixed).astype(np.uint8)
 
 
-def dim(pixels: Pixels, rect: stage.Rect, radius: float, opacity: float) -> Pixels:
+def dim(
+    pixels: Pixels, rect: stage.Rect, radius: float, opacity: float, tint: tuple[int, int, int] = stage.SPOT_TINT
+) -> Pixels:
     height, width = pixels.shape[:2]
-    return shade(pixels, rounded_cover(width, height, rect, radius), opacity)
+    return shade(pixels, rounded_cover(width, height, rect, radius), opacity, tint)
 
 
-def fade_floor(pixels: Pixels, floor: float, reach: float, cover: Cover, opacity: float) -> Pixels:
-    """Dissolves what lies within reach pixels above the page's floor into the page's background, eased in towards
-    the floor, outside the cutout only, so a line the composer or the window's edge cuts off never peeks out while
-    what is being read stays whole. Rows from the floor down are the composer's own, and are left alone."""
+def fade_floor(
+    pixels: Pixels,
+    floor: float,
+    reach: float,
+    cover: Cover,
+    opacity: float,
+    canvas: tuple[int, int, int] = stage.CANVAS,
+) -> Pixels:
+    """Dissolves what lies within reach pixels above the page's floor into the page's background (canvas, the page
+    theme's), eased in towards the floor, outside the cutout only, so a line the composer or the window's edge cuts off
+    never peeks out while what is being read stays whole. Rows from the floor down are the composer's own, and are
+    left alone."""
     top, bottom = max(0, int(floor - reach)), min(pixels.shape[0], int(np.ceil(floor)))
     if bottom <= top or opacity <= 0:
         return pixels
@@ -172,7 +186,7 @@ def fade_floor(pixels: Pixels, floor: float, reach: float, cover: Cover, opacity
     amount = (opacity * ramp[:, None] * (1 - cover[top:bottom]))[..., None]
     out = pixels.copy()
     band = out[top:bottom].astype(np.float32)
-    out[top:bottom] = np.rint(band * (1 - amount) + np.array(stage.CANVAS, np.float32) * amount).astype(np.uint8)
+    out[top:bottom] = np.rint(band * (1 - amount) + np.array(canvas, np.float32) * amount).astype(np.uint8)
     return out
 
 
@@ -203,10 +217,10 @@ def resized(sprite: Image.Image, size: tuple[int, int]) -> Image.Image:
     return sprite.convert("RGBa").resize(size, LANCZOS).convert("RGBA")
 
 
-def ripple(progress: float, scale: float) -> Image.Image:
-    """One moment of a click's ripple, a soft white disc with a ring in the app's accent that grows and fades, so it
-    shows on a white control and on an accent one alike. Drawn four times over and scaled down so its edge is smooth,
-    with its centre at the picture's centre."""
+def ripple(progress: float, scale: float, color: tuple[int, int, int] = stage.RIPPLE_COLOR) -> Image.Image:
+    """One moment of a click's ripple, a soft white disc with a ring in the app's accent (color, the page theme's) that
+    grows and fades, so it shows on a white control and on an accent one alike. Drawn four times over and scaled down
+    so its edge is smooth, with its centre at the picture's centre."""
     over = 4
     grown = stage.lerp(*stage.RIPPLE_RADIUS, stage.ease_out(progress)) * scale
     fade = (1 - progress) ** 1.5
@@ -214,7 +228,6 @@ def ripple(progress: float, scale: float) -> Image.Image:
     big = Image.new("RGBA", (size * over, size * over), (0, 0, 0, 0))
     middle, radius = size * over / 2, grown * over
     ring = max(1, round(2 * scale * over))
-    color = stage.RIPPLE_COLOR
     ImageDraw.Draw(big).ellipse(
         (middle - radius, middle - radius, middle + radius, middle + radius),
         fill=(255, 255, 255, round(110 * fade)),
@@ -226,7 +239,7 @@ def ripple(progress: float, scale: float) -> Image.Image:
 
 class Scene:
     """A clip's page at any moment and at any size: the captured frame, with the spotlight, the click ripples and the
-    pointer drawn over it."""
+    pointer drawn over it, each in the colours of the page's theme at that moment."""
 
     def __init__(self, plan: Plan, frames: Frames, chrome: Chrome) -> None:
         self.plan, self.frames, self.chrome = plan, frames, chrome
@@ -253,6 +266,8 @@ class Scene:
         shown = self.cursor.opacity(t)
         point = self.cursor.point(t)
         ripples = self.cursor.ripples(t)
+        theme = stage.theme_at(self.plan.themes, t)
+        look = stage.LOOKS[theme]
         key = (
             index,
             size,
@@ -262,6 +277,7 @@ class Scene:
             tuple(round(value, 1) for value in point) if shown > 0 else None,
             round(shown, 3),
             tuple((spot, round(progress, 3)) for spot, progress in ripples),
+            theme,
         )
         self.key = key
         if self.last is not None and self.last[0] == key:
@@ -275,10 +291,10 @@ class Scene:
             corner, far = place(rect[0], rect[1]), place(rect[2], rect[3])
             cover = rounded_cover(size[0], size[1], (*corner, *far), stage.SPOT_RADIUS * scale)
             if floor is not None:
-                pixels = fade_floor(pixels, floor * scale, stage.FLOOR_FADE_PX * scale, cover, dimmed)
-            pixels = shade(pixels, cover, dimmed)
+                pixels = fade_floor(pixels, floor * scale, stage.FLOOR_FADE_PX * scale, cover, dimmed, look.canvas)
+            pixels = shade(pixels, cover, dimmed, look.tint)
         for (x, y), progress in ripples:
-            sprite = ripple(progress, scale)
+            sprite = ripple(progress, scale, look.ripple)
             middle = place(x, y)
             overlay(pixels, sprite, middle[0] - sprite.width / 2, middle[1] - sprite.height / 2, 1.0)
         if shown > 0:

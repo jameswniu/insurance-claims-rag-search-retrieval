@@ -1,24 +1,28 @@
 """Records the README's demo clips into docs/demo, each as an mp4 with the GIF or poster OUTPUTS lists for it, and
 checks what each one shows.
 
-    make demos                                          # every clip
+    make demos                                          # every clip the running app's mode can record
     uv run python tools/record_demos.py why injection   # only these
     uv run python tools/record_demos.py --out DIR       # a take somewhere else, to look at before publishing
 
-Needs the compose stack (make up) in no-key mode, Docker and ffmpeg. Chromium runs on the compose network in a local
-image built on the official Playwright image, pinned by digest, so nothing is installed on the host; the first run
-pulls that image, the matching Playwright package and Ubuntu's Inter font package, which the captions are set in.
-Every clip reads the page after each answer and fails the run when the page shows something else.
+Needs the compose stack, Docker and ffmpeg. Every clip but the live one is recorded in no-key mode (make up). The live
+clip is recorded on its own, with the app in live mode (make up-live, with LLM_BACKEND and its settings), and checks
+the request log after its question: the models answered, the verifier kept what they wrote, and nothing fell back.
+Chromium runs on the compose network in a local image built on the official Playwright image, pinned by digest, so
+nothing is installed on the host; the first run pulls that image, the matching Playwright package and Ubuntu's Inter
+font package, which the captions are set in. Every clip reads the page after each answer and fails the run when the
+page shows something else.
 
 The clips are paced for a first-time viewer. Each reading pause is worked out from the words on screen, caption
 included, and starts only after scrolling stops, and PACE sets how brisk the whole set runs. The page is captured at
 twice its pixel density, frame by frame with when each was taken, and every move the recorder makes is logged. The
 finished files are then composited from both (tools/demo_render.py): the app in a window on a quiet stage with its
 caption under it, a spotlight on what is being read, and a pointer that glides to each control it presses. In the
-recorder's browser the only changes are measured scrolling, a soft fade above the composer and evidence, code and
-table text the app sets under 17 px raised to 17 px: the CSS is appended to the /static/style.css response and the
-script is injected before the page loads, so nothing under app/ or frontend/ changes and every answer shows as the
-app renders it.
+recorder's browser the only changes are measured scrolling, a soft fade above the composer and evidence, code, table
+and dev console text the app sets under 17 px raised to 17 px: the CSS is appended to the /static/style.css response
+and the script is injected before the page loads, so nothing under app/ or frontend/ changes and every answer shows as
+the app renders it. Every clip opens on the app's light theme. The devmode clip alone turns dev mode's dark theme on,
+so its stage, captions and GIF frame are drawn dark, and the spotlight follows the page's theme at each moment.
 
 A file already in the output directory is never overwritten: the run stops before recording anything, so delete a
 file to record it again. manifest.json, which describes each clip, is the one file a run updates, one clip at a time.
@@ -36,6 +40,7 @@ import subprocess
 import sys
 import tempfile
 import time
+import uuid
 from collections.abc import Callable
 from datetime import UTC, datetime
 from decimal import ROUND_HALF_UP, Decimal
@@ -66,6 +71,7 @@ OUTPUTS: dict[str, tuple[str, ...]] = {
     "ask": ("ask.gif", "ask.mp4", "ask.poster.png"),
     "policy": ("policy.mp4", "policy.poster.png"),
     "scan": ("scan.mp4", "scan.poster.png"),
+    "ocr-flag": ("ocr-flag.mp4",),
     "why": ("why.mp4", "why.poster.png"),
     "permissions": ("permissions.gif", "permissions.mp4"),
     "suppression": ("suppression.mp4", "suppression.poster.png"),
@@ -73,8 +79,16 @@ OUTPUTS: dict[str, tuple[str, ...]] = {
     "injection": ("injection.mp4", "injection.poster.png"),
     "off-topic": ("off-topic.mp4", "off-topic.poster.png"),
     "out-of-range": ("out-of-range.mp4", "out-of-range.poster.png"),
+    "devmode": ("devmode.gif", "devmode.mp4"),
+    "live": ("live.mp4",),
     "dashboard": ("dashboard.gif", "dashboard.mp4", "dashboard.poster.png"),
 }
+# The clips that need the app in live mode, with real models. A run records these or the no-key clips, never both.
+LIVE_CLIPS = ("live",)
+# The one clip whose page turns dev mode's dark theme on, and whose chrome is drawn dark to match.
+DARK_CLIPS = ("devmode",)
+NO_KEY_LABEL = "No API key"
+LIVE_LABEL = "Live models"
 
 # Pacing. A viewer reads 200 to 250 words a minute, so every reading pause is worked out from what is on screen, and
 # the times below are long enough to read every word as it plays. PACE is the one knob that retimes the whole set:
@@ -122,7 +136,18 @@ class Budget(NamedTuple):
     max_seconds: float | None
 
 
-EVIDENCE_CLIPS = ("policy", "scan", "why", "permissions", "suppression", "clarify", "dashboard")
+EVIDENCE_CLIPS = (
+    "policy",
+    "scan",
+    "ocr-flag",
+    "why",
+    "permissions",
+    "suppression",
+    "clarify",
+    "devmode",
+    "live",
+    "dashboard",
+)
 BOUNDARY_CLIPS = ("injection", "off-topic", "out-of-range")
 NAMED = [name for files in OUTPUTS.values() for name in files]
 BUDGETS: dict[str, Budget] = {
@@ -157,7 +182,19 @@ YEAR_OPTION = "2025"
 # The scan clip asks this eval case's question, about an invoice with four line items. The evidence panel draws a
 # scan's first six fields, and the field the answer is about comes first, so the total's crop is always among them.
 SCAN_CASE = "ocr-006"
+# The ocr-flag clip asks this one, about a proof of loss planted with its total's decimal point dropped, which the
+# case expects the answer to flag rather than state.
+OCR_FLAG_CASE = "ocr-016"
 ANALYST_TEXT = "Analysts see aggregates only, so I can't open individual claims."
+# The live clip's question, qual-011 in evals/cases/qualitative.jsonl, asked of the policy and guideline documents,
+# where live mode's answer is the model's own prose.
+LIVE_QUESTION = "What should a denial letter include?"
+# The caveat app/pipeline.py adds when live mode falls back to the no-key answer.
+LIVE_FALLBACK = "The model couldn't answer this one, so this came from the fixed workflow."
+# The dev console: the events the page keeps for a question, and the height its grip can be dragged to at most,
+# the window's height less this much (frontend/src/devmode/DevConsole.tsx).
+CONSOLE_KINDS = ("stage", "evidence", "answer", "refused", "clarify", "out_of_data", "error", "done")
+CONSOLE_HEADROOM_PX = 240
 
 # A West claim with a scan or adjuster notes on file. An open one reads best under a status question.
 CLAIM_SQL = """
@@ -170,6 +207,14 @@ LIMIT 1
 """
 PAID_SQL = "SELECT paid_total FROM sem.v_claims WHERE claim_id = {}"
 SCAN_TOTAL_SQL = "SELECT value FROM rag.scan_fields WHERE doc_id = '{}' AND field = 'total'"
+SCAN_FLAG_SQL = "SELECT value, flagged, flag_reason FROM rag.scan_fields WHERE doc_id = '{}' AND field = 'total'"
+# The live clip's request as the app logged it, found by the id its done event carried.
+LIVE_ROW_SQL = """
+SELECT row_to_json(r) FROM (
+    SELECT mode, route, outcome, fallback, models, cost_usd, verifier, tokens_in, tokens_out, total_ms
+    FROM ops.request_log WHERE request_id = '{}'
+) r
+"""
 # The monthly question's cells, split into withheld and published. Only the counts of each go in the manifest.
 SUPPRESSION_SQL = """
 SELECT count(*) FILTER (WHERE suppressed), count(*) FILTER (WHERE NOT suppressed)
@@ -208,6 +253,13 @@ CAPTIONS: dict[str, dict[str, str]] = {
         "open": "Open the scan evidence",
         "crop": "Inspect the total on the scan",
         "sql": "Check the payment comparison query",
+    },
+    "ocr-flag": {
+        "who": "Priya asks about a scanned proof of loss",
+        "type": "Ask for the total on the scan",
+        "answer": "The total is flagged, not stated",
+        "open": "Open the scan evidence",
+        "crop": "The crop shows the misread total",
     },
     "why": {
         "who": "Priya asks why West losses rose",
@@ -269,6 +321,27 @@ CAPTIONS: dict[str, dict[str, str]] = {
         "type": "Ask for claims from 2022",
         "notice": "This year is outside the data",
     },
+    "devmode": {
+        "who": "Dana checks what the server sends",
+        "switch": "Turn on Dev mode",
+        "console": "The page turns dark with a console",
+        "type": "Ask for a paid-loss figure",
+        "answer": "Read the returned figure",
+        "grow": "Drag the console taller",
+        "events": "Each streamed event gets a console row",
+        "open": "Open the done event",
+        "detail": "It names the request, route and outcome",
+    },
+    "live": {
+        "who": "Dana asks with live models connected",
+        "type": "Ask what a denial letter needs",
+        "wait": "Claude writes, then Gemini checks each sentence",
+        "answer": "Read the answer Claude wrote",
+        "cite": "Follow a citation to its source",
+        "source": "Check the guideline it cites",
+        "open": "Open the supporting evidence",
+        "checks": "Each kept sentence passed Gemini's check",
+    },
     "dashboard": {
         "who": "Priya opens the operator dashboard",
         "all": "Start with all request sources",
@@ -289,6 +362,7 @@ TITLES: dict[str, str] = {
     "ask": "A paid-loss figure, traced to its SQL",
     "policy": "A coverage answer, checked against the policy",
     "scan": "A total read off a scanned invoice",
+    "ocr-flag": "A misread total is flagged, not stated",
     "why": "What drove a rise in paid losses",
     "permissions": "Three users ask about one claim",
     "suppression": "Small groups stay withheld from analysts",
@@ -296,6 +370,8 @@ TITLES: dict[str, str] = {
     "injection": "An instruction override is refused",
     "off-topic": "Questions outside claims are declined",
     "out-of-range": "A year outside the data is named",
+    "devmode": "Dev mode shows each request's events",
+    "live": "Claude writes the answer and Gemini checks it",
     "dashboard": "The operator dashboard, by request source",
 }
 
@@ -356,6 +432,63 @@ def cents(value: str) -> str:
     return f"${Decimal(value):,.2f}"
 
 
+def js_number(value: float) -> str:
+    """A number as the page's script writes it, so 112.0 reads 112 and 111.1 reads 111.1."""
+    return str(int(value)) if isinstance(value, float) and value.is_integer() else str(value)
+
+
+MONEY = re.compile(r"\$\s?(\d[\d,]*(?:\.\d+)?)")
+NUMBER = re.compile(r"(?<![\w.,])(\d[\d,]*(?:\.\d+)?)")
+
+
+def wrong_amounts(text: str, misread: str, allowed: tuple[str, ...]) -> list[str]:
+    """What text states that a flagged answer must not: a dollar amount other than the allowed ones, or the misread
+    value written any way at all, with or without a dollar sign, commas or cents. Amounts compare by value, so the
+    ledger's $5,957.79 is allowed while $595,779 is not, though both carry the same digits."""
+    value = Decimal(re.sub(r"[^\d.]", "", misread))
+    fine = {Decimal(re.sub(r"[^\d.]", "", amount)) for amount in allowed}
+    found = [match[0] for match in MONEY.finditer(text) if Decimal(match[1].replace(",", "")) not in fine]
+    found += [match[0] for match in NUMBER.finditer(text) if Decimal(match[1].replace(",", "")) == value]
+    return list(dict.fromkeys(found))
+
+
+def clips_for(requested: list[str], live: bool) -> list[str]:
+    """The clips a run records, in recording order: the ones named, or with none named, every clip the app's mode
+    records. The live clips need live mode and every other clip needs no key, so a run never mixes the two, and a
+    named clip the mode can't record raises ValueError."""
+    if not requested:
+        return [clip for clip in OUTPUTS if (clip in LIVE_CLIPS) == live]
+    chosen = [clip for clip in OUTPUTS if clip in requested]
+    wrong = [clip for clip in chosen if (clip in LIVE_CLIPS) != live]
+    if wrong and live:
+        raise ValueError(f"{', '.join(wrong)} are recorded with no key: unset LLM_BACKEND, then restart the app")
+    if wrong:
+        raise ValueError(f"{', '.join(wrong)} needs live mode: start the app with make up-live, then record it alone")
+    return chosen
+
+
+def live_problems(row: dict[str, Any] | None, mode: dict[str, Any]) -> list[str]:
+    """Why a live clip's request doesn't count as the models' answer, from its request log row: none when it ran on
+    the app's backend, never fell back to the no-key answer, the verifier kept at least one sentence, and both the
+    writer and the checker are among the models that answered. A reply names its model, sometimes with a date after
+    the name the app asked for, such as claude-haiku-4-5-20251001."""
+    if row is None:
+        return ["the request log has no row for it"]
+    problems = []
+    if row.get("mode") != mode["backend"]:
+        problems.append(f"it ran in {row.get('mode')} mode, not {mode['backend']}")
+    if row.get("fallback") is not None:
+        problems.append(f"it fell back to the no-key answer, because of {row['fallback']}")
+    if not (row.get("verifier") or {}).get("kept"):
+        problems.append(f"the verifier kept nothing: {row.get('verifier')}")
+    answered = [str(name) for name in row.get("models") or []]
+    for role in ("main", "check"):
+        model = mode["models"][role]
+        if not any(name == model or name.startswith(f"{model}-") for name in answered):
+            problems.append(f"the {role} model, {model}, never answered: {', '.join(answered) or 'no model did'}")
+    return problems
+
+
 # style.css already sets this size. Setting it again through the CSSOM, which the page's CSP allows where an inline
 # style would be refused, keeps the clips at 18 px whatever the stylesheet says later.
 FONT_JS = """
@@ -389,6 +522,10 @@ details.evidence table.split, details.evidence table.split th, details.evidence 
 ol.citations, ol.citations::before, ol.citations li::before {{
   font-size: {FONT_FLOOR_PX}px !important;
 }}
+/* Dev mode's console rows, their details and its empty state, which the app sets at 14 px, raised to the floor too. */
+.devconsole .console-rows, .devconsole .console-empty {{
+  font-size: {FONT_FLOOR_PX}px !important;
+}}
 """
 # Measured scrolling, and a log of what the spotlight is on: the page reports each focused rect, each time a focused
 # rect moves with the page and each clear, stamped on the clock the captured frames are stamped on. The spotlight
@@ -416,22 +553,40 @@ DEMO_JS = """
       }
       return top === Infinity ? null : { top, left, bottom, right, width: right - left, height: bottom - top };
     };
-    // The sticky top bar and the fixed composer are always on screen, so their controls are never scrolled to.
-    const pinned = (els) => els.every((el) => el.closest(".topbar, .composer"));
+    // The sticky top bar, the fixed composer and dev mode's docked console are always on screen, so their controls
+    // are never scrolled to.
+    const pinned = (els) => els.every((el) => el.closest(".topbar, .composer, .devconsole"));
     const band = () => {
       const topbar = document.querySelector(".topbar")?.getBoundingClientRect().bottom ?? 0;
       const composer = document.querySelector(".composer")?.getBoundingClientRect().top ?? innerHeight;
       return { top: topbar + CLEARANCE, bottom: composer - CLEARANCE };
     };
+    // The console's list of events scrolls in its own box, so what is read there is read inside that box.
+    const listOf = (els) => {
+      const box = els[0]?.closest(".console-rows");
+      return box && els.every((el) => box.contains(el)) ? box : null;
+    };
+    // Where the targets must sit to be read whole: the band for the thread, the window for the top bar and the
+    // composer, and the console's own box, the full width of the window, for what is in the console.
+    const limits = (els) => {
+      const list = listOf(els);
+      if (list) {
+        const r = list.getBoundingClientRect();
+        return { top: r.top, bottom: r.bottom, left: r.left, right: r.right };
+      }
+      const whole = { top: 0, bottom: innerHeight, left: 0, right: innerWidth };
+      if (els.every((el) => el.closest(".devconsole"))) return whole;
+      return { ...(pinned(els) ? { top: 0, bottom: innerHeight } : band()), left: 8, right: innerWidth - 8 };
+    };
     const inBand = (els) => {
       const r = rectOf(els);
       if (!r) return false;
-      const b = pinned(els) ? { top: 0, bottom: innerHeight } : band();
+      const b = limits(els);
       // Half a pixel of slack for subpixel layout; anything more is a real overlap.
-      return r.top >= b.top - 0.5 && r.bottom <= b.bottom + 0.5 && r.left >= 8 && r.right <= innerWidth - 8;
+      return r.top >= b.top - 0.5 && r.bottom <= b.bottom + 0.5 && r.left >= b.left && r.right <= b.right;
     };
     const fits = (els) => {
-      const r = rectOf(els), b = band();
+      const r = rectOf(els), b = limits(els);
       return !!r && r.height <= b.bottom - b.top;
     };
     // The spotlight's rect: what it shows, with PAD around it, inside the page, as [left, top, right, bottom].
@@ -499,6 +654,8 @@ DEMO_JS = """
     // little as it can and "top" puts them at the top of the band. The spotlight fades out while the page moves.
     // Resolves once the page has settled.
     const reveal = async (els, align = "fit") => {
+      const list = listOf(els);
+      if (list) return revealIn(list, els, align);
       if (pinned(els)) {
         if (!inBand(els)) throw new Error("the target in the top bar is hidden");
         return 0;
@@ -528,6 +685,43 @@ DEMO_JS = """
         await new Promise((resolve) => setTimeout(resolve, SETTLE_MS));
       }
       if (!inBand(els)) throw new Error(`the reading target sits outside the band: ${describe(rectOf(els), band())}`);
+      return Math.abs(end - start);
+    };
+    // Moves a scroll position from start to end the way reveal does, with the spotlight faded out, then settles.
+    const glide = async (set, start, end) => {
+      unfocus();
+      const began = performance.now();
+      await new Promise((resolve) => {
+        const frame = (now) => {
+          const t = Math.min(1, (now - began) / SCROLL_MS);
+          set(start + (end - start) * t * t * (3 - 2 * t));
+          if (t < 1) requestAnimationFrame(frame);
+          else resolve();
+        };
+        requestAnimationFrame(frame);
+      });
+      await new Promise((resolve) => setTimeout(resolve, SETTLE_MS));
+    };
+    // The same for a target in the console's list, which scrolls that box instead of the page.
+    const revealIn = async (box, els, align) => {
+      const r = rectOf(els), b = box.getBoundingClientRect();
+      if (!r) throw new Error("the reading target has no size");
+      if (r.height > b.height) throw new Error(`the reading target is taller than the console list: ${describe(r, b)}`);
+      let delta = 0;
+      if (align === "top" || r.top < b.top) delta = r.top - b.top;
+      else if (r.bottom > b.bottom) delta = r.bottom - b.bottom;
+      const start = box.scrollTop, limit = box.scrollHeight - box.clientHeight;
+      const goal = delta > 0 ? Math.ceil(start + delta) : Math.floor(start + delta);
+      const end = Math.max(0, Math.min(goal, limit));
+      if (Math.abs(end - start) >= 1) await glide((at) => { box.scrollTop = at; }, start, end);
+      if (!inBand(els)) throw new Error(`the reading target is outside the console list: ${describe(rectOf(els), b)}`);
+      return Math.abs(end - start);
+    };
+    // Scrolls the page to y when no reading target sets where, as once the console grows over the thread and a line
+    // left across the composer's see-through top edge would show as a smudge.
+    const scrollPage = async (y) => {
+      const start = scrollY, end = Math.max(0, Math.min(y, document.documentElement.scrollHeight - innerHeight));
+      if (Math.abs(end - start) >= 1) await glide((at) => window.scrollTo(0, at), start, end);
       return Math.abs(end - start);
     };
     // Consecutive blocks grouped into screenfuls that each fit the band, as lists of indexes.
@@ -569,11 +763,21 @@ DEMO_JS = """
     addEventListener("scroll", follow, true);
     addEventListener("resize", follow);
     new ResizeObserver(follow).observe(document.body);
+    // The page's theme, light or dark, at load and at each change, on the clock the frames are stamped on, so the
+    // spotlight drawn over a frame takes the colours of the theme that frame shows.
+    const theme = () => (document.documentElement.dataset.mode === "dev" ? "dark" : "light");
+    let current = theme();
+    const themes = [[stamp(), current]];
+    new MutationObserver(() => {
+      if (theme() !== current) themes.push([stamp(), (current = theme())]);
+    }).observe(document.documentElement, { attributes: true, attributeFilter: ["data-mode"] });
     window.demo = {
-      reveal, inBand, fits, band, screens, words, small, focus,
+      reveal, scrollPage, inBand, fits, band, screens, words, small, focus,
       clear: unfocus,
       // What the spotlight did since the last call, as [epoch ms, kind, rect or null, the page's floor].
       drain: () => log.splice(0),
+      // The theme changes since the last call, as [epoch ms, "light" or "dark"].
+      themes: () => themes.splice(0),
     };
   };
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", install, { once: true });
@@ -634,6 +838,9 @@ class Demo:
         self.spot_log: list[list[Any]] = []
         self.cursor_log: list[list[Any]] = []
         self.pointer: stage.Point | None = None
+        # The page's theme at each change. Only a clip in DARK_CLIPS may turn it dark, and its chrome is drawn dark.
+        self.theme_log: list[list[Any]] = []
+        self.chrome = "dark" if name in DARK_CLIPS else "light"
 
     def open(self, user: str, path: str = "/", *, ready: str = PICKER) -> Any:
         """Opens path as user. The page fetches who is asking, and the dashboard its numbers, after it loads, so the
@@ -662,14 +869,11 @@ class Demo:
         self.check(marker.strip() == "1", "the recorder's CSS reached the page", f"its marker reads {marker!r}")
         size = self.page.evaluate("getComputedStyle(document.documentElement).fontSize")
         self.check(size == "18px", "the root font is 18px", f"it is {size}")
-        # The clips show the app's default light theme, the one the stage's spotlight and chrome are drawn in, never
-        # dev mode's dark one.
-        root = "document.documentElement"
-        theme = self.page.evaluate(
-            f"[{root}.dataset.mode ?? null, getComputedStyle({root}).getPropertyValue('--background').trim()]"
-        )
+        # Every clip opens on the app's default light theme. Only the devmode clip turns dev mode's dark one on, by
+        # pressing its switch, and finish checks that no other clip's page ever turned dark.
         light = [None, stage.APP_LIGHT["--background"]]
-        self.check(theme == light, "the page shows the light theme the stage is drawn for", f"it shows {theme}")
+        theme = self.theme()
+        self.check(theme == light, "the page opens on the light theme", f"it shows {theme}")
         self.capture()
         self.t0, self.t0_wall = time.monotonic(), time.time()
         self.caption(self.captions["who"])
@@ -706,9 +910,21 @@ class Demo:
         return round(epoch_s - self.t0_wall, 3)
 
     def drain(self) -> None:
-        """Moves what the page logged about the spotlight into the clip's log. Called before the page can reload."""
+        """Moves what the page logged about the spotlight and its theme into the clip's logs. Called before the page
+        can reload."""
         for stamp, kind, rect, floor in self.page.evaluate("demo.drain()"):
             self.spot_log.append([self.clip_time(stamp / 1000), kind, rect, floor])
+        for stamp, name in self.page.evaluate("demo.themes()"):
+            if not self.theme_log or self.theme_log[-1][1] != name:
+                self.theme_log.append([self.clip_time(stamp / 1000), name])
+
+    def theme(self) -> list[Any]:
+        """The page's dev mode attribute and its background token, as the page has them now."""
+        root = "document.documentElement"
+        shown: list[Any] = self.page.evaluate(
+            f"[{root}.dataset.mode ?? null, getComputedStyle({root}).getPropertyValue('--background').trim()]"
+        )
+        return shown
 
     def keep_answer(self, response: Any) -> None:
         if response.url.endswith("/ask") and response.request.method == "POST":
@@ -801,6 +1017,14 @@ class Demo:
             if not cleared and self.spot_log and self.spot_log[-1][1] != "clear":
                 self.spot_log.append([at, "clear", None, None])
 
+    def scroll_page(self, y: float) -> None:
+        """Scrolls the page to y, eased like reveal, and logs the move when there was one."""
+        at, began = self.now(), time.monotonic()
+        moved = float(self.page.evaluate("y => demo.scrollPage(y)", y))
+        self.drain()
+        if moved:
+            self.log(at, "scroll", seconds=round(time.monotonic() - began, 2), px=round(moved))
+
     def glide(self, point: stage.Point) -> None:
         """Moves the pointer to point the way a hand would: eased in and out on a gentle arc over 0.5 to 0.7 s, in many
         small moves, so the page sees each hover on the way. The drawn pointer follows the same path from the log."""
@@ -818,7 +1042,10 @@ class Demo:
             self.sleep(began + seconds * step / steps - time.monotonic())
             self.page.mouse.move(*stage.glide_point(origin, point, step / steps))
         places = [round(value, 1) for value in (*origin, *point)]
-        self.cursor_log.append(["glide", at, round(at + seconds, 3), *places])
+        # A page that is slow to take each move, as while a drag resizes it, falls behind the planned time. The moves
+        # still go out one step at a time, so the drawn pointer keeps with the page when it ends when the last did.
+        ended = max(round(at + seconds, 3), self.now())
+        self.cursor_log.append(["glide", at, ended, *places])
 
     def press(self, target: Any) -> None:
         """A real pointer press at the target's centre, once the pointer has glided there, so the ripple shows where
@@ -834,6 +1061,24 @@ class Demo:
         self.sleep(PRESS_S)
         self.page.mouse.up()
         self.cursor_log.append(["press", at, round(point[0], 1), round(point[1], 1)])
+
+    def drag(self, handle: Any, dy: float, caption: str, *, spot: Any) -> None:
+        """A real drag: the spotlight goes to spot, the pointer glides to the handle and presses, moves dy CSS pixels
+        down (up when negative) the way a hand would, and lets go. The page sees every move on the way."""
+        self.caption(caption)
+        self.spot(spot)
+        box = handle.bounding_box()
+        self.check(box is not None, "the handle to drag is on screen")
+        start = (box["x"] + box["width"] / 2, box["y"] + box["height"] / 2)
+        self.glide(start)
+        at = self.now()
+        self.page.mouse.down()
+        self.cursor_log.append(["press", at, round(start[0], 1), round(start[1], 1)])
+        self.sleep(PRESS_S)
+        self.glide((start[0], start[1] + dy))
+        self.page.mouse.up()
+        self.log(at, "drag", seconds=round(self.now() - at, 2), px=round(dy))
+        self.hold(paced(CLICK_BEAT_S), "click-beat")
 
     def click(self, target: Any, caption: str) -> None:
         """The spotlight moves to the control as the pointer glides to it and presses."""
@@ -958,15 +1203,22 @@ class Demo:
         self.sleep(paced(QUESTION_HOLD_S) - (time.monotonic() - began))
         self.log(at, "pause", seconds=round(time.monotonic() - began, 2))  # the glide to Send can take longer
 
-    def submit(self, question: str) -> Any:
+    def submit(self, question: str, *, waiting: str | None = None) -> Any:
         """Presses Send and waits for the whole answer. The footer goes on when the done event arrives, after the
-        answer and its evidence panel. A question the server turns away ends in an error notice instead."""
+        answer and its evidence panel. A question the server turns away ends in an error notice instead. An answer
+        that takes seconds, as a live model's does, is watched while it comes: with a waiting caption, the spotlight
+        moves to the reply's card, whose progress line names each step as it finishes."""
         turns = self.page.locator(".turn")
         before = turns.count()
         self.press(self.page.locator("#send"))
         at, sent = self.now(), time.monotonic()
         self.page.evaluate("document.activeElement?.blur()")  # no caret blinking through the pauses that follow
         turn = turns.nth(before)
+        if waiting is not None:
+            self.caption(waiting)
+            card = turn.locator("section.answer")
+            card.wait_for()
+            self.spot(card)
         try:
             turn.locator(".footer, .notice.error").first.wait_for(timeout=45_000)
         except Exception as exc:
@@ -1016,6 +1268,9 @@ class Demo:
         self.hold(paced(END_HOLD_S), "end")
         self.length_s = self.now()
         self.drain()
+        if self.name not in DARK_CLIPS:
+            dark = [at for at, name in self.theme_log if name == "dark"]
+            self.check(not dark, "the page stayed on the light theme", f"it turned dark at {dark} s")
         if self.capturing:
             self.page.screencast.stop()
             self.capturing = False
@@ -1046,6 +1301,8 @@ class Demo:
                 "captions": self.caption_log,
                 "spot": self.spot_log,
                 "cursor": self.cursor_log,
+                "themes": self.theme_log,
+                "chrome": self.chrome,
             },
         }
 
@@ -1214,6 +1471,43 @@ def clip_scan(demo: Demo, facts: Facts) -> None:
     open_tab(demo, sql, captions["sql"])
     demo.read(content(sql), captions["sql"], 14.0, label="the payment query and its claim", words=sql_reading(sql))
     demo.note(f"scan: {scan['doc_id']} total {total}, crop captioned {shown!r}")
+    demo.shown = {"answer": text, "crop": shown}
+    demo.finish()
+
+
+def clip_ocr_flag(demo: Demo, facts: Facts) -> None:
+    """Priya asks for the total on a proof of loss whose total OCR misread. The answer flags it and states no amount
+    but what the payment record holds, and the crop shows the misread total under its flag."""
+    captions, scan = demo.captions, facts["ocr_flag"]
+    demo.open("priya")
+    demo.establish(captions["who"])
+    turn = demo.ask(scan["question"], captions["type"])
+    text = answer_text(turn)
+    demo.check("couldn't be read reliably" in text, "the answer flags the total instead of stating it", text)
+    paid = cents(scan["ledger_total"])
+    wrong = wrong_amounts(text, scan["read"], (paid,))
+    demo.check(not wrong, f"the answer states no amount but the {paid} paid", ", ".join(wrong))
+    demo.check(paid in text, f"the answer gives the payment record's {paid}", text)
+    fields = [field for payload in demo.evidence("scan") for field in payload if field.get("doc_id") == scan["doc_id"]]
+    total = next((field for field in fields if field.get("field") == "total"), None)
+    marked = total is not None and total.get("flagged") is True and total.get("value") == scan["read"]
+    demo.check(marked, f"the scan evidence sends the total as read, {scan['read']}, and flagged", str(total))
+    demo.read_answer(turn, [captions["answer"]], 12.0)
+    demo.open_evidence(turn, captions["open"])
+    figure = turn.locator("details.evidence figure.scan").first
+    shown = figure.locator("figcaption").inner_text()
+    first = f"the first crop is the total, as read, {scan['read']}"
+    demo.check(shown.startswith(f"total: {scan['read']}"), first, shown)
+    demo.check(shown.endswith(scan["flag_reason"]), f"its caption ends on its flag, {scan['flag_reason']}", shown)
+    at, began = demo.now(), time.monotonic()
+    # The crop is drawn once the scan image loads, which can finish after the answer.
+    figure.locator("canvas, p.legend").first.wait_for(timeout=10_000)
+    demo.log(at, "wait", seconds=round(time.monotonic() - began, 2), target="the total's crop")
+    demo.check(figure.locator("p.legend").count() == 0, "the scan image loaded")
+    label = str(figure.locator("canvas").get_attribute("aria-label"))
+    demo.check(scan["doc_id"] in label, f"the crop is from {scan['doc_id']}", label)
+    demo.read(figure, captions["crop"], EVIDENCE_HOLD_S, label="the misread total's crop and its flag")
+    demo.note(f"ocr flag: {scan['doc_id']} total, read as {scan['read']}, flagged {scan['flag_reason']}; {paid} paid")
     demo.shown = {"answer": text, "crop": shown}
     demo.finish()
 
@@ -1435,6 +1729,143 @@ def clip_out_of_range(demo: Demo, facts: Facts) -> None:
     demo.finish()
 
 
+CONSOLE_ROWS_JS = """lines => lines.map((line) => Object.fromEntries(
+  ["when", "level", "request", "kind", "summary"].map((name) => [name, line.querySelector(`.${name}`).innerText])
+))"""
+
+
+def clip_devmode(demo: Demo, facts: Facts) -> None:
+    """Dana turns dev mode on with its switch, and the page goes dark with a console docked under the composer. She
+    asks for a paid-loss figure, the console logs each event the server streamed for it, and the done event opens
+    to its JSON. The console's rows are checked against the events the page was sent."""
+    captions = demo.captions
+    page = demo.open("dana")
+    demo.establish(captions["who"])
+    switch = page.get_by_role("switch", name="Dev mode")
+    demo.check(switch.get_attribute("aria-checked") == "false", "dev mode starts off")
+    demo.click(switch, captions["switch"])
+    page.locator("html[data-mode='dev']").wait_for(state="attached")
+    dark = ["dev", stage.APP_DARK["--background"]]
+    demo.check(demo.theme() == dark, "the switch turns the page dark", f"it shows {demo.theme()}")
+    demo.check(switch.get_attribute("aria-checked") == "true", "the switch reads on")
+    console = page.locator("section.devconsole")
+    demo.check(console.get_attribute("data-state") == "open", "the console docks open under the composer")
+    empty = console.locator(".console-empty")
+    demo.check(empty.inner_text().startswith("No events yet."), "the console starts empty", empty.inner_text())
+    demo.read([console.locator(".console-strip"), empty], captions["console"], INTRO_HOLD_S, label="the empty console")
+
+    turn = demo.ask(HAIL, captions["type"])
+    text = answer_text(turn)
+    figure = found(re.search(r"\$\d{1,3}(?:,\d{3})+", text), f"no dollar figure in {text!r}").group()
+    value = str(demo.evidence("rows")[0][0]["value"])
+    demo.check(dollars(value) == figure, "the answer's figure is the SQL row, rounded", f"{figure} and {value}")
+    demo.read_answer(turn, [captions["answer"]], ANSWER_HOLD_S)
+    events = demo.events()
+    sent = [name for name, _ in events if name in CONSOLE_KINDS]
+    done = [data for name, data in events if name == "done"][-1]
+    request = str(done["request_id"])[:8]
+    rows: list[dict[str, str]] = console.locator(".console-row .console-line").evaluate_all(CONSOLE_ROWS_JS)
+    kinds = [row["kind"] for row in rows]
+    demo.check(kinds == sent, "the console has a row for each event sent, in order", f"{kinds} and {sent}")
+    demo.check({row["request"] for row in rows} == {request}, f"every row names request {request}", str(rows))
+    demo.check({row["level"] for row in rows} == {"INFO"}, "every event logs at INFO")
+    counted = console.locator(".console-counts > span").first.inner_text()
+    demo.check(counted == f"{len(sent)} events", f"the console counts {len(sent)} events", counted)
+    queries = [row["summary"] for row in rows if row["summary"].startswith("kind=sql")]
+    demo.check(len(queries) == 1 and queries[0].startswith("kind=sql params=4 sql="), "one row logs the SQL")
+    summary = rows[-1]["summary"]
+    ended = f"route={done['route']} outcome={done['outcome']} total_ms={js_number(done['total_ms'])}"
+    demo.check(rows[-1]["kind"] == "done" and summary.startswith(ended), f"the last row is the done event, {ended}")
+    footer = turn.locator(".footer").inner_text()
+    named = f"Request {request}" in footer and f"Route {done['route']}" in footer
+    demo.check(named, "the answer's footer names the same request and route", footer)
+
+    # The console's list is shorter than the events at its first height, so it is dragged up to its tallest first.
+    grown = page.evaluate(f"Math.max(140, innerHeight - {CONSOLE_HEADROOM_PX})")
+    height = "document.querySelector('section.devconsole').getBoundingClientRect().height"
+    demo.drag(console.locator(".console-grip"), page.evaluate(height) - grown, captions["grow"], spot=console)
+    tall = page.evaluate(height)
+    demo.check(abs(tall - grown) < 1, f"the console grew to {grown} px", f"it is {tall} px")
+    # At its tallest the console leaves the thread only its top padding above the composer, so the page goes back
+    # to its top, where no line of the question sits across the composer's see-through edge.
+    demo.scroll_page(0)
+    items = console.locator(".console-row")
+    demo.read(items, captions["events"], ANSWER_HOLD_S, label="a row for each event")
+    item = items.last
+    line = item.locator(".console-line")
+    demo.click(line, captions["open"])
+    detail = item.locator(".console-detail")
+    demo.check(line.get_attribute("aria-expanded") == "true" and detail.count() == 1, "the done row opens")
+    shown = json.loads(detail.inner_text())
+    fields = {key: done[key] for key in ("request_id", "route", "outcome", "total_ms", "claim_ids", "doc_ids")}
+    demo.check(shown == fields, "its JSON is the done event's own fields", f"{shown} and {fields}")
+    roots = demo.handles(console.locator(".console-rows"))
+    small: list[str] = page.evaluate("([els, floor]) => demo.small(els, floor)", [roots, FONT_FLOOR_PX])
+    demo.check(not small, f"console text is at least {FONT_FLOOR_PX} px", "; ".join(small[:5]))
+    demo.read(item, captions["detail"], EVIDENCE_HOLD_S, label="the done event and its JSON", poster=True)
+    demo.note(f"devmode: {figure}, {len(sent)} events for request {request} ({', '.join(sent)}), done opened")
+    demo.shown = {"figure": figure, "events": sent, "request": request, "done": shown}
+    demo.finish()
+
+
+def clip_live(demo: Demo, facts: Facts) -> None:
+    """Dana asks a documents question with the app in live mode: Claude writes the answer from the passages the
+    search returned, Gemini reads each cited sentence against its passage, and the verifier keeps what holds. The
+    page is checked for citations, the verifier's count and no fallback caveat here, and the request log on the host
+    afterwards for the models that answered and whether anything fell back."""
+    captions = demo.captions
+    demo.open("dana")
+    demo.establish(captions["who"])
+    demo.type_question(LIVE_QUESTION, captions["type"])
+    turn = demo.submit(LIVE_QUESTION, waiting=captions["wait"])
+    text = answer_text(turn)
+    caveats = turn.locator(".answer > p.caveat").all_inner_texts()
+    demo.check(not any(LIVE_FALLBACK in caveat for caveat in caveats), "no fallback caveat", " | ".join(caveats))
+    events = demo.events()
+    answers = [data for name, data in events if name == "answer"]
+    demo.check(len(answers) == 1, "the reply is one answer", f"it has {len(answers)}")
+    kept, cut = answers[0].get("claims_kept") or [], answers[0].get("claims_cut") or 0
+    cut = len(cut) if isinstance(cut, list) else int(cut)
+    demo.check(bool(kept), "the verifier kept a written sentence", text)
+    demo.check(all(claim.get("citations") for claim in kept), "every kept sentence cites a passage", str(kept))
+    retrieved = {hit.get("chunk_id") for payload in demo.evidence("chunks") for hit in payload}
+    cited = {chunk for claim in kept for chunk in claim["citations"]}
+    demo.check(cited <= retrieved, "every citation is a passage the search returned", str(cited - retrieved))
+    markers = turn.locator(".answer-text sup.cite a")
+    demo.check(markers.count() > 0, "the answer carries numbered citations")
+    sources = turn.locator("ol.citations li").all_inner_texts()
+    demo.check(bool(sources), "the answer lists the sources it cites")
+    done = [data for name, data in events if name == "done"][-1]
+    demo.read_answer(turn, [captions["answer"]], 16.0, poster=True)
+    marker = markers.first
+    entry = turn.locator(str(marker.get_attribute("href")))
+    demo.click(marker, captions["cite"])
+    demo.check(bool(entry.evaluate("el => el.matches(':target')")), "the citation lands on its source entry")
+    demo.read(entry, captions["source"], 8.0, label="the cited source entry")
+    demo.open_evidence(turn, captions["open"])
+    checks = section(turn, "Verifier")
+    open_tab(demo, checks, captions["checks"])
+    legend = checks.locator("p.legend").inner_text()
+    counts = f"{len(kept)} {'claim' if len(kept) == 1 else 'claims'} kept, {cut} cut."
+    demo.check(legend == counts, f"the Checks tab counts {counts}", legend)
+    tags = checks.locator("ul.claims .tag").all_inner_texts()
+    demo.check(tags.count("Kept") == len(kept), "each kept sentence is tagged Kept", str(tags))
+    # The count with as many of the checked sentences under it as fit the band, however long the model wrote them.
+    # They were read in the answer above, so the pause is for the count, each one's tag and the reason for any cut.
+    head, items = checks.locator("p.legend"), checks.locator("ul.claims > li")
+    count = items.count()
+    while count > 1 and not demo.fits([head, *[items.nth(i) for i in range(count)]]):
+        count -= 1
+    chosen = [items.nth(i) for i in range(count)]
+    reasons = [item.inner_text() for item in chosen if "cut" in str(item.get_attribute("class"))]
+    words = len(legend.split()) + count + sum(len(reason.split()) for reason in reasons)
+    label = f"the verifier's count and {count} of its {items.count()} checks"
+    demo.read([head, *chosen], captions["checks"], 12.0, label=label, words=words)
+    demo.note(f"live: {len(kept)} sentences kept, {cut} cut, citing {', '.join(sources)}")
+    demo.shown = {"answer": text, "sources": sources, "kept": len(kept), "cut": cut, "request_id": done["request_id"]}
+    demo.finish()
+
+
 def clip_dashboard(demo: Demo, facts: Facts) -> None:
     """Priya reads the operator dashboard for all sources, then for each source that has requests. The browser
     requests' routes and outcomes are read under the UI filter: they include the questions the other clips just
@@ -1519,6 +1950,7 @@ CLIPS: dict[str, Callable[[Demo, Facts], None]] = {
     "ask": clip_ask,
     "policy": clip_policy,
     "scan": clip_scan,
+    "ocr-flag": clip_ocr_flag,
     "why": clip_why,
     "permissions": clip_permissions,
     "suppression": clip_suppression,
@@ -1526,6 +1958,8 @@ CLIPS: dict[str, Callable[[Demo, Facts], None]] = {
     "injection": clip_injection,
     "off-topic": clip_off_topic,
     "out-of-range": clip_out_of_range,
+    "devmode": clip_devmode,
+    "live": clip_live,
     "dashboard": clip_dashboard,
 }
 
@@ -1533,8 +1967,8 @@ CLIPS: dict[str, Callable[[Demo, Facts], None]] = {
 def draw_chrome(browser: Any, demo: Demo) -> None:
     """Runs in the Playwright container: draws a clip's chrome into out/chrome/NAME, listed in its chrome.json. That is
     the stage under each caption line, the window's stage with no caption, the title card, the bare stage, the GIF's
-    bar and a footer for each caption, and the pointer. A caption too wide for its line, or drawn in another face than
-    Inter, fails the clip."""
+    bar and a footer for each caption, and the pointer, all in the clip's chrome theme. A caption too wide for its
+    line, or drawn in another face than Inter, fails the clip."""
     folder = demo.out / "chrome" / demo.name
     folder.mkdir(parents=True, exist_ok=True)
     context = browser.new_context(viewport={"width": stage.STAGE_W, "height": stage.STAGE_H}, device_scale_factor=1)
@@ -1555,18 +1989,17 @@ def draw_chrome(browser: Any, demo: Demo) -> None:
     try:
         index: dict[str, Any] = {"stages": {}, "footers": {}}
         texts = list(dict.fromkeys(str(text) for _, text in demo.caption_log))
+        theme, width, height = demo.chrome, stage.STAGE_W, stage.STAGE_H
         for number, text in enumerate(texts):
-            markup = stage.stage_html(text, demo.mode)
-            index["stages"][text] = draw(f"stage-{number:02d}.png", markup, stage.STAGE_W, stage.STAGE_H, caption=text)
-            markup = stage.gif_footer_html(text, demo.mode)
+            markup = stage.stage_html(text, demo.mode, theme=theme)
+            index["stages"][text] = draw(f"stage-{number:02d}.png", markup, width, height, caption=text)
+            markup = stage.gif_footer_html(text, demo.mode, theme)
             footer = draw(f"footer-{number:02d}.png", markup, stage.GIF_W, stage.GIF_FOOTER_H, caption=text)
             index["footers"][text] = footer
-        index["window"] = draw("window.png", stage.stage_html(None, demo.mode), stage.STAGE_W, stage.STAGE_H)
-        index["title"] = draw("title.png", stage.title_html(TITLES[demo.name]), stage.STAGE_W, stage.STAGE_H)
-        index["empty"] = draw(
-            "empty.png", stage.stage_html(None, demo.mode, window=False), stage.STAGE_W, stage.STAGE_H
-        )
-        index["bar"] = draw("bar.png", stage.gif_bar_html(), stage.GIF_W, stage.GIF_BAR_H)
+        index["window"] = draw("window.png", stage.stage_html(None, demo.mode, theme=theme), width, height)
+        index["title"] = draw("title.png", stage.title_html(TITLES[demo.name], theme), width, height)
+        index["empty"] = draw("empty.png", stage.stage_html(None, demo.mode, window=False, theme=theme), width, height)
+        index["bar"] = draw("bar.png", stage.gif_bar_html(theme), stage.GIF_W, stage.GIF_BAR_H)
         width, height = (side * stage.CURSOR_SPRITE_SCALE for side in stage.CURSOR_SIZE)
         index["cursor"] = draw("cursor.png", stage.cursor_html(), width, height, clear=True)
         (folder / "chrome.json").write_text(json.dumps(index, indent=2))
@@ -1637,21 +2070,29 @@ def frontend_network(container: str) -> str:
     fail(f"the app container is on {', '.join(networks)}, and none of them is the compose frontend network")
 
 
-# Asked inside the running app, so the answer is the process's own settings rather than a guess from files.
+# Asked inside the running app, so the answer is the process's own settings rather than a guess from files. In live
+# mode it names the models the client asks for, never anything it signs in with.
 MODE_PY = (
-    "import json, os; from app.config import settings; from app.llm.client import default; "
-    "print(json.dumps({'backend': settings().backend, 'live_client': default() is not None, "
-    "'LLM_BACKEND': os.environ.get('LLM_BACKEND')}))"
+    "import json, os; from app.config import settings; from app.llm.client import default; llm = default(); "
+    "mode = {'backend': settings().backend, 'live_client': llm is not None, "
+    "'LLM_BACKEND': os.environ.get('LLM_BACKEND')}; "
+    "mode.update({} if llm is None else {'models': {'main': llm.main_model, 'fast': llm.fast_model, "
+    "'check': llm.checker.fast_model}, 'check_provider': llm.checker.provider}); "
+    "print(json.dumps(mode))"
 )
 
 
 def app_mode(container: str) -> dict[str, Any]:
-    """How the running app answers. app/config.py reads LLM_BACKEND, and unset or off means no model is called."""
+    """How the running app answers. app/config.py reads LLM_BACKEND, and unset or off means no model is called; set,
+    it is live mode, and LLM_CHECK_BACKEND says where the checker runs."""
     printed = run("docker", "exec", container, "python", "-c", MODE_PY).strip().splitlines()[-1]
     mode: dict[str, Any] = json.loads(printed)
-    if mode["backend"] != "none" or mode["live_client"]:
-        fail(f"the app runs live mode ({mode}). The clips are recorded with no key: unset LLM_BACKEND, then restart it")
-    return {"label": "No API key", **mode, "selected_by": "LLM_BACKEND unset or off, read by app/config.py"}
+    if mode["live_client"] != (mode["backend"] != "none"):
+        fail(f"the app's mode doesn't add up: {mode}")
+    if mode["live_client"]:
+        selected = "LLM_BACKEND and LLM_CHECK_BACKEND, read by app/config.py and app/llm/client.py"
+        return {"label": LIVE_LABEL, **mode, "selected_by": selected}
+    return {"label": NO_KEY_LABEL, **mode, "selected_by": "LLM_BACKEND unset or off, read by app/config.py"}
 
 
 def app_build(container: str) -> dict[str, Any]:
@@ -1667,6 +2108,12 @@ def psql(query: str) -> list[list[str]]:
     base = ("docker", "compose", "exec", "-T", "db", "psql", "-U", "postgres", "-d", "claims", "-v", "ON_ERROR_STOP=1")
     lines = run(*base, "-tA", "-F", "|", "-c", query).strip().splitlines()
     return [line.split("|") for line in lines if line]
+
+
+def live_row(request_id: str) -> dict[str, Any] | None:
+    """The live clip's request as the app logged it, or None when there is no such row."""
+    found = psql(LIVE_ROW_SQL.format(uuid.UUID(request_id)))
+    return dict(json.loads("|".join(found[0]))) if found else None
 
 
 def cases() -> list[dict[str, Any]]:
@@ -1709,6 +2156,8 @@ def preflight(clips: list[str], known: list[dict[str, Any]]) -> Facts:
         matches = truth["mismatch"] is None and truth["total"] == truth["ledger_total"]
         facts["scan"] = {"case": case["id"], "question": case["q"], "doc_id": case["scan"], "matches": matches}
         facts["scan"] |= {"claim_id": truth["claim_id"], "total": truth["total"], "ledger_total": truth["ledger_total"]}
+    if "ocr-flag" in clips:
+        facts["ocr_flag"] = ocr_flag_facts(known)
     if "suppression" in clips:
         withheld, published = (int(value) for value in psql(SUPPRESSION_SQL)[0])
         if not withheld or not published:
@@ -1722,6 +2171,32 @@ def preflight(clips: list[str], known: list[dict[str, Any]]) -> Facts:
         facts["sources"] = sources
         facts["source_counts"] = {"read_at": datetime.now(UTC).isoformat(timespec="seconds"), "rows": by_mode}
     return facts
+
+
+def ocr_flag_facts(known: list[dict[str, Any]]) -> dict[str, Any]:
+    """The ocr-flag clip's case: a proof of loss whose printed total dropped its decimal point, which the case expects
+    flagged, and which the database holds as read and flagged, with the ledger's total beside it."""
+    case = next((case for case in known if case["id"] == OCR_FLAG_CASE), None)
+    if case is None or case.get("expect") != "flag":
+        fail(f"the eval case {OCR_FLAG_CASE} is gone, or no longer expects a flag: {case}")
+    truths = (ROOT / "data" / "scans" / "truth.jsonl").read_text().splitlines()
+    truth = next((row for line in truths if (row := json.loads(line))["doc_id"] == case["scan"]), None)
+    if truth is None or truth["mismatch"] != "dropped-decimal":
+        fail(f"{case['scan']} is no longer planted with a dropped decimal point: {truth}")
+    read = psql(SCAN_FLAG_SQL.format(case["scan"]))
+    if not read or read[0][1] != "t":
+        fail(f"{case['scan']} no longer has its total flagged: {read}")
+    value, _, reason = read[0]
+    return {
+        "case": case["id"],
+        "question": case["q"],
+        "doc_id": case["scan"],
+        "claim_id": truth["claim_id"],
+        "printed": truth["total"],
+        "read": value,
+        "flag_reason": reason,
+        "ledger_total": truth["ledger_total"],
+    }
 
 
 def record_in_container(clips: list[str], facts: Facts, mode: str, network: str, raw: Path) -> dict[str, Any]:
@@ -1859,16 +2334,20 @@ def shown(path: Path) -> str:
     return str(path.relative_to(ROOT)) if path.is_relative_to(ROOT) else str(path)
 
 
-def orchestrate(clips: list[str], out: Path) -> int:
-    taken = [out / name for clip in clips for name in OUTPUTS[clip] if (out / name).exists()]
-    if taken:
-        listed = ", ".join(shown(path) for path in taken)
-        fail(f"stopped before recording, because demo files are never overwritten. Delete {listed} to record again.")
+def orchestrate(requested: list[str], out: Path) -> int:
     missing = [tool for tool in ("docker", "ffmpeg", "ffprobe") if shutil.which(tool) is None]
     if missing:
         fail(f"{' and '.join(missing)} not found on PATH")
     app = healthy_app()
     mode = app_mode(app)
+    try:
+        clips = clips_for(requested, mode["live_client"])
+    except ValueError as exc:
+        fail(str(exc))
+    taken = [out / name for clip in clips for name in OUTPUTS[clip] if (out / name).exists()]
+    if taken:
+        listed = ", ".join(shown(path) for path in taken)
+        fail(f"stopped before recording, because demo files are never overwritten. Delete {listed} to record again.")
     network = frontend_network(app)
     known = cases()
     facts = preflight(clips, known)
@@ -1892,6 +2371,18 @@ def orchestrate(clips: list[str], out: Path) -> int:
             if not result["ok"]:
                 failed.append(f"{clip}: {result['error']}")
                 continue
+            # A live clip's page can't show which models answered or whether one fell back, so the request log says.
+            logged: dict[str, Any] | None = None
+            if clip in LIVE_CLIPS:
+                request_id = str(result["shown"].get("request_id") or "")
+                logged = live_row(request_id) if request_id else None
+                problems = live_problems(logged, mode)
+                if problems or logged is None:
+                    failed.append(f"{clip}: {'; '.join(problems)}")
+                    continue
+                logged = {"request_id": request_id, **logged}
+                cost = "an unpriced cost" if logged["cost_usd"] is None else f"${logged['cost_usd']}"
+                print(f"{clip}: answered by {', '.join(logged['models'])} for {cost}", flush=True)
             warnings += result["warnings"]
             files: dict[str, Any] = {}
             for name in OUTPUTS[clip]:
@@ -1910,6 +2401,10 @@ def orchestrate(clips: list[str], out: Path) -> int:
                 warnings.append(f"{clip}.mp4 runs {video['seconds']} s, and its beats and title {framed:.2f} s")
             clip_facts = {key: facts[key] for key in PREFLIGHT_KEYS.get(clip, ()) if key in facts}
             entries[clip] = manifest_entry(clip, result, files, {**context, "preflight": clip_facts}, known)
+            if logged is not None:
+                # The request as the app logged it: the models that answered, as each reply named itself, and what
+                # the call cost, with no fallback and what the verifier kept.
+                entries[clip]["live"] = logged
             results[clip] |= {"eval_ids": {q["question"]: q["eval_ids"] for q in entries[clip]["questions"]}}
             results[clip] |= {"mode": mode, "app": context["app"], "files": files}
         (raw / "results.json").write_text(json.dumps(results, indent=2))
@@ -1943,6 +2438,7 @@ PREFLIGHT_KEYS: dict[str, tuple[str, ...]] = {
     "permissions": ("claim",),
     "policy": ("policy",),
     "scan": ("scan",),
+    "ocr-flag": ("ocr_flag",),
     "suppression": ("suppression",),
     "dashboard": ("sources", "source_counts"),
 }
@@ -1950,19 +2446,21 @@ PREFLIGHT_KEYS: dict[str, tuple[str, ...]] = {
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="python tools/record_demos.py", description="Record the README demos.")
-    parser.add_argument("clips", nargs="*", metavar="clip", help=f"any of {', '.join(OUTPUTS)}, or every one")
+    parser.add_argument(
+        "clips", nargs="*", metavar="clip", help=f"any of {', '.join(OUTPUTS)}, or every one the app's mode records"
+    )
     parser.add_argument("--out", type=Path, default=OUT, help="where the files go, to preview a take first")
     parser.add_argument("--inside", action="store_true", help=argparse.SUPPRESS)
     parser.add_argument("--facts", default="{}", help=argparse.SUPPRESS)
-    parser.add_argument("--mode", default="No API key", help=argparse.SUPPRESS)
+    parser.add_argument("--mode", default=NO_KEY_LABEL, help=argparse.SUPPRESS)
     args = parser.parse_args(argv)
     unknown = sorted(set(args.clips) - set(OUTPUTS))
     if unknown:
         parser.error(f"no clip named {', '.join(unknown)}; choose from {', '.join(OUTPUTS)}")
-    clips = [clip for clip in OUTPUTS if clip in args.clips] or list(OUTPUTS)
+    requested = [clip for clip in OUTPUTS if clip in args.clips]
     if args.inside:
-        return record(clips, json.loads(args.facts), args.mode, Path("/out"))
-    return orchestrate(clips, args.out.resolve())
+        return record(requested or list(OUTPUTS), json.loads(args.facts), args.mode, Path("/out"))
+    return orchestrate(requested, args.out.resolve())
 
 
 if __name__ == "__main__":

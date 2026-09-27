@@ -1023,6 +1023,315 @@
         }
       }
     },
+    "ocr-flag": {
+      "recorded_at": "2026-09-27T05:24:29+00:00",
+      "identity": [
+        {
+          "user": "priya",
+          "name": "Priya Natarajan",
+          "title": "Claims supervisor, all regions",
+          "role": "u_supervisor"
+        }
+      ],
+      "questions": [
+        {
+          "user": "priya",
+          "question": "What's the total on the proof of loss for claim 103747?",
+          "eval_ids": [
+            "ocr-016"
+          ]
+        }
+      ],
+      "mode": {
+        "label": "No API key",
+        "backend": "none",
+        "live_client": false,
+        "LLM_BACKEND": null,
+        "selected_by": "LLM_BACKEND unset or off, read by app/config.py"
+      },
+      "app": {
+        "commit": "389b53bbbb5852052403a348c60fc91c3f8f3d46",
+        "dirty": false,
+        "image": "sha256:172bd3d64235f2464016f734f85863b9821fd8f429b0b1c7dffcdd583a95e668"
+      },
+      "preflight": {
+        "ocr_flag": {
+          "case": "ocr-016",
+          "question": "What's the total on the proof of loss for claim 103747?",
+          "doc_id": "scan-103747-proof-of-loss",
+          "claim_id": 103747,
+          "printed": "595779",
+          "read": "$595779",
+          "flag_reason": "format",
+          "ledger_total": "5957.79"
+        }
+      },
+      "length_s": 18.48,
+      "beats": [
+        {
+          "at": 0.04,
+          "kind": "read",
+          "caption": "Priya asks about a scanned proof of loss",
+          "seconds": 2.29,
+          "minimum_s": 0.74,
+          "words": 6,
+          "cells": 0,
+          "target": "who is asking"
+        },
+        {
+          "at": 3.17,
+          "kind": "type",
+          "caption": "Ask for the total on the scan",
+          "seconds": 1.59,
+          "text": "What's the total on the proof of loss for claim 103747?"
+        },
+        {
+          "at": 4.79,
+          "kind": "pause",
+          "caption": "Ask for the total on the scan",
+          "seconds": 0.68
+        },
+        {
+          "at": 5.7,
+          "kind": "wait",
+          "caption": "Ask for the total on the scan",
+          "seconds": 0.35,
+          "question": "What's the total on the proof of loss for claim 103747?"
+        },
+        {
+          "at": 6.18,
+          "kind": "read",
+          "caption": "The total is flagged, not stated",
+          "seconds": 5.18,
+          "minimum_s": 4.44,
+          "words": 34,
+          "cells": 0,
+          "target": "the answer"
+        },
+        {
+          "at": 11.4,
+          "kind": "click",
+          "caption": "Open the scan evidence"
+        },
+        {
+          "at": 12.21,
+          "kind": "click-beat",
+          "caption": "Open the scan evidence",
+          "seconds": 0.37
+        },
+        {
+          "at": 12.61,
+          "kind": "wait",
+          "caption": "Open the scan evidence",
+          "seconds": 0.01,
+          "target": "the total's crop"
+        },
+        {
+          "at": 12.63,
+          "kind": "scroll",
+          "caption": "The crop shows the misread total",
+          "seconds": 0.64,
+          "px": 45
+        },
+        {
+          "at": 13.27,
+          "kind": "read",
+          "caption": "The crop shows the misread total",
+          "seconds": 4.44,
+          "minimum_s": 4.44,
+          "words": 6,
+          "cells": 0,
+          "target": "the misread total's crop and its flag"
+        },
+        {
+          "at": 17.73,
+          "kind": "end",
+          "caption": "The crop shows the misread total",
+          "seconds": 0.74
+        }
+      ],
+      "waits_s": [
+        0.35,
+        0.01
+      ],
+      "holds_s": [
+        2.29,
+        5.18,
+        4.44
+      ],
+      "assertions": [
+        {
+          "check": "POST /session signs in as priya",
+          "ok": true,
+          "detail": "it answered 204"
+        },
+        {
+          "check": "the recorder's CSS reached the page",
+          "ok": true,
+          "detail": "its marker reads '1'"
+        },
+        {
+          "check": "the root font is 18px",
+          "ok": true,
+          "detail": "it is 18px"
+        },
+        {
+          "check": "the page opens on the light theme",
+          "ok": true,
+          "detail": "it shows [None, '#f5f7f9']"
+        },
+        {
+          "check": "the page's frames are being captured",
+          "ok": true
+        },
+        {
+          "check": "the user picker shows Priya Natarajan",
+          "ok": true,
+          "detail": "it shows 'Priya Natarajan, Claims supervisor, all regions'"
+        },
+        {
+          "check": "who is asking is on the page",
+          "ok": true
+        },
+        {
+          "check": "who is asking stayed whole inside the reading band",
+          "ok": true
+        },
+        {
+          "check": "the control to press is on screen",
+          "ok": true
+        },
+        {
+          "check": "the composer holds the whole question",
+          "ok": true,
+          "detail": "What's the total on the proof of loss for claim 103747?"
+        },
+        {
+          "check": "the control to press is on screen",
+          "ok": true
+        },
+        {
+          "check": "the thread shows the exact question",
+          "ok": true,
+          "detail": "it shows \"What's the total on the proof of loss for claim 103747?\""
+        },
+        {
+          "check": "the answer flags the total instead of stating it",
+          "ok": true,
+          "detail": "The scanned total on the proof of loss for claim 103747 couldn't be read reliably: what was read isn't in the form a total takes. The payment record shows $5,957.79 paid on this claim."
+        },
+        {
+          "check": "the answer states no amount but the $5,957.79 paid",
+          "ok": true
+        },
+        {
+          "check": "the answer gives the payment record's $5,957.79",
+          "ok": true,
+          "detail": "The scanned total on the proof of loss for claim 103747 couldn't be read reliably: what was read isn't in the form a total takes. The payment record shows $5,957.79 paid on this claim."
+        },
+        {
+          "check": "the page's /ask response was captured",
+          "ok": true
+        },
+        {
+          "check": "the scan evidence sends the total as read, $595779, and flagged",
+          "ok": true,
+          "detail": "{'doc_id': 'scan-103747-proof-of-loss', 'title': 'Proof of loss, claim 103747', 'field': 'total', 'value': '$595779', 'confidence': 92.6, 'bbox': [1388, 705, 150, 28], 'flagged': True, 'flag_reason': 'format'}"
+        },
+        {
+          "check": "the answer has text",
+          "ok": true
+        },
+        {
+          "check": "the answer is on the page",
+          "ok": true
+        },
+        {
+          "check": "the answer stayed whole inside the reading band",
+          "ok": true
+        },
+        {
+          "check": "the control to press is on screen",
+          "ok": true
+        },
+        {
+          "check": "the evidence panel opened",
+          "ok": true
+        },
+        {
+          "check": "evidence text is at least 17 px",
+          "ok": true
+        },
+        {
+          "check": "the first crop is the total, as read, $595779",
+          "ok": true,
+          "detail": "total: $595779, OCR confidence 93%, format"
+        },
+        {
+          "check": "its caption ends on its flag, format",
+          "ok": true,
+          "detail": "total: $595779, OCR confidence 93%, format"
+        },
+        {
+          "check": "the scan image loaded",
+          "ok": true
+        },
+        {
+          "check": "the crop is from scan-103747-proof-of-loss",
+          "ok": true,
+          "detail": "Part of scan scan-103747-proof-of-loss. total: $595779, OCR confidence 93%, format"
+        },
+        {
+          "check": "the misread total's crop and its flag is on the page",
+          "ok": true
+        },
+        {
+          "check": "the misread total's crop and its flag stayed whole inside the reading band",
+          "ok": true
+        },
+        {
+          "check": "the page stayed on the light theme",
+          "ok": true,
+          "detail": "it turned dark at [] s"
+        },
+        {
+          "check": "the .caption .text text is drawn in Inter-Medium",
+          "ok": true,
+          "detail": "Inter-Medium"
+        },
+        {
+          "check": "the .gif-footer .text text is drawn in Inter-Medium",
+          "ok": true,
+          "detail": "Inter-Medium"
+        },
+        {
+          "check": "the .title .name text is drawn in Inter-Bold",
+          "ok": true,
+          "detail": "Inter-Bold"
+        },
+        {
+          "check": "the .title .line text is drawn in Inter-Regular",
+          "ok": true,
+          "detail": "Inter-Regular"
+        }
+      ],
+      "facts": [
+        "ocr flag: scan-103747-proof-of-loss total, read as $595779, flagged format; $5,957.79 paid"
+      ],
+      "shown": {
+        "answer": "The scanned total on the proof of loss for claim 103747 couldn't be read reliably: what was read isn't in the form a total takes. The payment record shows $5,957.79 paid on this claim.",
+        "crop": "total: $595779, OCR confidence 93%, format"
+      },
+      "poster_s": null,
+      "title_s": 1.0,
+      "files": {
+        "ocr-flag.mp4": {
+          "bytes": 1305328,
+          "width": 1920,
+          "seconds": 19.97
+        }
+      }
+    },
     "why": {
       "recorded_at": "2026-09-27T00:58:41+00:00",
       "identity": [
@@ -3406,6 +3715,826 @@
           "bytes": 131367,
           "width": 900
         }
+      }
+    },
+    "devmode": {
+      "recorded_at": "2026-09-27T05:39:32+00:00",
+      "identity": [
+        {
+          "user": "dana",
+          "name": "Dana Reyes",
+          "title": "Claims adjuster, West",
+          "role": "u_adj_west"
+        }
+      ],
+      "questions": [
+        {
+          "user": "dana",
+          "question": "How much did we pay on hail claims in Colorado in Q2 2025?",
+          "eval_ids": [
+            "quant-001"
+          ]
+        }
+      ],
+      "mode": {
+        "label": "No API key",
+        "backend": "none",
+        "live_client": false,
+        "LLM_BACKEND": null,
+        "selected_by": "LLM_BACKEND unset or off, read by app/config.py"
+      },
+      "app": {
+        "commit": "389b53bbbb5852052403a348c60fc91c3f8f3d46",
+        "dirty": false,
+        "image": "sha256:172bd3d64235f2464016f734f85863b9821fd8f429b0b1c7dffcdd583a95e668"
+      },
+      "preflight": {},
+      "length_s": 33.39,
+      "beats": [
+        {
+          "at": 0.05,
+          "kind": "read",
+          "caption": "Dana checks what the server sends",
+          "seconds": 1.96,
+          "minimum_s": 0.74,
+          "words": 5,
+          "cells": 0,
+          "target": "who is asking"
+        },
+        {
+          "at": 2.23,
+          "kind": "click",
+          "caption": "Turn on Dev mode"
+        },
+        {
+          "at": 3.13,
+          "kind": "click-beat",
+          "caption": "Turn on Dev mode",
+          "seconds": 0.37
+        },
+        {
+          "at": 3.6,
+          "kind": "read",
+          "caption": "The page turns dark with a console",
+          "seconds": 4.29,
+          "minimum_s": 0.74,
+          "words": 25,
+          "cells": 0,
+          "target": "the empty console"
+        },
+        {
+          "at": 9.01,
+          "kind": "type",
+          "caption": "Ask for a paid-loss figure",
+          "seconds": 1.62,
+          "text": "How much did we pay on hail claims in Colorado in Q2 2025?"
+        },
+        {
+          "at": 10.67,
+          "kind": "pause",
+          "caption": "Ask for a paid-loss figure",
+          "seconds": 0.63
+        },
+        {
+          "at": 11.52,
+          "kind": "wait",
+          "caption": "Ask for a paid-loss figure",
+          "seconds": 0.36,
+          "question": "How much did we pay on hail claims in Colorado in Q2 2025?"
+        },
+        {
+          "at": 12.06,
+          "kind": "scroll",
+          "caption": "Read the returned figure",
+          "seconds": 0.04,
+          "px": 0
+        },
+        {
+          "at": 12.12,
+          "kind": "read",
+          "caption": "Read the returned figure",
+          "seconds": 2.96,
+          "minimum_s": 2.96,
+          "words": 12,
+          "cells": 0,
+          "target": "the answer"
+        },
+        {
+          "at": 15.75,
+          "kind": "drag",
+          "caption": "Drag the console taller",
+          "seconds": 0.7,
+          "px": -116
+        },
+        {
+          "at": 16.45,
+          "kind": "click-beat",
+          "caption": "Drag the console taller",
+          "seconds": 0.37
+        },
+        {
+          "at": 16.83,
+          "kind": "scroll",
+          "caption": "Drag the console taller",
+          "seconds": 0.65,
+          "px": 16
+        },
+        {
+          "at": 17.52,
+          "kind": "read",
+          "caption": "Each streamed event gets a console row",
+          "seconds": 8.62,
+          "minimum_s": 2.96,
+          "words": 64,
+          "cells": 0,
+          "target": "a row for each event"
+        },
+        {
+          "at": 26.19,
+          "kind": "click",
+          "caption": "Open the done event"
+        },
+        {
+          "at": 27.12,
+          "kind": "click-beat",
+          "caption": "Open the done event",
+          "seconds": 0.37
+        },
+        {
+          "at": 27.53,
+          "kind": "scroll",
+          "caption": "It names the request, route and outcome",
+          "seconds": 0.63,
+          "px": 183
+        },
+        {
+          "at": 28.19,
+          "kind": "read",
+          "caption": "It names the request, route and outcome",
+          "seconds": 4.44,
+          "minimum_s": 4.44,
+          "words": 21,
+          "cells": 0,
+          "target": "the done event and its JSON"
+        },
+        {
+          "at": 32.64,
+          "kind": "end",
+          "caption": "It names the request, route and outcome",
+          "seconds": 0.74
+        }
+      ],
+      "waits_s": [
+        0.36
+      ],
+      "holds_s": [
+        1.96,
+        4.29,
+        2.96,
+        8.62,
+        4.44
+      ],
+      "assertions": [
+        {
+          "check": "POST /session signs in as dana",
+          "ok": true,
+          "detail": "it answered 204"
+        },
+        {
+          "check": "the recorder's CSS reached the page",
+          "ok": true,
+          "detail": "its marker reads '1'"
+        },
+        {
+          "check": "the root font is 18px",
+          "ok": true,
+          "detail": "it is 18px"
+        },
+        {
+          "check": "the page opens on the light theme",
+          "ok": true,
+          "detail": "it shows [None, '#f5f7f9']"
+        },
+        {
+          "check": "the page's frames are being captured",
+          "ok": true
+        },
+        {
+          "check": "the user picker shows Dana Reyes",
+          "ok": true,
+          "detail": "it shows 'Dana Reyes, Claims adjuster, West'"
+        },
+        {
+          "check": "who is asking is on the page",
+          "ok": true
+        },
+        {
+          "check": "who is asking stayed whole inside the reading band",
+          "ok": true
+        },
+        {
+          "check": "dev mode starts off",
+          "ok": true
+        },
+        {
+          "check": "the control to press is on screen",
+          "ok": true
+        },
+        {
+          "check": "the switch turns the page dark",
+          "ok": true,
+          "detail": "it shows ['dev', '#141a21']"
+        },
+        {
+          "check": "the switch reads on",
+          "ok": true
+        },
+        {
+          "check": "the console docks open under the composer",
+          "ok": true
+        },
+        {
+          "check": "the console starts empty",
+          "ok": true,
+          "detail": "No events yet. Ask a question, and each event the server sends for it shows here as it arrives."
+        },
+        {
+          "check": "the empty console is on the page",
+          "ok": true
+        },
+        {
+          "check": "the empty console stayed whole inside the reading band",
+          "ok": true
+        },
+        {
+          "check": "the control to press is on screen",
+          "ok": true
+        },
+        {
+          "check": "the composer holds the whole question",
+          "ok": true,
+          "detail": "How much did we pay on hail claims in Colorado in Q2 2025?"
+        },
+        {
+          "check": "the control to press is on screen",
+          "ok": true
+        },
+        {
+          "check": "the thread shows the exact question",
+          "ok": true,
+          "detail": "it shows 'How much did we pay on hail claims in Colorado in Q2 2025?'"
+        },
+        {
+          "check": "the page's /ask response was captured",
+          "ok": true
+        },
+        {
+          "check": "the answer's figure is the SQL row, rounded",
+          "ok": true,
+          "detail": "$4,108,453 and 4108452.79"
+        },
+        {
+          "check": "the answer has text",
+          "ok": true
+        },
+        {
+          "check": "the answer is on the page",
+          "ok": true
+        },
+        {
+          "check": "the answer stayed whole inside the reading band",
+          "ok": true
+        },
+        {
+          "check": "the page's /ask response was captured",
+          "ok": true
+        },
+        {
+          "check": "the console has a row for each event sent, in order",
+          "ok": true,
+          "detail": "['stage', 'stage', 'stage', 'evidence', 'evidence', 'stage', 'answer', 'done'] and ['stage', 'stage', 'stage', 'evidence', 'evidence', 'stage', 'answer', 'done']"
+        },
+        {
+          "check": "every row names request 85bf65f4",
+          "ok": true,
+          "detail": "[{'when': '05:39:48.867', 'level': 'INFO', 'request': '85bf65f4', 'kind': 'stage', 'summary': 'name=gate server_ms=0.2 arrived_ms=45'}, {'when': '05:39:48.883', 'level': 'INFO', 'request': '85bf65f4', 'kind': 'stage', 'summary': 'name=route server_ms=0.3 arrived_ms=62'}, {'when': '05:39:48.889', 'level': 'INFO', 'request': '85bf65f4', 'kind': 'stage', 'summary': 'name=quantitative server_ms=27.9 arrived_ms=68'}, {'when': '05:39:48.892', 'level': 'INFO', 'request': '85bf65f4', 'kind': 'evidence', 'summary': 'kind=sql params=4 sql=\"SELECT SUM(amount) AS value FROM sem.v_payments_net WHERE (paid_date BET\u2026\"'}, {'when': '05:39:48.902', 'level': 'INFO', 'request': '85bf65f4', 'kind': 'evidence', 'summary': 'kind=rows rows=1'}, {'when': '05:39:48.931', 'level': 'INFO', 'request': '85bf65f4', 'kind': 'stage', 'summary': 'name=verify server_ms=50.2 arrived_ms=110'}, {'when': '05:39:48.961', 'level': 'INFO', 'request': '85bf65f4', 'kind': 'answer', 'summary': 'kept=1 cut=0 citations=0 chars=67'}, {'when': '05:39:48.980', 'level': 'INFO', 'request': '85bf65f4', 'kind': 'done', 'summary': 'route=quantitative outcome=answer total_ms=78.6'}]"
+        },
+        {
+          "check": "every event logs at INFO",
+          "ok": true
+        },
+        {
+          "check": "the console counts 8 events",
+          "ok": true,
+          "detail": "8 events"
+        },
+        {
+          "check": "one row logs the SQL",
+          "ok": true
+        },
+        {
+          "check": "the last row is the done event, route=quantitative outcome=answer total_ms=78.6",
+          "ok": true
+        },
+        {
+          "check": "the answer's footer names the same request and route",
+          "ok": true,
+          "detail": "Finished in 79 ms\nRequest 85bf65f4\nRoute quantitative\nUseful?"
+        },
+        {
+          "check": "the handle to drag is on screen",
+          "ok": true
+        },
+        {
+          "check": "the console grew to 396 px",
+          "ok": true,
+          "detail": "it is 396 px"
+        },
+        {
+          "check": "a row for each event is on the page",
+          "ok": true
+        },
+        {
+          "check": "a row for each event stayed whole inside the reading band",
+          "ok": true
+        },
+        {
+          "check": "the control to press is on screen",
+          "ok": true
+        },
+        {
+          "check": "the done row opens",
+          "ok": true
+        },
+        {
+          "check": "its JSON is the done event's own fields",
+          "ok": true,
+          "detail": "{'request_id': '85bf65f4-9ecd-4358-af90-e08a0aab488b', 'route': 'quantitative', 'outcome': 'answer', 'total_ms': 78.6, 'claim_ids': [], 'doc_ids': []} and {'request_id': '85bf65f4-9ecd-4358-af90-e08a0aab488b', 'route': 'quantitative', 'outcome': 'answer', 'total_ms': 78.6, 'claim_ids': [], 'doc_ids': []}"
+        },
+        {
+          "check": "console text is at least 17 px",
+          "ok": true
+        },
+        {
+          "check": "the done event and its JSON is on the page",
+          "ok": true
+        },
+        {
+          "check": "the done event and its JSON stayed whole inside the reading band",
+          "ok": true
+        },
+        {
+          "check": "the .caption .text text is drawn in Inter-Medium",
+          "ok": true,
+          "detail": "Inter-Medium"
+        },
+        {
+          "check": "the .gif-footer .text text is drawn in Inter-Medium",
+          "ok": true,
+          "detail": "Inter-Medium"
+        },
+        {
+          "check": "the .title .name text is drawn in Inter-Bold",
+          "ok": true,
+          "detail": "Inter-Bold"
+        },
+        {
+          "check": "the .title .line text is drawn in Inter-Regular",
+          "ok": true,
+          "detail": "Inter-Regular"
+        }
+      ],
+      "facts": [
+        "devmode: $4,108,453, 8 events for request 85bf65f4 (stage, stage, stage, evidence, evidence, stage, answer, done), done opened"
+      ],
+      "shown": {
+        "figure": "$4,108,453",
+        "events": [
+          "stage",
+          "stage",
+          "stage",
+          "evidence",
+          "evidence",
+          "stage",
+          "answer",
+          "done"
+        ],
+        "request": "85bf65f4",
+        "done": {
+          "request_id": "85bf65f4-9ecd-4358-af90-e08a0aab488b",
+          "route": "quantitative",
+          "outcome": "answer",
+          "total_ms": 78.6,
+          "claim_ids": [],
+          "doc_ids": []
+        }
+      },
+      "poster_s": 29.19,
+      "title_s": 1.0,
+      "files": {
+        "devmode.gif": {
+          "bytes": 2753703,
+          "width": 900,
+          "seconds": 33.41
+        },
+        "devmode.mp4": {
+          "bytes": 2304703,
+          "width": 1920,
+          "seconds": 34.9
+        }
+      }
+    },
+    "live": {
+      "recorded_at": "2026-09-27T05:55:23+00:00",
+      "identity": [
+        {
+          "user": "dana",
+          "name": "Dana Reyes",
+          "title": "Claims adjuster, West",
+          "role": "u_adj_west"
+        }
+      ],
+      "questions": [
+        {
+          "user": "dana",
+          "question": "What should a denial letter include?",
+          "eval_ids": [
+            "qual-011"
+          ]
+        }
+      ],
+      "mode": {
+        "label": "Live models",
+        "backend": "anthropic",
+        "live_client": true,
+        "LLM_BACKEND": "anthropic",
+        "models": {
+          "main": "claude-sonnet-5",
+          "fast": "claude-haiku-4-5",
+          "check": "gemini-3.5-flash"
+        },
+        "check_provider": "gcp.vertex_ai",
+        "selected_by": "LLM_BACKEND and LLM_CHECK_BACKEND, read by app/config.py and app/llm/client.py"
+      },
+      "app": {
+        "commit": "389b53bbbb5852052403a348c60fc91c3f8f3d46",
+        "dirty": false,
+        "image": "sha256:08ae061ba88a379f1535f546f63158fcaaa0357df3f9e54a577177a060222f20"
+      },
+      "preflight": {},
+      "length_s": 39.05,
+      "beats": [
+        {
+          "at": 0.06,
+          "kind": "read",
+          "caption": "Dana asks with live models connected",
+          "seconds": 1.96,
+          "minimum_s": 0.74,
+          "words": 5,
+          "cells": 0,
+          "target": "who is asking"
+        },
+        {
+          "at": 2.82,
+          "kind": "type",
+          "caption": "Ask what a denial letter needs",
+          "seconds": 1.01,
+          "text": "What should a denial letter include?"
+        },
+        {
+          "at": 3.84,
+          "kind": "pause",
+          "caption": "Ask what a denial letter needs",
+          "seconds": 0.64
+        },
+        {
+          "at": 4.67,
+          "kind": "wait",
+          "caption": "Claude writes, then Gemini checks each sentence",
+          "seconds": 7.45,
+          "question": "What should a denial letter include?"
+        },
+        {
+          "at": 12.23,
+          "kind": "read",
+          "caption": "Read the answer Claude wrote",
+          "seconds": 13.73,
+          "minimum_s": 5.92,
+          "words": 112,
+          "cells": 0,
+          "target": "the answer"
+        },
+        {
+          "at": 26.06,
+          "kind": "click",
+          "caption": "Follow a citation to its source"
+        },
+        {
+          "at": 26.87,
+          "kind": "click-beat",
+          "caption": "Follow a citation to its source",
+          "seconds": 0.37
+        },
+        {
+          "at": 27.25,
+          "kind": "scroll",
+          "caption": "Check the guideline it cites",
+          "seconds": 0.62,
+          "px": 15
+        },
+        {
+          "at": 27.88,
+          "kind": "read",
+          "caption": "Check the guideline it cites",
+          "seconds": 2.96,
+          "minimum_s": 2.96,
+          "words": 10,
+          "cells": 0,
+          "target": "the cited source entry"
+        },
+        {
+          "at": 30.9,
+          "kind": "click",
+          "caption": "Open the supporting evidence"
+        },
+        {
+          "at": 31.61,
+          "kind": "click-beat",
+          "caption": "Open the supporting evidence",
+          "seconds": 0.37
+        },
+        {
+          "at": 32.04,
+          "kind": "click",
+          "caption": "Each kept sentence passed Gemini's check"
+        },
+        {
+          "at": 32.79,
+          "kind": "click-beat",
+          "caption": "Each kept sentence passed Gemini's check",
+          "seconds": 0.37
+        },
+        {
+          "at": 33.23,
+          "kind": "scroll",
+          "caption": "Each kept sentence passed Gemini's check",
+          "seconds": 0.61,
+          "px": 245
+        },
+        {
+          "at": 33.85,
+          "kind": "read",
+          "caption": "Each kept sentence passed Gemini's check",
+          "seconds": 4.44,
+          "minimum_s": 4.44,
+          "words": 9,
+          "cells": 0,
+          "target": "the verifier's count and 4 of its 4 checks"
+        },
+        {
+          "at": 38.31,
+          "kind": "end",
+          "caption": "Each kept sentence passed Gemini's check",
+          "seconds": 0.74
+        }
+      ],
+      "waits_s": [
+        7.45
+      ],
+      "holds_s": [
+        1.96,
+        13.73,
+        2.96,
+        4.44
+      ],
+      "assertions": [
+        {
+          "check": "POST /session signs in as dana",
+          "ok": true,
+          "detail": "it answered 204"
+        },
+        {
+          "check": "the recorder's CSS reached the page",
+          "ok": true,
+          "detail": "its marker reads '1'"
+        },
+        {
+          "check": "the root font is 18px",
+          "ok": true,
+          "detail": "it is 18px"
+        },
+        {
+          "check": "the page opens on the light theme",
+          "ok": true,
+          "detail": "it shows [None, '#f5f7f9']"
+        },
+        {
+          "check": "the page's frames are being captured",
+          "ok": true
+        },
+        {
+          "check": "the user picker shows Dana Reyes",
+          "ok": true,
+          "detail": "it shows 'Dana Reyes, Claims adjuster, West'"
+        },
+        {
+          "check": "who is asking is on the page",
+          "ok": true
+        },
+        {
+          "check": "who is asking stayed whole inside the reading band",
+          "ok": true
+        },
+        {
+          "check": "the control to press is on screen",
+          "ok": true
+        },
+        {
+          "check": "the composer holds the whole question",
+          "ok": true,
+          "detail": "What should a denial letter include?"
+        },
+        {
+          "check": "the control to press is on screen",
+          "ok": true
+        },
+        {
+          "check": "the thread shows the exact question",
+          "ok": true,
+          "detail": "it shows 'What should a denial letter include?'"
+        },
+        {
+          "check": "no fallback caveat",
+          "ok": true
+        },
+        {
+          "check": "the page's /ask response was captured",
+          "ok": true
+        },
+        {
+          "check": "the reply is one answer",
+          "ok": true,
+          "detail": "it has 1"
+        },
+        {
+          "check": "the verifier kept a written sentence",
+          "ok": true,
+          "detail": "A denial letter should follow these requirements: A denial letter names the policy form and the edition in force on the date of loss, quotes the provision relied on with its section number, states the facts that led to the decision, and tells the insured how to ask for a review. Additionally, when late notice is a ground for denial, late notice alone is not enough. The letter must say what the delay kept us from confirming, such as the cause of the loss or the extent of the damage. Procedurally, send the letter within five business days of the decision, and record the date it was sent in a file note."
+        },
+        {
+          "check": "every kept sentence cites a passage",
+          "ok": true,
+          "detail": "[{'text': 'A denial letter should follow these requirements: A denial letter names the policy form and the edition in force on the date of loss, quotes the provision relied on with its section number, states the facts that led to the decision, and tells the insured how to ask for a review.', 'numbers': [], 'citations': ['claims-guidelines#4-denial-letters:1']}, {'text': 'Additionally, when late notice is a ground for denial, late notice alone is not enough.', 'numbers': [], 'citations': ['claims-guidelines#4-denial-letters:1']}, {'text': 'The letter must say what the delay kept us from confirming, such as the cause of the loss or the extent of the damage.', 'numbers': [], 'citations': ['claims-guidelines#4-denial-letters:1']}, {'text': 'Procedurally, send the letter within five business days of the decision, and record the date it was sent in a file note.', 'numbers': [], 'citations': ['claims-guidelines#4-denial-letters:1']}]"
+        },
+        {
+          "check": "the page's /ask response was captured",
+          "ok": true
+        },
+        {
+          "check": "every citation is a passage the search returned",
+          "ok": true,
+          "detail": "set()"
+        },
+        {
+          "check": "the answer carries numbered citations",
+          "ok": true
+        },
+        {
+          "check": "the answer lists the sources it cites",
+          "ok": true
+        },
+        {
+          "check": "the answer has text",
+          "ok": true
+        },
+        {
+          "check": "the answer is on the page",
+          "ok": true
+        },
+        {
+          "check": "the answer stayed whole inside the reading band",
+          "ok": true
+        },
+        {
+          "check": "the control to press is on screen",
+          "ok": true
+        },
+        {
+          "check": "the citation lands on its source entry",
+          "ok": true
+        },
+        {
+          "check": "the cited source entry is on the page",
+          "ok": true
+        },
+        {
+          "check": "the cited source entry stayed whole inside the reading band",
+          "ok": true
+        },
+        {
+          "check": "the control to press is on screen",
+          "ok": true
+        },
+        {
+          "check": "the evidence panel opened",
+          "ok": true
+        },
+        {
+          "check": "evidence text is at least 17 px",
+          "ok": true
+        },
+        {
+          "check": "the control to press is on screen",
+          "ok": true
+        },
+        {
+          "check": "the Verifier tab is showing",
+          "ok": true
+        },
+        {
+          "check": "the Checks tab counts 4 claims kept, 0 cut.",
+          "ok": true,
+          "detail": "4 claims kept, 0 cut."
+        },
+        {
+          "check": "each kept sentence is tagged Kept",
+          "ok": true,
+          "detail": "['Kept', 'Kept', 'Kept', 'Kept']"
+        },
+        {
+          "check": "the verifier's count and 4 of its 4 checks is on the page",
+          "ok": true
+        },
+        {
+          "check": "the verifier's count and 4 of its 4 checks stayed whole inside the reading band",
+          "ok": true
+        },
+        {
+          "check": "the page stayed on the light theme",
+          "ok": true,
+          "detail": "it turned dark at [] s"
+        },
+        {
+          "check": "the .caption .text text is drawn in Inter-Medium",
+          "ok": true,
+          "detail": "Inter-Medium"
+        },
+        {
+          "check": "the .gif-footer .text text is drawn in Inter-Medium",
+          "ok": true,
+          "detail": "Inter-Medium"
+        },
+        {
+          "check": "the .title .name text is drawn in Inter-Bold",
+          "ok": true,
+          "detail": "Inter-Bold"
+        },
+        {
+          "check": "the .title .line text is drawn in Inter-Regular",
+          "ok": true,
+          "detail": "Inter-Regular"
+        }
+      ],
+      "facts": [
+        "live: 4 sentences kept, 0 cut, citing CG-2026 guideline: Property Claims Handling Guidelines \u00b7 4. Denial letters"
+      ],
+      "shown": {
+        "answer": "A denial letter should follow these requirements: A denial letter names the policy form and the edition in force on the date of loss, quotes the provision relied on with its section number, states the facts that led to the decision, and tells the insured how to ask for a review. Additionally, when late notice is a ground for denial, late notice alone is not enough. The letter must say what the delay kept us from confirming, such as the cause of the loss or the extent of the damage. Procedurally, send the letter within five business days of the decision, and record the date it was sent in a file note.",
+        "sources": [
+          "CG-2026 guideline: Property Claims Handling Guidelines \u00b7 4. Denial letters"
+        ],
+        "kept": 4,
+        "cut": 0,
+        "request_id": "b0ce4a30-30cb-41eb-90e6-0539db34efe0"
+      },
+      "poster_s": 13.23,
+      "title_s": 1.0,
+      "files": {
+        "live.mp4": {
+          "bytes": 2217527,
+          "width": 1920,
+          "seconds": 40.53
+        }
+      },
+      "live": {
+        "request_id": "b0ce4a30-30cb-41eb-90e6-0539db34efe0",
+        "mode": "anthropic",
+        "route": "qualitative",
+        "outcome": "answer",
+        "fallback": null,
+        "models": [
+          "claude-sonnet-5",
+          "gemini-3.5-flash"
+        ],
+        "cost_usd": 0.017524,
+        "verifier": {
+          "cut": 0,
+          "kept": 4,
+          "retried": false
+        },
+        "tokens_in": 7784,
+        "tokens_out": 875,
+        "total_ms": 7228
       }
     },
     "dashboard": {

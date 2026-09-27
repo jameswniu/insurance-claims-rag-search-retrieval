@@ -93,15 +93,85 @@ def test_every_video_clip_has_captions_and_opens_on_who_is_asking() -> None:
 
 def test_outputs_and_clips_name_the_same_clips() -> None:
     assert set(rd.OUTPUTS) == set(rd.CLIPS)
-    assert len(VIDEO_CLIPS) == 11
+    assert len(VIDEO_CLIPS) == 14
 
 
-def test_each_clip_writes_an_mp4_and_ask_permissions_and_dashboard_a_gif() -> None:
+def test_each_clip_writes_an_mp4_and_the_readme_gifs_are_ask_permissions_devmode_and_dashboard() -> None:
     for clip in VIDEO_CLIPS:
         files = rd.OUTPUTS[clip]
         assert f"{clip}.mp4" in files, clip
         assert set(files) <= {f"{clip}.mp4", f"{clip}.gif", f"{clip}.poster.png"}, clip
-    assert [clip for clip in VIDEO_CLIPS if f"{clip}.gif" in rd.OUTPUTS[clip]] == ["ask", "permissions", "dashboard"]
+    gifs = [clip for clip in VIDEO_CLIPS if f"{clip}.gif" in rd.OUTPUTS[clip]]
+    assert gifs == ["ask", "permissions", "devmode", "dashboard"]
+    # The two newest clips beside the devmode one are mp4s alone.
+    assert rd.OUTPUTS["ocr-flag"] == ("ocr-flag.mp4",) and rd.OUTPUTS["live"] == ("live.mp4",)
+
+
+def test_a_run_records_the_live_clip_alone_and_every_other_clip_with_no_key() -> None:
+    no_key = rd.clips_for([], live=False)
+    assert "live" not in no_key and no_key[-1] == "dashboard" and len(no_key) == len(rd.OUTPUTS) - 1
+    assert rd.clips_for([], live=True) == ["live"]
+    # Named clips keep the recording order, whatever order they were named in.
+    assert rd.clips_for(["devmode", "ocr-flag"], live=False) == ["ocr-flag", "devmode"]
+    with pytest.raises(ValueError, match="needs live mode"):
+        rd.clips_for(["ask", "live"], live=False)
+    with pytest.raises(ValueError, match="recorded with no key"):
+        rd.clips_for(["live", "devmode"], live=True)
+
+
+LIVE_MODE = {"backend": "anthropic", "models": {"main": "claude-sonnet-5", "fast": "claude-haiku-4-5", "check": "g-3"}}
+ANSWERED = {
+    "mode": "anthropic",
+    "fallback": None,
+    "models": ["claude-sonnet-5", "g-3"],
+    "verifier": {"kept": 2, "cut": 0, "retried": False},
+}
+
+
+def test_a_live_request_counts_only_when_the_models_answered_and_nothing_fell_back() -> None:
+    assert rd.live_problems(ANSWERED, LIVE_MODE) == []
+    # A reply that names its model with a date after it is still that model.
+    assert rd.live_problems({**ANSWERED, "models": ["claude-sonnet-5-20260101", "g-3"]}, LIVE_MODE) == []
+    assert rd.live_problems(None, LIVE_MODE) == ["the request log has no row for it"]
+    [fell_back] = rd.live_problems({**ANSWERED, "fallback": "reading"}, LIVE_MODE)
+    assert "fell back" in fell_back and "reading" in fell_back
+    [unchecked] = rd.live_problems({**ANSWERED, "models": ["claude-sonnet-5"]}, LIVE_MODE)
+    assert "check model, g-3" in unchecked
+    assert len(rd.live_problems({**ANSWERED, "mode": "none", "models": [], "verifier": None}, LIVE_MODE)) == 4
+    # A model whose name only starts the same way is another model.
+    assert rd.live_problems({**ANSWERED, "models": ["claude-sonnet-50", "g-3"]}, LIVE_MODE)
+
+
+def test_the_app_mode_probe_never_reads_a_credential() -> None:
+    assert "KEY" not in rd.MODE_PY and "key" not in rd.MODE_PY.lower().replace("no-key", "")
+    assert "environ.get('LLM_BACKEND')" in rd.MODE_PY
+
+
+def test_a_flagged_answer_may_state_the_ledger_amount_but_never_the_misread_one() -> None:
+    flagged = (
+        "The scanned total on the proof of loss for claim 103747 couldn't be read reliably: what was read isn't in the"
+        " form a total takes. The payment record shows $5,957.79 paid on this claim."
+    )
+    assert rd.wrong_amounts(flagged, "$595779", ("$5,957.79",)) == []
+    stated = "The total on the proof of loss for claim 103747 is $595,779.00."
+    assert rd.wrong_amounts(stated, "$595779", ("$5,957.79",)) == ["$595,779.00", "595,779.00"]
+    assert rd.wrong_amounts("It reads 595779 on the page.", "$595779", ()) == ["595779"]
+    assert rd.wrong_amounts("It came to $12.50.", "$595779", ("$5,957.79",)) == ["$12.50"]
+
+
+def test_a_number_reads_as_the_page_script_writes_it() -> None:
+    assert rd.js_number(112.0) == "112" and rd.js_number(111.1) == "111.1" and rd.js_number(7) == "7"
+
+
+def test_only_the_devmode_clip_turns_dark_and_every_special_clip_is_recorded() -> None:
+    assert set(rd.DARK_CLIPS) == {"devmode"} and set(rd.LIVE_CLIPS) == {"live"}
+    assert set(rd.DARK_CLIPS) | set(rd.LIVE_CLIPS) <= set(rd.OUTPUTS)
+    assert not set(rd.DARK_CLIPS) & set(rd.LIVE_CLIPS)
+
+
+def test_the_console_text_is_raised_to_the_floor_like_the_evidence() -> None:
+    rule = rd.DEMO_CSS.split(".devconsole .console-rows", 1)[1].split("}", 1)[0]
+    assert f"font-size: {rd.FONT_FLOOR_PX}px !important" in rule and ".devconsole .console-empty" in rule
 
 
 def test_the_readme_plays_every_gif_and_names_only_files_the_recorder_writes() -> None:

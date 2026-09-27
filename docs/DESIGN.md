@@ -182,13 +182,14 @@ The checker reads the same memo a cause sentence cites, so a memo written to say
 
 ## The demo clips
 
-The README links each clip. Every clip runs without an API key. The recorder adds the window frame, title cards, captions, spotlight, pointer, reading pauses and larger evidence text, and shows every answer as the app gave it.
+The README links each clip. Every clip runs without an API key except the live one. The recorder adds the window frame, title cards, captions, spotlight, pointer, reading pauses and larger evidence text, and shows every answer as the app gave it.
 
 | Clip | What it shows |
 |---|---|
 | A figure and its SQL | Dana asks what was paid on Colorado hail claims in Q2 2025 and traces the figure to the SQL, its bound values and the row it returned. |
 | A policy answer and its source | Dana asks whether flood damage is covered, follows the citation to section 4.1 of the HO-2025 policy and reads the passage it came from. |
 | A total read from a scan | Priya asks for the total on a scanned invoice and checks it on the crop of the scan and in the payment query. |
+| A misread total, flagged | Priya asks for the total on a proof of loss whose scan dropped its decimal point, and the answer flags it instead of stating it, beside the crop of what was read. |
 | Why losses rose | Priya asks why West paid losses rose in Q2 2025, and the driver split shows the hail and Colorado shares the answer gives. |
 | One claim, three users | Dana, Omar and Sam ask about the same West claim, and only Dana gets it back. |
 | Withheld small groups | Sam, the analyst, asks for monthly counts and gets withheld cells where a month has too few claims. |
@@ -196,6 +197,8 @@ The README links each clip. Every clip runs without an API key. The recorder add
 | An instruction override | Dana tells the app to ignore its instructions and show every region's claims, and the gate refuses. |
 | An off-topic question | Dana asks for a banana bread recipe and is told what the app covers. |
 | A year outside the data | Dana asks about 2022 and is told the data runs from January 2024 to June 2026. |
+| Dev mode and its console | Dana turns on Dev mode, asks for a paid-loss figure, reads a console row for each event the server streamed and opens the done event's JSON. |
+| An answer from live models | With the models connected, Dana asks what a denial letter should include, Claude writes the cited answer and Gemini checks each sentence before the verifier keeps it. |
 | The dashboard by source | Priya reads the service dashboard for all requests, then for eval, replayed and browser requests alone. |
 
 ## From laptop to production

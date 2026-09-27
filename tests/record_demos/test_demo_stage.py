@@ -109,6 +109,21 @@ def test_the_pointer_steps_away_once_a_reading_pause_starts() -> None:
     assert cursor.ripples(6.0)  # the click's ripple plays out whatever the pointer does
 
 
+def test_the_pointer_left_alone_fades_even_when_the_next_reading_pause_is_far_off() -> None:
+    # A press, then a long wait for the answer before the reading pause at 12.0: the pointer fades on its own.
+    cursor = stage.CursorTrack(
+        [
+            ["glide", 5.0, 5.6, 576.0, 330.0, 820.0, 596.0],
+            ["press", 5.6, 820.0, 596.0],
+            ["rest", 12.0],
+            ["glide", 14.0, 14.6, 820.0, 596.0, 400.0, 300.0],
+        ]
+    )
+    assert cursor.opacity(5.6 + stage.CURSOR_IDLE_S - 0.01) == 1
+    assert cursor.opacity(5.6 + stage.CURSOR_IDLE_S + stage.CURSOR_FADE_S) == 0
+    assert cursor.opacity(9.0) == 0 and cursor.opacity(14.6) == 1
+
+
 def test_a_press_with_no_glide_before_it_never_pops_up() -> None:
     assert stage.CursorTrack([["press", 2.0, 100.0, 100.0]]).opacity(2.1) == 0
 
@@ -187,6 +202,42 @@ def test_the_chrome_names_only_the_tokens_it_sets() -> None:
     named = set(re.findall(rf"var\(({TOKEN})\)", stage.BASE_CSS + stage.STAGE_CSS + stage.GIF_CSS))
     assert named and named <= set(stage.APP_LIGHT)
     assert all(f"{token}: {color};" in stage.BASE_CSS for token, color in stage.APP_LIGHT.items())
+
+
+def test_the_dark_chrome_is_drawn_in_the_app_dev_mode_tokens() -> None:
+    styles = (ROOT / "frontend" / "src" / "styles.css").read_text()
+    dev = dict(re.findall(rf"({TOKEN}):\s*([^;]+);", styles.split(':root[data-mode="dev"] {', 1)[1].split("}", 1)[0]))
+    for token, color in stage.APP_DARK.items():
+        assert dev.get(token) == color, token
+    assert set(stage.APP_DARK) == set(stage.APP_LIGHT)
+    dark = stage.stage_html("Turn on Dev mode", "No API key", theme="dark")
+    assert all(f"{token}: {color};" in dark for token, color in stage.APP_DARK.items())
+    assert stage.APP_LIGHT["--background"] not in dark
+    assert stage.APP_DARK["--surface"] in stage.gif_bar_html("dark") + stage.gif_footer_html("Open it", "M", "dark")
+    # The title card's mark is the header's: the bubble in the on-accent colour of each theme.
+    assert f'stroke="{stage.APP_DARK["--on-accent"]}"' in stage.title_html("Dev mode", "dark")
+    assert f'stroke="{stage.APP_LIGHT["--on-accent"]}"' in stage.title_html("A figure")
+
+
+def test_the_moves_over_the_page_take_the_theme_it_shows_at_each_moment() -> None:
+    changes = [(-0.4, "light"), (6.2, "dark")]
+    assert [stage.theme_at(changes, t) for t in (-1.0, 0.0, 6.19, 6.2, 30.0)] == ["light"] * 3 + ["dark"] * 2
+    assert stage.theme_at([], 3.0) == "light"
+    light, dark = stage.LOOKS["light"], stage.LOOKS["dark"]
+    assert (light.tint, light.canvas, light.ripple) == (stage.SPOT_TINT, stage.CANVAS, stage.RIPPLE_COLOR)
+    # On the dark page the spotlight darkens towards black, and the floor fades into the dark background.
+    assert dark.tint == (0, 0, 0) and dark.canvas == stage.rgb(stage.APP_DARK["--background"])
+    assert dark.ripple == stage.rgb(stage.APP_DARK["--accent"])
+    pixels = np.full((80, 100, 3), 200, np.uint8)
+    dimmed = render.dim(pixels, (20.0, 10.0, 80.0, 70.0), 12.0, 1.0, dark.tint)
+    assert (dimmed[40, 50] == 200).all() and dimmed[2, 2].tolist() == [100, 100, 100]
+
+
+def test_a_log_without_themes_plays_light() -> None:
+    log = {"mode": "No API key", "frames": [[0.0, "000000.jpg"]], "captions": [], "spot": [], "cursor": []}
+    assert render.Plan.load(log, 5.0).themes == []
+    themed = render.Plan.load({**log, "themes": [[-0.2, "light"], [4.0, "dark"]]}, 5.0)
+    assert themed.themes == [(-0.2, "light"), (4.0, "dark")]
 
 
 def test_the_mode_label_is_on_the_stage_and_in_the_gif_footer() -> None:
