@@ -4,6 +4,37 @@
 [![tests](https://github.com/jameswniu/insurance-claims-rag-text-to-sql/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/jameswniu/insurance-claims-rag-text-to-sql/actions/workflows/tests.yml)
 [![license](https://img.shields.io/badge/license-Apache%202.0-blue)](LICENSE)
 
+## Run it
+
+You need Docker 24 or later and about 1.5 GB of memory. No API key is needed.
+
+```sh
+git clone https://github.com/jameswniu/insurance-claims-rag-text-to-sql
+cd insurance-claims-rag-text-to-sql
+make up
+```
+
+The first run seeds 6,951 claims and reads 60 scanned forms, which took 2 minutes on a GitHub arm runner. `make up` ends by printing the address to open, http://localhost:8000 unless another program holds that port. Pick a user and ask.
+
+Every other command runs from the same folder, in any terminal.
+
+```sh
+cd insurance-claims-rag-text-to-sql
+make logs              # follow the server logs, Ctrl+C stops following
+make test              # the test suite, in a container
+make test-sandbox      # the sandbox limit tests, on the host where Docker runs
+make eval              # score every eval case into evals/report.json
+APP_PORT=8100 make up  # start on a port you choose
+make down              # stop, keeping the database
+make reset             # delete the database, so the next make up starts fresh
+```
+
+To see each event the server streams for a question, switch on Dev mode in the app's header. A console docks under the question box and logs every event, with its JSON a click away.
+
+To add live models, copy `.env.example` to `.env`, set `LLM_BACKEND` and its API key there, then run `make live-check` to confirm each model answers and `make up-live` to start.
+
+## Demo
+
 Dana, a West adjuster, asks what was paid on Colorado hail claims in Q2 2025. The answer comes back with the exact SQL that ran under her own database login.
 
 [<img src="docs/demo/ask.gif" alt="Dana, the West adjuster, asks how much was paid on hail claims in Colorado in the second quarter of 2025 and reads the $4,108,453 answer, then opens the evidence to the SQL behind it, its bound values and the row it returned." width="100%">](https://cdn.jsdelivr.net/gh/jameswniu/insurance-claims-rag-text-to-sql@6cbff6ef61ad788ce35553bb6658dfcc90adce82/docs/demo/ask.mp4)
@@ -22,18 +53,6 @@ Click any GIF on this page, or a clip below, to play the full video with caption
 | [An off-topic question](https://cdn.jsdelivr.net/gh/jameswniu/insurance-claims-rag-text-to-sql@6cbff6ef61ad788ce35553bb6658dfcc90adce82/docs/demo/off-topic.mp4) | Dana asks for a banana bread recipe and is told what the app covers | 11 s |
 | [A year outside the data](https://cdn.jsdelivr.net/gh/jameswniu/insurance-claims-rag-text-to-sql@6cbff6ef61ad788ce35553bb6658dfcc90adce82/docs/demo/out-of-range.mp4) | Dana asks about 2022 and is told the data runs from January 2024 to June 2026 | 11 s |
 | [An answer from live models](https://cdn.jsdelivr.net/gh/jameswniu/insurance-claims-rag-text-to-sql@6cbff6ef61ad788ce35553bb6658dfcc90adce82/docs/demo/live.mp4) | Dana asks what a denial letter needs, Claude answers with citations and Gemini checks each sentence | 41 s |
-
-## Run it
-
-You need Docker 24 or later and about 1.5 GB of memory, enough for the stack and one analysis job.
-
-```sh
-git clone https://github.com/jameswniu/insurance-claims-rag-text-to-sql
-cd insurance-claims-rag-text-to-sql
-make up
-```
-
-The first run seeds 6,951 claims and reads 60 scanned forms, which took 2 minutes on a GitHub arm runner. `make up` ends by printing the address to open, http://localhost:8000 unless another program holds that port. Pick a user and ask. No API key is needed. `make test` runs the tests.
 
 ## How it works
 
