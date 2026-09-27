@@ -47,10 +47,33 @@ GIF_BAR_H = 34
 GIF_FOOTER_H = 52
 GIF_W, GIF_H = VIEW_W, GIF_BAR_H + VIEW_H + GIF_FOOTER_H
 
-# Timing, in seconds. The title card and the fade back to the stage frame the mp4 only.
-TITLE_S = 1.5  # the whole card: it fades in, holds, then crossfades into the window
-TITLE_FADE_S = 0.3
-WINDOW_FADE_S = 0.3
+# The app's light theme, the one the clips are recorded in, by its token names in the :root block of
+# frontend/src/styles.css. The spotlight, the ripple and all the chrome around the page are drawn in these, so they sit
+# with the page. A test holds each to the stylesheet, and the recorder checks the running page against --background.
+APP_LIGHT = {
+    "--background": "#f5f7f9",
+    "--surface": "#ffffff",
+    "--surface-raised": "#eef2f5",
+    "--border": "#d1d9e0",
+    "--control": "#788793",
+    "--chart-grid": "#e3e9ee",
+    "--foreground": "#202b36",
+    "--muted": "#435363",
+    "--subtle": "#5d6b79",
+    "--accent": "#245b85",
+}
+
+
+def rgb(color: str) -> tuple[int, int, int]:
+    """A #rrggbb colour as its red, green and blue."""
+    return int(color[1:3], 16), int(color[3:5], 16), int(color[5:7], 16)
+
+
+# Timing, in seconds. The title card and the fade back to the stage frame the mp4 only. These are the moves' own
+# timings, which read smoothly at any pace, so the recorder's PACE leaves them alone.
+TITLE_S = 1.0  # the whole card: it fades in, holds, then crossfades into the window
+TITLE_FADE_S = 0.2
+WINDOW_FADE_S = 0.2
 OUTRO_S = 0.5  # the window fades back to the empty stage, so a loop restarts on the stage it began on
 CAPTION_FADE_S = 0.2
 SPOT_GLIDE_S = 0.3
@@ -65,16 +88,18 @@ GLIDE_STEPS_PER_S = 40  # the page's own pointer moves this often along the path
 
 # The spotlight dims the rest of the page by SPOT_DIM towards SPOT_TINT, through a rounded cutout.
 SPOT_DIM = 0.5
-SPOT_TINT = (15, 23, 42)  # the app's own text colour, its --foreground
+SPOT_TINT = rgb(APP_LIGHT["--foreground"])  # the app's own text colour
 SPOT_RADIUS = 12.0
 SPOT_GROW = 14.0  # the cutout closes in by this much as it fades in
 SPOT_PAD = 6.0  # the cutout's room around what it shows
 # Outside the cutout, what lies just above the page's floor (the composer's top, or the window's bottom edge) fades
 # into the page's background over this many CSS pixels, so a line cut off there dissolves instead of peeking out.
 FLOOR_FADE_PX = 40.0
-CANVAS = (248, 250, 252)  # the app's page background, its --background
+CANVAS = rgb(APP_LIGHT["--background"])  # the app's page background
 
-# Typing: each key's pause is jittered between these, with a longer beat before a word or after punctuation.
+# Typing: each key's pause is jittered between these, with a longer beat before a word or after punctuation. They are
+# set for a mean pause of TYPE_MEAN_MS, and scale with the mean a question is typed at.
+TYPE_MEAN_MS = 75.0
 TYPE_MIN_MS, TYPE_MAX_MS = 45.0, 110.0
 TYPE_SPACE_MS = 60.0
 TYPE_PUNCT_MS = 140.0
@@ -83,7 +108,7 @@ PUNCTUATION = ",.;:?!"
 # The pointer, as the recorder's Chromium draws it: at CURSOR_SPRITE_SCALE times its size, with its tip here.
 CURSOR_SPRITE_SCALE = 4
 CURSOR_TIP = (3.0, 3.0)  # in CSS pixels of the sprite's own box, before scaling
-RIPPLE_COLOR = (59, 91, 219)  # the app's accent, for the ring; its fill is white, so it shows on an accent button
+RIPPLE_COLOR = rgb(APP_LIGHT["--accent"])  # for the ring; its fill is white, so it shows on an accent button
 RIPPLE_RADIUS = (6.0, 26.0)
 
 
@@ -113,23 +138,23 @@ def grow(rect: Rect, by: float) -> Rect:
 def typing_delays(text: str, mean_ms: float) -> list[float]:
     """The pause before each key of text, in ms. Each is jittered between TYPE_MIN_MS and TYPE_MAX_MS, a key that
     starts a word or follows punctuation waits longer, and the pauses add up to what len(text) keys at mean_ms take,
-    so a question types in about the time it always did. The first key has no pause. The same text always types the
-    same way, so a take can be recorded again."""
+    so a question types in about the time it always did. Those bounds and beats are set for TYPE_MEAN_MS and scale
+    with mean_ms, so a faster mean types the same rhythm, only quicker. The first key has no pause. The same text
+    always types the same way, so a take can be recorded again."""
     if len(text) < 2:
         return [0.0] * len(text)
     rng = random.Random(zlib.crc32(text.encode()))
     pairs = list(zip(text, text[1:], strict=False))
-    extra = [TYPE_SPACE_MS if before == " " else TYPE_PUNCT_MS if before in PUNCTUATION else 0.0 for before, _ in pairs]
-    spread = TYPE_MAX_MS - TYPE_MIN_MS
+    k = mean_ms / TYPE_MEAN_MS
+    low, high, space, punct = TYPE_MIN_MS * k, TYPE_MAX_MS * k, TYPE_SPACE_MS * k, TYPE_PUNCT_MS * k
+    extra = [space if before == " " else punct if before in PUNCTUATION else 0.0 for before, _ in pairs]
+    spread = high - low
     # What the jitter above the floor must add up to, and a skew that makes its mean land near there.
-    room = mean_ms * len(text) - sum(extra) - TYPE_MIN_MS * len(pairs)
-    power = max(0.3, spread / max(1.0, room / len(pairs)) - 1)
+    room = mean_ms * len(text) - sum(extra) - low * len(pairs)
+    power = max(0.3, spread / max(k, room / len(pairs)) - 1)
     jitter = [spread * rng.random() ** power for _ in pairs]
     scale = room / sum(jitter) if room > 0 and sum(jitter) > 0 else 0.0
-    return [
-        0.0,
-        *(min(TYPE_MAX_MS, TYPE_MIN_MS + value * scale) + bump for value, bump in zip(jitter, extra, strict=True)),
-    ]
+    return [0.0, *(min(high, low + value * scale) + bump for value, bump in zip(jitter, extra, strict=True))]
 
 
 def caption_at(changes: Sequence[tuple[float, str]], t: float) -> tuple[str | None, str | None, float]:
@@ -334,31 +359,43 @@ BRAND_PATHS = (
     "M3 3h10a1 1 0 0 1 1 1v6.2a1 1 0 0 1-1 1H8.2L5 13.8v-2.6H3a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z",
     "M5 6h6M5 8.4h3.6",
 )
-ACCENT = "#3b5bdb"
 CAPTION_ROOM_PX = 24  # the least room between a caption and the mode label beside it
 
+
+def tint(token: str, alpha: float) -> str:
+    """One of the app's light colours at alpha, as CSS, for a shadow."""
+    red, green, blue = rgb(APP_LIGHT[token])
+    return f"rgb({red} {green} {blue} / {alpha})"
+
+
+# The chrome names the app's own tokens, which this sets from APP_LIGHT.
+TOKENS_CSS = ":root { " + " ".join(f"{token}: {color};" for token, color in APP_LIGHT.items()) + " }"
 BASE_CSS = f"""
+{TOKENS_CSS}
 * {{ box-sizing: border-box; }}
 html, body {{ margin: 0; }}
 body {{ position: relative; overflow: hidden; font-family: {FONT}; -webkit-font-smoothing: antialiased; }}
 .dots {{ display: flex; }}
-.dots i {{ display: block; border-radius: 50%; background: #d9dce2; }}
+.dots i {{ display: block; border-radius: 50%; background: var(--border); }}
 .address {{
   position: absolute; left: 50%; transform: translateX(-50%); display: flex; align-items: center;
-  justify-content: center; background: #eff1f4; color: #5d6574; letter-spacing: 0.01em;
+  justify-content: center; background: var(--surface-raised); color: var(--subtle); letter-spacing: 0.01em;
 }}
 """
 STAGE_CSS = f"""
-body {{ width: {STAGE_W}px; height: {STAGE_H}px; background: linear-gradient(165deg, #eef1f6, #f6f7f9); }}
+body {{
+  width: {STAGE_W}px; height: {STAGE_H}px;
+  background: linear-gradient(165deg, color-mix(in srgb, var(--surface-raised) 80%, var(--border)), var(--background));
+}}
 .window {{
   position: absolute; left: {WINDOW_X}px; top: {WINDOW_Y}px; width: {CONTENT_W}px; height: {BAR_H + CONTENT_H}px;
-  border-radius: {WINDOW_RADIUS}px; overflow: hidden; background: #f6f7f9;
-  box-shadow: 0 0 0 1px rgb(15 23 42 / 0.09), 0 1px 2px rgb(16 24 40 / 0.05), 0 10px 24px -6px rgb(16 24 40 / 0.10),
-    0 30px 70px -18px rgb(16 24 40 / 0.22);
+  border-radius: {WINDOW_RADIUS}px; overflow: hidden; background: var(--background);
+  box-shadow: 0 0 0 1px {tint("--foreground", 0.1)}, 0 1px 2px {tint("--foreground", 0.05)},
+    0 10px 24px -6px {tint("--foreground", 0.1)}, 0 30px 70px -18px {tint("--foreground", 0.22)};
 }}
 .bar {{
-  position: relative; height: {BAR_H}px; display: flex; align-items: center; padding: 0 18px; background: #fdfdfe;
-  border-bottom: 1px solid #e6e8ec;
+  position: relative; height: {BAR_H}px; display: flex; align-items: center; padding: 0 18px;
+  background: var(--surface); border-bottom: 1px solid var(--chart-grid);
 }}
 .bar .dots {{ gap: 8px; }}
 .bar .dots i {{ width: 12px; height: 12px; }}
@@ -368,35 +405,36 @@ body {{ width: {STAGE_W}px; height: {STAGE_H}px; background: linear-gradient(165
   display: flex; align-items: center; justify-content: space-between; gap: {CAPTION_ROOM_PX}px;
   font-family: {CAPTION_FONT};
 }}
-.caption .text {{ font-size: 30px; font-weight: 500; color: #1b2030; white-space: nowrap; }}
-.caption .mode {{ font-size: 20px; color: #8a93a2; white-space: nowrap; }}
+.caption .text {{ font-size: 30px; font-weight: 500; color: var(--foreground); white-space: nowrap; }}
+.caption .mode {{ font-size: 20px; color: var(--control); white-space: nowrap; }}
 .title {{
   position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
   gap: 24px; font-family: {CAPTION_FONT};
 }}
 .mark {{ display: flex; align-items: center; gap: 20px; }}
 .icon {{
-  display: grid; place-items: center; width: 64px; height: 64px; border-radius: 18px; background: {ACCENT};
-  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.14), 0 10px 24px -8px rgb(59 91 219 / 0.5);
+  display: grid; place-items: center; width: 64px; height: 64px; border-radius: 18px; background: var(--accent);
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.14), 0 10px 24px -8px {tint("--accent", 0.5)};
 }}
 .icon svg {{ width: 40px; height: 40px; }}
-.name {{ font-size: 68px; font-weight: 700; letter-spacing: -0.02em; color: #15181d; }}
-.line {{ margin: 0; font-size: 32px; color: #4a5160; }}
+.name {{ font-size: 68px; font-weight: 700; letter-spacing: -0.02em; color: var(--foreground); }}
+.line {{ margin: 0; font-size: 32px; color: var(--muted); }}
 """
 GIF_CSS = f"""
 .gif-bar {{
-  position: relative; width: {GIF_W}px; height: {GIF_BAR_H}px; background: #fdfdfe; border-bottom: 1px solid #e6e8ec;
+  position: relative; width: {GIF_W}px; height: {GIF_BAR_H}px; background: var(--surface);
+  border-bottom: 1px solid var(--chart-grid);
 }}
 .gif-bar .dots {{ position: absolute; left: 14px; top: 12px; gap: 7px; }}
 .gif-bar .dots i {{ width: 10px; height: 10px; }}
 .gif-bar .address {{ top: 6px; width: 300px; height: 22px; border-radius: 6px; font-size: 13px; }}
 .gif-footer {{
   width: {GIF_W}px; height: {GIF_FOOTER_H}px; display: flex; align-items: center; justify-content: space-between;
-  gap: {CAPTION_ROOM_PX}px; padding: 0 20px; background: #ffffff; border-top: 1px solid #e3e6eb;
+  gap: {CAPTION_ROOM_PX}px; padding: 0 20px; background: var(--surface); border-top: 1px solid var(--border);
   font-family: {CAPTION_FONT};
 }}
-.gif-footer .text {{ font-size: 22px; font-weight: 500; color: #15181d; white-space: nowrap; }}
-.gif-footer .mode {{ font-size: 15px; color: #7c8594; white-space: nowrap; }}
+.gif-footer .text {{ font-size: 22px; font-weight: 500; color: var(--foreground); white-space: nowrap; }}
+.gif-footer .mode {{ font-size: 15px; color: var(--control); white-space: nowrap; }}
 .still {{ display: block; width: {GIF_W}px; }}
 """
 # The pointer: the usual arrow, black with a white edge and a soft shadow, its tip at CURSOR_TIP.

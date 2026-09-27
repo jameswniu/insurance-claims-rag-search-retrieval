@@ -3,36 +3,65 @@ writes and what each may weigh. Recording itself needs the stack and a browser, 
 own assertions, not here."""
 
 import json
+import re
 from pathlib import Path
 
 import pytest
 
+from tools import demo_stage as stage
 from tools import record_demos as rd
 
 VIDEO_CLIPS = [clip for clip in rd.OUTPUTS if clip != "dashboard-still"]
+HAIL = "How much did we pay on hail claims in Colorado in Q2 2025?"
+ROOT = Path(__file__).resolve().parents[2]
 
 
+@pytest.fixture
+def storyboard(monkeypatch: pytest.MonkeyPatch) -> None:
+    """The pacing block's own times, long enough to read every word as it plays, as PACE 1.0 spends them."""
+    monkeypatch.setattr(rd, "PACE", 1.0)
+
+
+@pytest.mark.usefixtures("storyboard")
 def test_a_pause_is_never_shorter_than_its_storyboard_minimum() -> None:
     assert rd.reading_hold(8.0, 12, "Read the returned figure") == 8.0
     assert rd.reading_hold(8.0, 0, "") == 8.0
 
 
+@pytest.mark.usefixtures("storyboard")
 def test_a_pause_grows_with_the_words_on_screen_and_in_the_caption() -> None:
     # 40 words on screen and 4 in the caption: 2.0 + 0.30 * 44.
     assert rd.reading_hold(2.0, 40, "Read the returned figure") == pytest.approx(15.2)
     assert rd.reading_hold(2.0, 41, "Read the returned figure") > rd.reading_hold(2.0, 40, "Read the returned figure")
 
 
+@pytest.mark.usefixtures("storyboard")
 def test_a_table_is_read_cell_by_cell_when_that_takes_longer() -> None:
     # 10 numbers, 5 header words and a 2-word caption: 2.0 + 0.6 * 10 + 0.30 * 7, longer than 2.0 + 0.30 * 9.
     assert rd.reading_hold(0.0, 7, "Check shares", cells=10, labels=5) == pytest.approx(10.1)
     assert rd.reading_hold(0.0, 40, "Check shares", cells=1, labels=5) == pytest.approx(2.0 + 0.3 * 42)
 
 
-def test_one_constant_retimes_every_pause(monkeypatch: pytest.MonkeyPatch) -> None:
-    before = rd.reading_hold(0.0, 20, "Read the answer")
-    monkeypatch.setattr(rd, "SECONDS_PER_WORD", 0.60)
-    assert rd.reading_hold(0.0, 20, "Read the answer") == pytest.approx(2.0 + (before - 2.0) * 2)
+def test_pace_is_the_one_knob_that_retimes_every_pause_evenly(monkeypatch: pytest.MonkeyPatch) -> None:
+    pauses = [(8.0, 12, "Read the returned figure", 0, 0), (2.0, 40, "Read the returned figure", 0, 0)]
+    pauses += [(0.0, 7, "Check shares", 10, 5), (18.0, 50, "Trace the figure to its source", 0, 0)]
+
+    def holds() -> list[float]:
+        return [rd.reading_hold(least, words, caption, cells=n, labels=m) for least, words, caption, n, m in pauses]
+
+    monkeypatch.setattr(rd, "PACE", 1.0)
+    slow = holds()
+    monkeypatch.setattr(rd, "PACE", 0.5)
+    assert holds() == pytest.approx([hold / 2 for hold in slow], abs=0.005)
+    assert rd.paced(rd.CLICK_BEAT_S) == rd.CLICK_BEAT_S / 2
+
+
+def test_a_question_types_at_pace() -> None:
+    # The recorder types at its mean key pause times PACE, so a question takes about that long a key.
+    mean = rd.paced(rd.TYPE_DELAY_MS)
+    assert sum(stage.typing_delays(HAIL, mean)) == pytest.approx(mean * len(HAIL), rel=0.05)
+    slow = sum(stage.typing_delays(HAIL, rd.TYPE_DELAY_MS))
+    assert sum(stage.typing_delays(HAIL, mean)) == pytest.approx(rd.PACE * slow)
 
 
 def test_sql_is_read_in_names_placeholders_and_operators() -> None:
@@ -133,7 +162,8 @@ def test_the_manifest_keeps_other_clips_and_lists_clips_in_recording_order(tmp_p
     manifest = json.loads((tmp_path / rd.MANIFEST).read_text())
     assert list(manifest["clips"]) == ["ask", "why"]
     assert manifest["clips"]["why"] == {"length_s": 96.0}
-    assert manifest["pacing"]["seconds_per_word"] == rd.SECONDS_PER_WORD
+    assert manifest["pacing"]["pace"] == rd.PACE
+    assert manifest["pacing"]["seconds_per_word"] == pytest.approx(rd.SECONDS_PER_WORD * rd.PACE)
 
 
 def test_the_page_script_gets_every_setting_it_names() -> None:
@@ -158,6 +188,13 @@ def test_each_output_comes_out_its_own_width() -> None:
     assert rd.width_of("ask.mp4") == rd.width_of("policy.mp4") == 1920
     assert rd.width_of("ask.gif") == rd.width_of("ask.poster.png") == rd.width_of("permissions.poster.png") == 900
     assert rd.width_of("dashboard.png") == 1800
+
+
+def test_every_token_the_injected_css_reads_is_in_the_app_stylesheet() -> None:
+    token = r"-{2}[\w-]+"  # a CSS custom property's name, such as --background
+    declared = set(re.findall(rf"({token})\s*:", (ROOT / "frontend" / "src" / "styles.css").read_text()))
+    read = set(re.findall(rf"var\(({token})", rd.DEMO_CSS))
+    assert read and read <= declared, read - declared
 
 
 def test_the_injected_css_leaves_answers_and_chart_labels_alone() -> None:

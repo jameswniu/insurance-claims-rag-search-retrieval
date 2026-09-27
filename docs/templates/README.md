@@ -19,21 +19,23 @@ make up
 
 The first run seeds 6,951 claims and reads 60 scanned forms, which took 2 minutes on a GitHub arm runner. Then open http://127.0.0.1:8000, pick a user and ask. No API key is needed. `make test` runs the tests.
 
+Dana, a West adjuster, asks what was paid on Colorado hail claims in Q2 2025. The answer comes back with the exact SQL that ran under her own database login.
+
 <img src="docs/demo/ask.gif" alt="Dana, the West adjuster, asks how much was paid on hail claims in Colorado in the second quarter of 2025 and reads the $4,108,453 answer, then opens the evidence to the SQL behind it, its bound values and the row it returned." width="100%">
 
 | Demo | Length |
 |---|---|
-| [A figure and its SQL](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@1b00fc3759f14502f5775c8b20bea64c7b9ae290/docs/demo/ask.mp4) | 54 s |
-| [A policy answer and its source](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@1b00fc3759f14502f5775c8b20bea64c7b9ae290/docs/demo/policy.mp4) | 77 s |
-| [A total read from a scan](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@1b00fc3759f14502f5775c8b20bea64c7b9ae290/docs/demo/scan.mp4) | 60 s |
-| [Why losses rose](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@1b00fc3759f14502f5775c8b20bea64c7b9ae290/docs/demo/why.mp4) | 100 s |
-| [One claim, three users](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@1b00fc3759f14502f5775c8b20bea64c7b9ae290/docs/demo/permissions.mp4) | 84 s |
-| [Withheld small groups](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@1b00fc3759f14502f5775c8b20bea64c7b9ae290/docs/demo/suppression.mp4) | 85 s |
-| [A question with no period](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@1b00fc3759f14502f5775c8b20bea64c7b9ae290/docs/demo/clarify.mp4) | 66 s |
-| [An instruction override](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@1b00fc3759f14502f5775c8b20bea64c7b9ae290/docs/demo/injection.mp4) | 29 s |
-| [An off-topic question](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@1b00fc3759f14502f5775c8b20bea64c7b9ae290/docs/demo/off-topic.mp4) | 23 s |
-| [A year outside the data](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@1b00fc3759f14502f5775c8b20bea64c7b9ae290/docs/demo/out-of-range.mp4) | 25 s |
-| [The dashboard by source](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@1b00fc3759f14502f5775c8b20bea64c7b9ae290/docs/demo/dashboard.mp4) | 105 s |
+| [A figure and its SQL](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@1b00fc3759f14502f5775c8b20bea64c7b9ae290/docs/demo/ask.mp4) | 23 s |
+| [A policy answer and its source](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@1b00fc3759f14502f5775c8b20bea64c7b9ae290/docs/demo/policy.mp4) | 33 s |
+| [A total read from a scan](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@1b00fc3759f14502f5775c8b20bea64c7b9ae290/docs/demo/scan.mp4) | 26 s |
+| [Why losses rose](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@1b00fc3759f14502f5775c8b20bea64c7b9ae290/docs/demo/why.mp4) | 43 s |
+| [One claim, three users](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@1b00fc3759f14502f5775c8b20bea64c7b9ae290/docs/demo/permissions.mp4) | 37 s |
+| [Withheld small groups](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@1b00fc3759f14502f5775c8b20bea64c7b9ae290/docs/demo/suppression.mp4) | 36 s |
+| [A question with no period](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@1b00fc3759f14502f5775c8b20bea64c7b9ae290/docs/demo/clarify.mp4) | 30 s |
+| [An instruction override](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@1b00fc3759f14502f5775c8b20bea64c7b9ae290/docs/demo/injection.mp4) | 13 s |
+| [An off-topic question](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@1b00fc3759f14502f5775c8b20bea64c7b9ae290/docs/demo/off-topic.mp4) | 11 s |
+| [A year outside the data](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@1b00fc3759f14502f5775c8b20bea64c7b9ae290/docs/demo/out-of-range.mp4) | 11 s |
+| [The dashboard by source](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@1b00fc3759f14502f5775c8b20bea64c7b9ae290/docs/demo/dashboard.mp4) | 43 s |
 
 ## How it works
 

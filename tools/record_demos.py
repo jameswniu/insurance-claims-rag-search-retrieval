@@ -10,14 +10,15 @@ image built on the official Playwright image, pinned by digest, so nothing is in
 pulls that image, the matching Playwright package and Ubuntu's Inter font package, which the captions are set in.
 Every clip reads the page after each answer and fails the run when the page shows something else.
 
-The clips are paced for a first-time viewer. Each reading pause lasts at least SECONDS_PER_WORD for every word on
-screen, caption included, and starts only after scrolling stops. The page is captured at twice its pixel density,
-frame by frame with when each was taken, and every move the recorder makes is logged. The finished files are then
-composited from both (tools/demo_render.py): the app in a window on a quiet stage with its caption under it, a
-spotlight on what is being read, and a pointer that glides to each control it presses. In the recorder's browser the
-only changes are measured scrolling, a soft fade above the composer and evidence, code and table text the app sets
-under 17 px raised to 17 px: the CSS is appended to the /static/style.css response and the script is injected before
-the page loads, so nothing under app/ or frontend/ changes and every answer shows as the app renders it.
+The clips are paced for a first-time viewer. Each reading pause is worked out from the words on screen, caption
+included, and starts only after scrolling stops, and PACE sets how brisk the whole set runs. The page is captured at
+twice its pixel density, frame by frame with when each was taken, and every move the recorder makes is logged. The
+finished files are then composited from both (tools/demo_render.py): the app in a window on a quiet stage with its
+caption under it, a spotlight on what is being read, and a pointer that glides to each control it presses. In the
+recorder's browser the only changes are measured scrolling, a soft fade above the composer and evidence, code and
+table text the app sets under 17 px raised to 17 px: the CSS is appended to the /static/style.css response and the
+script is injected before the page loads, so nothing under app/ or frontend/ changes and every answer shows as the
+app renders it.
 
 A file already in the output directory is never overwritten: the run stops before recording anything, so delete a
 file to record it again. manifest.json, which describes each clip, is the one file a run updates, one clip at a time.
@@ -78,8 +79,12 @@ OUTPUTS: dict[str, tuple[str, ...]] = {
     "dashboard-still": ("dashboard.png",),
 }
 
-# Pacing. A viewer reads 200 to 250 words a minute, so every reading pause is worked out from what is on screen.
-# Change SECONDS_PER_WORD to retime the whole set.
+# Pacing. A viewer reads 200 to 250 words a minute, so every reading pause is worked out from what is on screen, and
+# the times below are long enough to read every word as it plays. PACE is the one knob that retimes the whole set:
+# every hold, beat and keystroke takes its time below times PACE. At 0.37, with the moves at their own speed, a clip
+# runs in a little under half the time it takes at 1.0: each answer and piece of evidence stays up long enough to take
+# in at a glance, and a viewer after every word pauses the mp4 or lets the GIF loop again.
+PACE = 0.37
 SECONDS_PER_WORD = 0.30
 READ_BASE_S = 2.0  # to find the new text on screen before reading it
 SECONDS_PER_CELL = 0.6  # for each number in a table the caption points at, on top of its labels
@@ -91,10 +96,12 @@ IDENTITY_HOLD_S = 3.0
 ANSWER_HOLD_S = 8.0
 EVIDENCE_HOLD_S = 12.0
 CLICK_BEAT_S = 1.0
-PRESS_S = 0.15  # between pointer down and up, so the ripple shows before the page changes
-SCROLL_MS = 700
-SCROLL_SETTLE_MS = 100
 END_HOLD_S = 2.0
+# The moves, which PACE leaves alone, since they read smoothly at any pace: the press, the scroll, and in
+# tools/demo_stage.py the pointer's glides, the fades and the title card.
+PRESS_S = 0.15  # between pointer down and up, so the ripple shows before the page changes
+SCROLL_MS = 500
+SCROLL_SETTLE_MS = 100
 MAX_CLIP_S = 120
 GIF_MAX_CLIP_S = 52  # the pointer's glides added about a second; the holds are never cut to fit
 GIF_MAX_BYTES = 5_000_000
@@ -313,14 +320,20 @@ def check_caption(caption: str) -> None:
         raise ValueError(f"{caption!r} has {count} words, and a caption has 1 to {CAPTION_MAX_WORDS}")
 
 
+def paced(seconds: float) -> float:
+    """A time from the pacing block, a hold, a beat or a keystroke, as a clip spends it at PACE."""
+    return seconds * PACE
+
+
 def reading_hold(minimum_s: float, words: int, caption: str, *, cells: int = 0, labels: int = 0) -> float:
-    """How long a reading pause lasts: the storyboard's minimum, or the time to read what is on screen, whichever is
-    longer. words counts the target's words, or its SQL units. A table can take longer read cell by cell: each
-    number the caption points at gets SECONDS_PER_CELL, and its headers (labels) and the caption are read as words."""
+    """How long a reading pause lasts at PACE: the storyboard's minimum, or the time to read what is on screen,
+    whichever is longer. words counts the target's words, or its SQL units. A table can take longer read cell by cell:
+    each number the caption points at gets SECONDS_PER_CELL, and its headers (labels) and the caption are read as
+    words."""
     extra = caption_words(caption)
     by_words = READ_BASE_S + SECONDS_PER_WORD * (words + extra)
     by_cells = READ_BASE_S + SECONDS_PER_CELL * cells + SECONDS_PER_WORD * (labels + extra)
-    return round(max(minimum_s, by_words, by_cells), 2)
+    return round(paced(max(minimum_s, by_words, by_cells)), 2)
 
 
 def sql_units(sql: str) -> int:
@@ -657,6 +670,14 @@ class Demo:
             self.check(marker.strip() == "1", "the recorder's CSS reached the page", f"its marker reads {marker!r}")
         size = self.page.evaluate("getComputedStyle(document.documentElement).fontSize")
         self.check(size == "18px", "the root font is 18px", f"it is {size}")
+        # The clips show the app's default light theme, the one the stage's spotlight and chrome are drawn in, never
+        # dev mode's dark one.
+        root = "document.documentElement"
+        theme = self.page.evaluate(
+            f"[{root}.dataset.mode ?? null, getComputedStyle({root}).getPropertyValue('--background').trim()]"
+        )
+        light = [None, stage.APP_LIGHT["--background"]]
+        self.check(theme == light, "the page shows the light theme the stage is drawn for", f"it shows {theme}")
         if video:
             self.capture()
         self.t0, self.t0_wall = time.monotonic(), time.time()
@@ -833,7 +854,7 @@ class Demo:
         at = self.now()
         self.press(target)
         self.log(at, "click")
-        self.hold(CLICK_BEAT_S, "click-beat")
+        self.hold(paced(CLICK_BEAT_S), "click-beat")
 
     def read(
         self,
@@ -869,7 +890,8 @@ class Demo:
             self.poster_s = round(at + min(1.0, hold / 3), 2)
         self.sleep(hold)
         self.check(self.in_band(shown), f"{label} stayed whole inside the reading band")
-        self.log(at, "read", seconds=hold, minimum_s=minimum_s, words=count, cells=cells, target=label)
+        least = round(paced(minimum_s), 2)
+        self.log(at, "read", seconds=hold, minimum_s=least, words=count, cells=cells, target=label)
         return hold
 
     def read_answer(
@@ -931,7 +953,7 @@ class Demo:
         self.press(box)
         at, began = self.now(), time.monotonic()
         due = 0.0
-        for char, pause in zip(question, stage.typing_delays(question, TYPE_DELAY_MS), strict=True):
+        for char, pause in zip(question, stage.typing_delays(question, paced(TYPE_DELAY_MS)), strict=True):
             due += pause / 1000
             self.sleep(began + due - time.monotonic())
             self.page.keyboard.type(char)
@@ -943,8 +965,8 @@ class Demo:
         send = self.page.locator("#send").bounding_box()
         if send is not None:
             self.glide((send["x"] + send["width"] / 2, send["y"] + send["height"] / 2))
-        self.sleep(QUESTION_HOLD_S - (time.monotonic() - began))
-        self.log(at, "pause", seconds=QUESTION_HOLD_S)
+        self.sleep(paced(QUESTION_HOLD_S) - (time.monotonic() - began))
+        self.log(at, "pause", seconds=round(time.monotonic() - began, 2))  # the glide to Send can take longer
 
     def submit(self, question: str) -> Any:
         """Presses Send and waits for the whole answer. The footer goes on when the done event arrives, after the
@@ -997,11 +1019,11 @@ class Demo:
             self.press(link)
         self.page.evaluate("document.fonts.ready.then(() => true)")
         self.log(at, "navigate", seconds=round(time.monotonic() - began, 2), to=self.page.url)
-        self.hold(CLICK_BEAT_S, "click-beat")
+        self.hold(paced(CLICK_BEAT_S), "click-beat")
 
     def finish(self) -> None:
         """Holds the last frame with its caption and spotlight, so a looping GIF doesn't jump straight back."""
-        self.hold(END_HOLD_S, "end")
+        self.hold(paced(END_HOLD_S), "end")
         self.length_s = self.now()
         self.drain()
         if self.capturing:
@@ -1880,8 +1902,10 @@ def write_manifest(out: Path, entries: dict[str, Any]) -> Path:
     path = out / MANIFEST
     manifest: dict[str, Any] = json.loads(path.read_text()) if path.exists() else {}
     manifest["recorder"] = "tools/record_demos.py"
-    manifest["pacing"] = {"seconds_per_word": SECONDS_PER_WORD, "read_base_s": READ_BASE_S}
-    manifest["pacing"] |= {"seconds_per_cell": SECONDS_PER_CELL, "font_floor_px": FONT_FLOOR_PX}
+    # The rates the clips were recorded at: the pacing block's, times PACE.
+    rates = {"seconds_per_word": SECONDS_PER_WORD, "read_base_s": READ_BASE_S, "seconds_per_cell": SECONDS_PER_CELL}
+    manifest["pacing"] = {"pace": PACE, **{key: round(paced(value), 3) for key, value in rates.items()}}
+    manifest["pacing"] |= {"type_delay_ms": round(paced(TYPE_DELAY_MS), 1), "font_floor_px": FONT_FLOOR_PX}
     manifest["clips"] = {**manifest.get("clips", {}), **entries}
     manifest["clips"] = {clip: manifest["clips"][clip] for clip in OUTPUTS if clip in manifest["clips"]}
     staged = path.with_suffix(".json.tmp")

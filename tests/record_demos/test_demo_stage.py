@@ -3,6 +3,7 @@ spotlight are at any moment, and the stage's geometry. The compositing itself is
 files."""
 
 import math
+import re
 from pathlib import Path
 
 import numpy as np
@@ -27,6 +28,12 @@ def test_typing_is_jittered_within_its_bounds_and_the_first_key_waits_for_nothin
 def test_typing_takes_about_as_long_as_it_did_at_an_even_pace() -> None:
     for text in (HAIL, "Is flood damage covered?", "What's the status of claim 105964?"):
         assert sum(stage.typing_delays(text, 75)) == pytest.approx(75 * len(text), rel=0.05), text
+
+
+def test_a_faster_mean_types_the_same_rhythm_only_quicker() -> None:
+    slow, quick = stage.typing_delays(HAIL, 75), stage.typing_delays(HAIL, 37.5)
+    assert quick == pytest.approx([delay / 2 for delay in slow])
+    assert sum(quick) == pytest.approx(37.5 * len(HAIL), rel=0.05)
 
 
 def test_a_word_starts_after_a_longer_beat() -> None:
@@ -160,6 +167,26 @@ def test_the_title_card_uses_the_app_brand_mark() -> None:
     for path in stage.BRAND_PATHS:
         assert path in mark
     assert "Claims Q&amp;A" in stage.title_html("A paid-loss figure, traced to its SQL")
+
+
+TOKEN = r"-{2}[\w-]+"  # a CSS custom property's name, such as --accent
+
+
+def test_the_stage_is_drawn_in_the_app_light_tokens() -> None:
+    # The first :root block of the stylesheet is the light theme, which the page opens in and the clips show.
+    styles = (ROOT / "frontend" / "src" / "styles.css").read_text()
+    light = dict(re.findall(rf"({TOKEN}):\s*([^;]+);", styles.split(":root {", 1)[1].split("}", 1)[0]))
+    for token, color in stage.APP_LIGHT.items():
+        assert light.get(token) == color, token
+    # The spotlight dims towards the text colour, the floor fades into the background, and a click rings in the accent.
+    drawn = (stage.SPOT_TINT, stage.CANVAS, stage.RIPPLE_COLOR)
+    assert drawn == tuple(stage.rgb(light[token]) for token in ("--foreground", "--background", "--accent"))
+
+
+def test_the_chrome_names_only_the_tokens_it_sets() -> None:
+    named = set(re.findall(rf"var\(({TOKEN})\)", stage.BASE_CSS + stage.STAGE_CSS + stage.GIF_CSS))
+    assert named and named <= set(stage.APP_LIGHT)
+    assert all(f"{token}: {color};" in stage.BASE_CSS for token, color in stage.APP_LIGHT.items())
 
 
 def test_the_mode_label_is_on_the_stage_and_in_the_gif_footer() -> None:
