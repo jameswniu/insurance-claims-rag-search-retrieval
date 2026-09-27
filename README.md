@@ -40,12 +40,23 @@ Click any GIF on this page, or a clip below, to play the full video with caption
 
 ## How it works
 
-<img src="docs/figures/system-map.svg" alt="A question passes the gate and the router, then the lookup, figures, documents or why path. Every path queries Postgres as the asker's own login, and the why path also uses a sandbox. The verifier checks the draft before the answer. Ingest loads documents and scans into Postgres." width="100%">
+### Top level, how a question flows
+
+<img src="docs/figures/system-map.svg" alt="A question goes from the browser to the FastAPI app, where the gate refuses injection and off-topic questions and the router asks back, says the period is outside the data, or picks the lookup, figures, documents or why path, each reading Postgres as the asker, before the verifier checks the answer and it streams back." width="100%">
 
 - The gate turns away injection attempts and off-topic questions.
 - Keyword rules pick one of four paths, or ask a clarifying question.
+- Analysts get totals only, from `agg.metric()`, which runs as its owner and withholds any group with fewer than 10 claims or one claim over half the total.
 - The verifier cuts any sentence whose figure or citation doesn't trace to the evidence.
 - No step needs a language model. `LLM_BACKEND` turns on live mode, which adds Claude, and optionally Gemini as the checker.
+
+### Mid level, inside each path
+
+<img src="docs/figures/system-paths.svg" alt="Four columns show the steps inside each path, feeding a verifier that traces every figure and citation and checks wording, over a band showing the models and orchestrator tools that live mode adds." width="100%">
+
+### Low level, what runs where
+
+<img src="docs/figures/system-runtime.svg" alt="The five compose services, how each Postgres login reaches data through its group, forced row security or the analyst's aggregate function, and the sandbox job limits beside the telemetry." width="100%">
 
 ## What could go wrong, and what stops it
 

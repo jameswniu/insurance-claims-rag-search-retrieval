@@ -1,36 +1,93 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 528" width="1200" height="528" role="img" aria-label="A question passes the gate and the router, then the lookup, figures, documents or why path. Every path queries Postgres as the asker's own login, and the why path also uses a sandbox. The verifier checks the draft before the answer. Ingest loads documents and scans into Postgres.">
-<defs><marker id="head" viewBox="0 0 10 10" refX="10" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto"><path d="M0,1 L10,5 L0,9 z" fill="#0969da"/></marker><marker id="head-gray" viewBox="0 0 10 10" refX="10" refY="5" markerUnits="userSpaceOnUse" markerWidth="10" markerHeight="10" orient="auto"><path d="M0,1 L10,5 L0,9 z" fill="#8c959f"/></marker></defs>
-<rect width="1200" height="528" fill="#ffffff"/>
-<rect x="492" y="24" width="216" height="324" rx="14" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="1.5"/>
-<text x="510" y="55" text-anchor="start" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" font-weight="600" fill="#59636e">Paths</text>
-<path d="M192,198 L258,198" fill="none" stroke="#0969da" stroke-width="2" marker-end="url(#head)"/>
-<path d="M426,198 L492,198" fill="none" stroke="#0969da" stroke-width="2" marker-end="url(#head)"/>
-<path d="M708,198 L774,198" fill="none" stroke="#0969da" stroke-width="2" marker-end="url(#head)"/>
-<path d="M942,198 L1008,198" fill="none" stroke="#0969da" stroke-width="2" marker-end="url(#head)"/>
-<path d="M684,300 L774,300" fill="none" stroke="#8c959f" stroke-width="2" marker-end="url(#head-gray)"/>
-<path d="M600,348 L600,448" fill="none" stroke="#8c959f" stroke-width="2" marker-end="url(#head-gray)"/>
-<path d="M426,476 L516,476" fill="none" stroke="#8c959f" stroke-width="2" marker-end="url(#head-gray)"/>
-<rect x="24" y="170" width="168" height="56" rx="10" fill="#ddf4ff" stroke="#0969da" stroke-width="2"/>
-<text x="108" y="206" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="24" font-weight="600" fill="#1f2328">Gate</text>
-<rect x="258" y="170" width="168" height="56" rx="10" fill="#ddf4ff" stroke="#0969da" stroke-width="2"/>
-<text x="342" y="206" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="24" font-weight="600" fill="#1f2328">Router</text>
-<rect x="516" y="68" width="168" height="56" rx="10" fill="#ddf4ff" stroke="#0969da" stroke-width="2"/>
-<text x="600" y="104" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="24" font-weight="600" fill="#1f2328">Lookup</text>
-<rect x="516" y="136" width="168" height="56" rx="10" fill="#ddf4ff" stroke="#0969da" stroke-width="2"/>
-<text x="600" y="172" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="24" font-weight="600" fill="#1f2328">Figures</text>
-<rect x="516" y="204" width="168" height="56" rx="10" fill="#ddf4ff" stroke="#0969da" stroke-width="2"/>
-<text x="600" y="240" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="24" font-weight="600" fill="#1f2328">Documents</text>
-<rect x="516" y="272" width="168" height="56" rx="10" fill="#ddf4ff" stroke="#0969da" stroke-width="2"/>
-<text x="600" y="308" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="24" font-weight="600" fill="#1f2328">Why</text>
-<rect x="774" y="170" width="168" height="56" rx="10" fill="#ddf4ff" stroke="#0969da" stroke-width="2"/>
-<text x="858" y="206" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="24" font-weight="600" fill="#1f2328">Verifier</text>
-<rect x="1008" y="170" width="168" height="56" rx="10" fill="#ddf4ff" stroke="#0969da" stroke-width="2"/>
-<text x="1092" y="206" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="24" font-weight="600" fill="#1f2328">Answer</text>
-<rect x="774" y="272" width="168" height="56" rx="10" fill="#ffffff" stroke="#afb8c1" stroke-width="2"/>
-<text x="858" y="308" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="24" font-weight="600" fill="#1f2328">Sandbox</text>
-<rect x="516" y="448" width="168" height="56" rx="10" fill="#ffffff" stroke="#afb8c1" stroke-width="2"/>
-<text x="600" y="484" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="24" font-weight="600" fill="#1f2328">Postgres</text>
-<rect x="258" y="448" width="168" height="56" rx="10" fill="#ffffff" stroke="#afb8c1" stroke-width="2"/>
-<text x="342" y="484" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="24" font-weight="600" fill="#1f2328">Ingest</text>
-<text x="620" y="406" text-anchor="start" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">Every query runs as the asker&#x27;s own login</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 914" width="1200" height="914" role="img" aria-labelledby="title desc">
+<title id="title">System map, top level: one question end to end</title>
+<desc id="desc">The browser posts a question to the FastAPI app, where the gate refuses injection and off-topic questions and the keyword router asks back, says the period is outside the data, or picks the lookup, figures, documents or why path. Every path reads Postgres as the asker&#x27;s own login, and the why path also runs a sandbox job. The verifier checks numbers and citations before the answer and its evidence stream back as server-sent events. Ingest loads documents, notes and scans into Postgres, and each request is logged for the operator dashboard.</desc>
+<defs><marker id="head" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#59636e"/></marker></defs>
+<rect width="1200" height="914" fill="#ffffff"/>
+<rect x="16" y="150" width="1168" height="444" rx="14" fill="#fbfcfd" stroke="#d1d9e0" stroke-width="2" stroke-dasharray="3 5" stroke-linecap="round"/>
+<text x="599" y="181" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" font-weight="600" fill="#59636e">FastAPI app</text>
+<path d="M111,92 L111,345" fill="none" stroke="#59636e" stroke-width="2" marker-end="url(#head)"/>
+<text x="125" y="129" text-anchor="start" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="23" fill="#59636e">POST /ask</text>
+<path d="M1075,345 L1075,92" fill="none" stroke="#59636e" stroke-width="2" marker-end="url(#head)"/>
+<text x="1061" y="129" text-anchor="end" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">server-sent events</text>
+<path d="M192,385 L225,385" fill="none" stroke="#59636e" stroke-width="2" marker-end="url(#head)"/>
+<path d="M111,425 L111,466" fill="none" stroke="#59636e" stroke-width="2" marker-end="url(#head)"/>
+<path d="M328,425 L328,466" fill="none" stroke="#59636e" stroke-width="2" marker-end="url(#head)"/>
+<path d="M328,345 L328,304" fill="none" stroke="#59636e" stroke-width="2" marker-end="url(#head)"/>
+<path d="M431,385 L448,385" fill="none" stroke="#59636e" stroke-width="2"/>
+<path d="M448,238 L448,532" fill="none" stroke="#59636e" stroke-width="2"/>
+<path d="M448,238 L464,238" fill="none" stroke="#59636e" stroke-width="2" marker-end="url(#head)"/>
+<path d="M448,336 L464,336" fill="none" stroke="#59636e" stroke-width="2" marker-end="url(#head)"/>
+<path d="M448,434 L464,434" fill="none" stroke="#59636e" stroke-width="2" marker-end="url(#head)"/>
+<path d="M448,532 L464,532" fill="none" stroke="#59636e" stroke-width="2" marker-end="url(#head)"/>
+<path d="M734,238 L750,238" fill="none" stroke="#59636e" stroke-width="2"/>
+<path d="M734,336 L750,336" fill="none" stroke="#59636e" stroke-width="2"/>
+<path d="M734,434 L750,434" fill="none" stroke="#59636e" stroke-width="2"/>
+<path d="M734,532 L750,532" fill="none" stroke="#59636e" stroke-width="2"/>
+<path d="M750,238 L750,532" fill="none" stroke="#59636e" stroke-width="2"/>
+<path d="M750,385 L767,385" fill="none" stroke="#59636e" stroke-width="2" marker-end="url(#head)"/>
+<path d="M947,385 L980,385" fill="none" stroke="#59636e" stroke-width="2" marker-end="url(#head)"/>
+<path d="M1075,425 L1075,650" fill="none" stroke="#59636e" stroke-width="2" marker-end="url(#head)"/>
+<path d="M1075,760 L1075,810" fill="none" stroke="#59636e" stroke-width="2" marker-end="url(#head)"/>
+<path d="M286,705 L400,705" fill="none" stroke="#59636e" stroke-width="2" marker-end="url(#head)"/>
+<path d="M545,574 L545,650" fill="none" stroke="#59636e" stroke-width="2" stroke-dasharray="7 6" marker-end="url(#head)"/>
+<text x="531" y="630" text-anchor="end" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">as the asker&#x27;s own login</text>
+<path d="M704,574 L704,622 L818,622 L818,650" fill="none" stroke="#59636e" stroke-width="2" stroke-dasharray="7 6" marker-end="url(#head)"/>
+<rect x="16" y="16" width="1168" height="76" rx="10" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="2"/>
+<text x="600" y="46" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#1f2328">Browser</text>
+<text x="600" y="78" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">React chat page, reads the answer as it streams</text>
+<rect x="30" y="345" width="162" height="80" rx="10" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="2"/>
+<text x="111" y="393" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#1f2328">Gate</text>
+<rect x="225" y="345" width="206" height="80" rx="10" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="2"/>
+<text x="328" y="377" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#1f2328">Router</text>
+<text x="328" y="409" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">keyword rules</text>
+<rect x="225" y="196" width="206" height="108" rx="10" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="2"/>
+<text x="328" y="226" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#1f2328">Out of data</text>
+<text x="328" y="258" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">Jan 2024 to</text>
+<text x="328" y="290" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">Jun 2026</text>
+<rect x="225" y="466" width="206" height="108" rx="10" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="2"/>
+<text x="328" y="496" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#1f2328">Clarify</text>
+<text x="328" y="528" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">one question,</text>
+<text x="328" y="560" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">with options</text>
+<rect x="30" y="466" width="162" height="108" rx="10" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="2"/>
+<text x="111" y="496" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#1f2328">Refused</text>
+<text x="111" y="528" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">injection,</text>
+<text x="111" y="560" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">off-topic</text>
+<rect x="464" y="196" width="270" height="84" rx="10" fill="#ddf4ff" stroke="#54aeff" stroke-width="2"/>
+<text x="599" y="230" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#1f2328">Lookup</text>
+<text x="599" y="262" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">one claim by id</text>
+<rect x="464" y="294" width="270" height="84" rx="10" fill="#ddf4ff" stroke="#54aeff" stroke-width="2"/>
+<text x="599" y="328" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#1f2328">Figures</text>
+<text x="599" y="360" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">typed query to SQL</text>
+<rect x="464" y="392" width="270" height="84" rx="10" fill="#ddf4ff" stroke="#54aeff" stroke-width="2"/>
+<text x="599" y="426" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#1f2328">Documents</text>
+<text x="599" y="458" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">hybrid, reranked</text>
+<rect x="464" y="490" width="270" height="84" rx="10" fill="#ddf4ff" stroke="#54aeff" stroke-width="2"/>
+<text x="599" y="524" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#1f2328">Why</text>
+<text x="599" y="556" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">drivers + memos</text>
+<rect x="767" y="330" width="180" height="110" rx="10" fill="#dafbe1" stroke="#4ac26b" stroke-width="2"/>
+<text x="857" y="361" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#1f2328">Verifier</text>
+<text x="857" y="393" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">numbers and</text>
+<text x="857" y="425" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">citations</text>
+<rect x="980" y="345" width="190" height="80" rx="10" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="2"/>
+<text x="1075" y="377" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#1f2328">Answer</text>
+<text x="1075" y="409" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">and evidence</text>
+<rect x="16" y="650" width="270" height="110" rx="10" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="2"/>
+<text x="151" y="681" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#1f2328">Ingest</text>
+<text x="151" y="713" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">docs, notes, scans</text>
+<text x="151" y="745" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">mask, screen, OCR</text>
+<rect x="400" y="650" width="290" height="110" rx="10" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="2"/>
+<text x="545" y="681" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#1f2328">Postgres</text>
+<text x="545" y="713" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">claims and chunks</text>
+<text x="545" y="745" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">row-level security</text>
+<rect x="730" y="650" width="176" height="110" rx="10" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="2"/>
+<text x="818" y="681" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#1f2328">Sandbox</text>
+<text x="818" y="713" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">no network,</text>
+<text x="818" y="745" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">10 s a job</text>
+<rect x="967" y="650" width="216" height="110" rx="10" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="2"/>
+<text x="1075" y="681" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#1f2328">Telemetry</text>
+<text x="1075" y="713" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">request log</text>
+<text x="1075" y="745" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">and spans</text>
+<rect x="967" y="810" width="216" height="80" rx="10" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="2"/>
+<text x="1075" y="842" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#1f2328">Dashboard</text>
+<text x="1075" y="874" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">operators only</text>
 </svg>
