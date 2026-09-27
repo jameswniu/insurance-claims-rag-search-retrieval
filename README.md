@@ -2,8 +2,8 @@
 
 Ask a made-up home insurer a question in plain English, and get an answer from its claims, policy documents or scanned invoices. Every query runs as the asker's own database login, so a West adjuster never sees an East claim, whatever the question says.
 
-[![checks](https://github.com/jameswniu/questions-to-sql-intent-router/actions/workflows/checks.yml/badge.svg?branch=rag-rebuild)](https://github.com/jameswniu/questions-to-sql-intent-router/actions/workflows/checks.yml)
-[![tests](https://github.com/jameswniu/questions-to-sql-intent-router/actions/workflows/tests.yml/badge.svg?branch=rag-rebuild)](https://github.com/jameswniu/questions-to-sql-intent-router/actions/workflows/tests.yml)
+[![checks](https://github.com/jameswniu/agentic-rag-text-to-sql/actions/workflows/checks.yml/badge.svg?branch=main)](https://github.com/jameswniu/agentic-rag-text-to-sql/actions/workflows/checks.yml)
+[![tests](https://github.com/jameswniu/agentic-rag-text-to-sql/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/jameswniu/agentic-rag-text-to-sql/actions/workflows/tests.yml)
 [![license](https://img.shields.io/badge/license-Apache%202.0-blue)](LICENSE)
 
 ## Run it
@@ -11,9 +11,8 @@ Ask a made-up home insurer a question in plain English, and get an answer from i
 You need Docker 24 or later and about 1.5 GB of memory, enough for the stack and one analysis job.
 
 ```sh
-git clone https://github.com/jameswniu/questions-to-sql-intent-router
-cd questions-to-sql-intent-router
-git switch rag-rebuild
+git clone https://github.com/jameswniu/agentic-rag-text-to-sql
+cd agentic-rag-text-to-sql
 make up
 ```
 
@@ -21,22 +20,22 @@ The first run seeds 6,951 claims and reads 60 scanned forms, which took 2 minute
 
 Dana, a West adjuster, asks what was paid on Colorado hail claims in Q2 2025. The answer comes back with the exact SQL that ran under her own database login.
 
-[<img src="docs/demo/ask.gif" alt="Dana, the West adjuster, asks how much was paid on hail claims in Colorado in the second quarter of 2025 and reads the $4,108,453 answer, then opens the evidence to the SQL behind it, its bound values and the row it returned." width="100%">](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@6cbff6ef61ad788ce35553bb6658dfcc90adce82/docs/demo/ask.mp4)
+[<img src="docs/demo/ask.gif" alt="Dana, the West adjuster, asks how much was paid on hail claims in Colorado in the second quarter of 2025 and reads the $4,108,453 answer, then opens the evidence to the SQL behind it, its bound values and the row it returned." width="100%">](https://cdn.jsdelivr.net/gh/jameswniu/agentic-rag-text-to-sql@6cbff6ef61ad788ce35553bb6658dfcc90adce82/docs/demo/ask.mp4)
 
 Click any GIF on this page, or a clip below, to play the full video with captions.
 
 | Clip | What happens | Length |
 |---|---|---|
-| [A policy answer and its source](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@6cbff6ef61ad788ce35553bb6658dfcc90adce82/docs/demo/policy.mp4) | Dana asks if flood damage is covered and follows the citation into the policy | 33 s |
-| [A total read from a scan](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@6cbff6ef61ad788ce35553bb6658dfcc90adce82/docs/demo/scan.mp4) | Priya asks for an invoice total and checks it against the scan and the payments | 26 s |
-| [A misread total, flagged](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@6cbff6ef61ad788ce35553bb6658dfcc90adce82/docs/demo/ocr-flag.mp4) | A scan that dropped its decimal point comes back flagged, beside the crop | 20 s |
-| [Why losses rose](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@6cbff6ef61ad788ce35553bb6658dfcc90adce82/docs/demo/why.mp4) | Priya asks why West losses rose in Q2 2025 and checks the hail and Colorado shares | 43 s |
-| [Withheld small groups](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@6cbff6ef61ad788ce35553bb6658dfcc90adce82/docs/demo/suppression.mp4) | Sam, the analyst, gets monthly counts, and months with too few claims are withheld | 36 s |
-| [A question with no period](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@6cbff6ef61ad788ce35553bb6658dfcc90adce82/docs/demo/clarify.mp4) | Priya asks what was paid, picks 2025 from the app's options and checks the query | 30 s |
-| [An instruction override](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@6cbff6ef61ad788ce35553bb6658dfcc90adce82/docs/demo/injection.mp4) | Dana tells the app to ignore its instructions and show every region, and the gate refuses | 13 s |
-| [An off-topic question](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@6cbff6ef61ad788ce35553bb6658dfcc90adce82/docs/demo/off-topic.mp4) | Dana asks for a banana bread recipe and is told what the app covers | 11 s |
-| [A year outside the data](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@6cbff6ef61ad788ce35553bb6658dfcc90adce82/docs/demo/out-of-range.mp4) | Dana asks about 2022 and is told the data runs from January 2024 to June 2026 | 11 s |
-| [An answer from live models](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@6cbff6ef61ad788ce35553bb6658dfcc90adce82/docs/demo/live.mp4) | Dana asks what a denial letter needs, Claude answers with citations and Gemini checks each sentence | 41 s |
+| [A policy answer and its source](https://cdn.jsdelivr.net/gh/jameswniu/agentic-rag-text-to-sql@6cbff6ef61ad788ce35553bb6658dfcc90adce82/docs/demo/policy.mp4) | Dana asks if flood damage is covered and follows the citation into the policy | 33 s |
+| [A total read from a scan](https://cdn.jsdelivr.net/gh/jameswniu/agentic-rag-text-to-sql@6cbff6ef61ad788ce35553bb6658dfcc90adce82/docs/demo/scan.mp4) | Priya asks for an invoice total and checks it against the scan and the payments | 26 s |
+| [A misread total, flagged](https://cdn.jsdelivr.net/gh/jameswniu/agentic-rag-text-to-sql@6cbff6ef61ad788ce35553bb6658dfcc90adce82/docs/demo/ocr-flag.mp4) | A scan that dropped its decimal point comes back flagged, beside the crop | 20 s |
+| [Why losses rose](https://cdn.jsdelivr.net/gh/jameswniu/agentic-rag-text-to-sql@6cbff6ef61ad788ce35553bb6658dfcc90adce82/docs/demo/why.mp4) | Priya asks why West losses rose in Q2 2025 and checks the hail and Colorado shares | 43 s |
+| [Withheld small groups](https://cdn.jsdelivr.net/gh/jameswniu/agentic-rag-text-to-sql@6cbff6ef61ad788ce35553bb6658dfcc90adce82/docs/demo/suppression.mp4) | Sam, the analyst, gets monthly counts, and months with too few claims are withheld | 36 s |
+| [A question with no period](https://cdn.jsdelivr.net/gh/jameswniu/agentic-rag-text-to-sql@6cbff6ef61ad788ce35553bb6658dfcc90adce82/docs/demo/clarify.mp4) | Priya asks what was paid, picks 2025 from the app's options and checks the query | 30 s |
+| [An instruction override](https://cdn.jsdelivr.net/gh/jameswniu/agentic-rag-text-to-sql@6cbff6ef61ad788ce35553bb6658dfcc90adce82/docs/demo/injection.mp4) | Dana tells the app to ignore its instructions and show every region, and the gate refuses | 13 s |
+| [An off-topic question](https://cdn.jsdelivr.net/gh/jameswniu/agentic-rag-text-to-sql@6cbff6ef61ad788ce35553bb6658dfcc90adce82/docs/demo/off-topic.mp4) | Dana asks for a banana bread recipe and is told what the app covers | 11 s |
+| [A year outside the data](https://cdn.jsdelivr.net/gh/jameswniu/agentic-rag-text-to-sql@6cbff6ef61ad788ce35553bb6658dfcc90adce82/docs/demo/out-of-range.mp4) | Dana asks about 2022 and is told the data runs from January 2024 to June 2026 | 11 s |
+| [An answer from live models](https://cdn.jsdelivr.net/gh/jameswniu/agentic-rag-text-to-sql@6cbff6ef61ad788ce35553bb6658dfcc90adce82/docs/demo/live.mp4) | Dana asks what a denial letter needs, Claude answers with citations and Gemini checks each sentence | 41 s |
 
 ## How it works
 
@@ -98,7 +97,7 @@ Live mode, scored 2026-09-25 over 3 runs for $4.50 with claude-sonnet-5, claude-
 
 Two adjusters and the analyst ask about the same West claim.
 
-[<img src="docs/demo/permissions.gif" alt="Dana, the West adjuster, asks for the status of claim 105964, reads that it is open, a fire loss in Colorado with $33,474 paid, and opens the evidence to the login the query ran on. Omar, the East adjuster, then asks the same and is told the claim can't be found, and Sam, the analyst, is told analysts see aggregates only." width="100%">](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@6cbff6ef61ad788ce35553bb6658dfcc90adce82/docs/demo/permissions.mp4)
+[<img src="docs/demo/permissions.gif" alt="Dana, the West adjuster, asks for the status of claim 105964, reads that it is open, a fire loss in Colorado with $33,474 paid, and opens the evidence to the login the query ran on. Omar, the East adjuster, then asks the same and is told the claim can't be found, and Sam, the analyst, is told analysts see aggregates only." width="100%">](https://cdn.jsdelivr.net/gh/jameswniu/agentic-rag-text-to-sql@6cbff6ef61ad788ce35553bb6658dfcc90adce82/docs/demo/permissions.mp4)
 
 | Who asks | What they get |
 |---|---|
@@ -110,13 +109,13 @@ Two adjusters and the analyst ask about the same West claim.
 
 `/dashboard`, for operators only, charts the request log beside the latest eval scores and filters it by where each request came from.
 
-[<img src="docs/demo/dashboard.gif" alt="Priya opens the operator dashboard and reads its request, answer rate, first event and rating tiles and a route's latency against its p95 budget, then filters to eval, replayed and browser requests in turn and reads which route each browser request took and how it ended." width="100%">](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@6cbff6ef61ad788ce35553bb6658dfcc90adce82/docs/demo/dashboard.mp4)
+[<img src="docs/demo/dashboard.gif" alt="Priya opens the operator dashboard and reads its request, answer rate, first event and rating tiles and a route's latency against its p95 budget, then filters to eval, replayed and browser requests in turn and reads which route each browser request took and how it ended." width="100%">](https://cdn.jsdelivr.net/gh/jameswniu/agentic-rag-text-to-sql@6cbff6ef61ad788ce35553bb6658dfcc90adce82/docs/demo/dashboard.mp4)
 
 ## Dev mode
 
 The Dev mode switch in the header turns the page dark and docks a console that logs each event the server streams for a question.
 
-[<img src="docs/demo/devmode.gif" alt="Dana turns on Dev mode, and the page goes dark with a console docked under the question box. She asks how much was paid on hail claims in Colorado in the second quarter of 2025, reads the $4,108,453 answer, drags the console taller to read a row for each event the server streamed, and opens the done event to its JSON, which names the request, its route and its outcome." width="100%">](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@6cbff6ef61ad788ce35553bb6658dfcc90adce82/docs/demo/devmode.mp4)
+[<img src="docs/demo/devmode.gif" alt="Dana turns on Dev mode, and the page goes dark with a console docked under the question box. She asks how much was paid on hail claims in Colorado in the second quarter of 2025, reads the $4,108,453 answer, drags the console taller to read a row for each event the server streamed, and opens the done event to its JSON, which names the request, its route and its outcome." width="100%">](https://cdn.jsdelivr.net/gh/jameswniu/agentic-rag-text-to-sql@6cbff6ef61ad788ce35553bb6658dfcc90adce82/docs/demo/devmode.mp4)
 
 ## From laptop to production
 
