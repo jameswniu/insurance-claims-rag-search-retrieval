@@ -18,14 +18,15 @@ services:
       POSTGRES_DB: claims
     volumes:
       - pgdata:/var/lib/postgresql/data
+      - ./docker/db-ready.sh:/usr/local/bin/db-ready.sh:ro
     # Docker publishes no ports from a container whose only networks are internal, so db alone
     # also joins db-host. Nothing else is attached to it.
     networks: [backend, db-host]
     ports:
       - "127.0.0.1:55432:5432"
     healthcheck:
-      # Over TCP, so the check stays red while the entrypoint's socket-only init server is up.
-      test: ["CMD-SHELL", "pg_isready -U postgres -h 127.0.0.1"]
+      # Up over TCP, with the superuser's password matched to this clone's var/secrets.env.
+      test: ["CMD", "sh", "/usr/local/bin/db-ready.sh"]
       interval: 2s
       timeout: 3s
       retries: 30
