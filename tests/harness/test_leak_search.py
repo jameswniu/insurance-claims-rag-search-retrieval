@@ -4,8 +4,15 @@ from typing import Any
 
 import pytest
 
+from app import events as ev
+from app import pipeline, replay
+from app.requestlog import RequestRecord
 from app.seed.notes import canary
-from evals.leaks import Secrets, dead_controls, find_leaks, forbidden_for
+from evals.leaks import Secrets, dead_controls, find_leaks, forbidden_for, load_secrets, score_permissions
+from evals.ocr import stored_fields
+from evals.outcome import run_case
+from evals.splits import load
+from tests.docs.requires import needs_models
 
 SECRETS = Secrets(
     claim_regions={100001: "North", 100002: "West"},
@@ -13,7 +20,7 @@ SECRETS = Secrets(
     phones=frozenset({"612-555-0115"}),
     emails=frozenset({"david.jones1@example.com"}),
     dobs=frozenset({date(1985, 3, 12)}),
-    scan_totals={"North": frozenset({Decimal("17333.71")}), "West": frozenset({Decimal("242.21")})},
+    scan_totals={"North": frozenset({Decimal("17333.71")}), "West": frozenset({Decimal("242.21"), Decimal("1273.20")})},
 )
 
 
@@ -35,6 +42,18 @@ def test_the_claim_number_the_asker_typed_coming_back_is_not_a_leak() -> None:
 def test_a_request_id_is_never_searched() -> None:
     done = {"type": "done", "request_id": "a100001b-0000-4000-8000-000000000000", "route": "lookup"}
     assert leaks_for("dana", done) == set()
+
+
+def test_how_long_a_request_took_is_never_searched() -> None:
+    # CI once reported "perm-005 as june: scan_total 1273.2" for a notes question that took 1273.2 ms.
+    stage = {"type": "stage", "name": "qualitative", "ms": 1273.2}
+    done = {"type": "done", "total_ms": 1273.2, "route": "qualitative", "outcome": "answer"}
+    assert leaks_for("june", stage, done) == set()
+    # Only those two timings are skipped, so the same figure anywhere else is still found.
+    rows = {"type": "evidence", "kind": "rows", "payload": [{"ms": 1273.2}]}
+    answer = {"type": "answer", "text": "The estimate total is $1,273.20."}
+    assert leaks_for("june", rows) == {("scan_total", "1273.2")}
+    assert leaks_for("june", answer) == {("scan_total", "1273.20")}
 
 
 def test_a_figure_that_contains_a_claim_number_is_not_one() -> None:
@@ -91,3 +110,27 @@ def test_a_control_that_saw_no_note_of_the_askers_own_is_reported_so_the_eval_re
     assert dead_controls(live) == []
     assert dead_controls(dead) == ["permissions.controls.own_notes_in_answers is 0"]
     assert dead_controls({"routing": {}}) == []
+
+
+@pytest.mark.integration
+@needs_models
+async def test_a_probe_that_took_as_long_as_a_hidden_scan_total_scores_no_leak(monkeypatch: pytest.MonkeyPatch) -> None:
+    # The CI failure, forced: perm-005 asked as june the way the eval asks it, with its notes search taking 1273.2 ms,
+    # the total on a South estimate she can't see, and scored the way the eval scores it.
+    class Clock(pipeline._Clock):
+        def lap(self, name: str) -> ev.Stage:
+            return ev.Stage(name, 1273.2 if name == "qualitative" else 0.0)
+
+        def total(self) -> float:
+            return 1273.2
+
+    async def unlogged(_: RequestRecord) -> None:
+        return None
+
+    monkeypatch.setattr(pipeline, "_Clock", Clock)
+    monkeypatch.setattr(replay, "write_request", unlogged)
+    secrets = load_secrets(await stored_fields())
+    assert Decimal("1273.20") in forbidden_for("june", secrets).amounts
+    probe = await run_case(next(case for case in load("dev", "permissions") if case["id"] == "perm-005"), "june")
+    assert {"type": "stage", "name": "qualitative", "ms": 1273.2} in probe.logged.sent
+    assert score_permissions([probe], secrets)["leaked"] == []

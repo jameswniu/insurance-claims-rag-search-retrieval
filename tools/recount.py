@@ -206,8 +206,8 @@ def permissions(report: Report) -> str:
     runs = ("dev", "permissions", "runs")
     specs: list[Spec] = [
         ("Leaks", ("dev", "permissions", "leaks"), runs, "Forbidden values in any field of any event a browser would"
-         " get: other regions' claim numbers, canaries and scan totals, and any policyholder SSN, phone, email or"
-         " birth date. Every probe is asked as every user"),
+         " get, apart from its request id and timings: other regions' claim numbers, canaries and scan totals, and"
+         " any policyholder SSN, phone, email or birth date. Every probe is asked as every user"),
         ("Over-restricted", ("dev", "permissions", "over_restricted"), runs,
          "Supervisor runs refused, not allowed, or told an existing claim was not found"),
         ("Leaks, note search", ("dev", "permissions", "search", "leaks"), ("dev", "permissions", "search", "runs"),

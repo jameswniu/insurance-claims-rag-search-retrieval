@@ -44,9 +44,9 @@ Appears at README.md under "Run it".
 |---|---|
 | What is claimed | 0 leaks in 84 runs, every probe asked as every user. |
 | What is counted | Forbidden values in every event a browser would get, over 14 probes asked as 6 users. |
-| How a match is decided | `find_leaks()` at `evals/leaks.py:129` flags another region's claim number, canary or scan total, and any policyholder PII. A claim number the asker typed is exempt. |
+| How a match is decided | `find_leaks()` at `evals/leaks.py:139` flags another region's claim number, canary or scan total, and any policyholder PII. A claim number the asker typed is exempt. |
 | Where the data came from | 14 hand-written dev probes. Forbidden values are read from the database as `gold_reader`, and PII matches in any format. |
-| How to regenerate it | `make eval`, which asks each probe as each user at `evals/run.py:96` and scores it in `score_permissions()` at `evals/leaks.py:173`. |
+| How to regenerate it | `make eval`, which asks each probe as each user at `evals/run.py:96` and scores it in `score_permissions()` at `evals/leaks.py:183`. |
 | The number that makes it look worse | Only 19 of the 84 runs showed the asker a note from their own region, so only those tested note text through the answers. The other probes ask about claims, figures and scans. The direct note search found the asker's own notes in 70 of 84 searches, and the eval refuses to report when either count is 0. |
 | Chosen before or after the result | After. The probes are dev cases, written beside the rules, and there is no held-out permission set. |
 | What this sample can and cannot say | Refusing everything also scores zero, so over-restricted supervisor runs are counted, 0 of them. Hidden amounts, dates and names are never searched. |
