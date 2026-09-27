@@ -15,8 +15,8 @@ except ModuleNotFoundError:  # run as a script from tools/, where the repository
 OUT = f.FIGURES / "hero.svg"
 HEIGHT = 528
 
-CANVAS, PANEL, TINT, BORDER = "#141A21", "#1D252E", "#25394A", "#43515F"  # fixed dark, the app's Dev mode palette
-PRIMARY, SECONDARY, ACCENT = "#E9EEF3", "#BCC7D2", "#8CB4DF"
+CANVAS, PANEL, TINT, BORDER = f.CANVAS, f.PANEL, f.TINT, f.EDGE  # the dark palette every figure shares
+PRIMARY, SECONDARY, ACCENT = f.PRIMARY, f.SECONDARY, f.ACCENT
 
 M = 48
 RIGHT = f.WIDTH - M
@@ -90,7 +90,8 @@ def tile(x: int, w: int, t: Tile) -> list[str]:
     """A panel with the value on top, then what it counts, then what it was counted over, each measured inside it."""
     lo, hi, cx = x + PAD, x + w - PAD, x + w / 2
     return [
-        f'<rect x="{x}" y="{TILE_Y}" width="{w}" height="{TILE_H}" fill="{PANEL}" stroke="{BORDER}" stroke-width="2"/>',
+        f'<rect x="{x}" y="{TILE_Y}" width="{w}" height="{TILE_H}" rx="10" '
+        f'fill="{PANEL}" stroke="{BORDER}" stroke-width="2"/>',
         f.fitted(cx, VALUE_Y, t.value, VALUE, ACCENT, lo, hi, bold=True, anchor="middle"),
         f.fitted(cx, CAPTION_Y, t.caption, CAPTION, PRIMARY, lo, hi, bold=True, anchor="middle"),
         f.fitted(cx, CONTEXT_Y, t.context, CONTEXT, SECONDARY, lo, hi, anchor="middle"),
@@ -103,7 +104,7 @@ def pills() -> list[str]:
     for (name, x, w), after in zip(PILLS, [*PILLS[1:], ("", RIGHT + GAP, 0)], strict=True):
         if x + w + GAP > after[1]:
             raise SystemExit(f"the {name} pill runs into the next one or past the margin")
-        fill, edge, ink = (ACCENT, ACCENT, CANVAS) if name == HIGHLIGHT else (PANEL, BORDER, SECONDARY)
+        fill, edge, ink = (f.GREEN_BG, f.SUCCESS, f.SUCCESS) if name == HIGHLIGHT else (PANEL, BORDER, SECONDARY)
         shape, r = f'x="{x}" y="{PILL_Y}" width="{w}" height="{PILL_H}"', PILL_H // 2
         out.append(f'<rect {shape} rx="{r}" fill="{fill}" stroke="{edge}" stroke-width="2"/>')
         out.append(f.fitted(x + w / 2, PILL_BASE, name, PILL_TEXT, ink, x + r, x + w - r, True, "middle"))
@@ -141,7 +142,7 @@ def draw(report: f.Report) -> str:
     for t, w in zip(row, widths(row), strict=True):
         parts += tile(x, w, t)
         x += w + GAP
-    parts += [*pills(), f.frame(HEIGHT, BORDER), f'<rect width="{f.WIDTH}" height="4" fill="{ACCENT}"/>']
+    parts += [*pills(), f'<rect width="{f.WIDTH}" height="4" fill="{ACCENT}"/>']
     description = (
         f"{NAME} answers questions about claims, policies and scanned forms for a made-up home insurer, on synthetic "
         f"data. Eval results with no API key: {', '.join(t.said for t in row)}. A question passes these stages in "

@@ -1,108 +1,109 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 952" width="1200" height="952" role="img" aria-labelledby="title desc">
 <title id="title">System runtime, low level: what runs where</title>
 <desc id="desc">Five compose services: init bootstraps the database once, db is Postgres 17 with pgvector, app is the FastAPI app on port 8000, sandboxd holds the Docker socket and starts one sandbox container per job. In Postgres, four adjuster logins share chat_adjuster, the supervisor has chat_supervisor and the analyst chat_analyst. Adjusters and the supervisor read through forced row security keyed on session_user and security_invoker views. The analyst reads only agg.metric, which runs as agg_owner and withholds cells under 10 claims or where one claim is over half. Each sandbox job has no network, a read-only root, uid 65534, 512 MB, one CPU, 64 processes, 10 seconds and 1 MiB of output. Telemetry is OpenTelemetry spans, request and audit rows, and the operator dashboard.</desc>
-<defs><marker id="head" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#59636e"/></marker></defs>
-<rect width="1200" height="952" fill="#ffffff"/>
-<rect x="16" y="16" width="1168" height="168" rx="14" fill="#fbfcfd" stroke="#d1d9e0" stroke-width="2" stroke-dasharray="3 5" stroke-linecap="round"/>
-<text x="34" y="47" text-anchor="start" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" font-weight="600" fill="#59636e">Compose services, on an internal backend network</text>
-<path d="M232,114 L264,114" fill="none" stroke="#59636e" stroke-width="2" marker-end="url(#head)"/>
-<path d="M499,114 L466,114" fill="none" stroke="#59636e" stroke-width="2" marker-end="url(#head)"/>
-<path d="M701,114 L734,114" fill="none" stroke="#59636e" stroke-width="2" marker-end="url(#head)"/>
-<path d="M936,114 L968,114" fill="none" stroke="#59636e" stroke-width="2" marker-end="url(#head)"/>
-<rect x="16" y="220" width="1168" height="484" rx="14" fill="#fbfcfd" stroke="#d1d9e0" stroke-width="2" stroke-dasharray="3 5" stroke-linecap="round"/>
-<text x="34" y="251" text-anchor="start" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" font-weight="600" fill="#59636e">Postgres logins, read-only with a 4 s statement timeout</text>
-<path d="M240,348 L277,348" fill="none" stroke="#59636e" stroke-width="2" marker-end="url(#head)"/>
-<path d="M240,484 L277,484" fill="none" stroke="#59636e" stroke-width="2" marker-end="url(#head)"/>
-<path d="M240,604 L277,604" fill="none" stroke="#59636e" stroke-width="2" marker-end="url(#head)"/>
-<path d="M547,348 L583,348" fill="none" stroke="#59636e" stroke-width="2" marker-end="url(#head)"/>
-<path d="M547,484 L583,484" fill="none" stroke="#59636e" stroke-width="2" marker-end="url(#head)"/>
-<path d="M547,604 L583,604" fill="none" stroke="#59636e" stroke-width="2" marker-end="url(#head)"/>
-<path d="M873,392 L910,392" fill="none" stroke="#59636e" stroke-width="2" marker-end="url(#head)"/>
-<path d="M1040,444 L1040,552" fill="none" stroke="#59636e" stroke-width="2" marker-end="url(#head)"/>
-<path d="M873,604 L910,604" fill="none" stroke="#59636e" stroke-width="2" marker-end="url(#head)"/>
-<rect x="16" y="740" width="740" height="196" rx="14" fill="#fbfcfd" stroke="#d1d9e0" stroke-width="2" stroke-dasharray="3 5" stroke-linecap="round"/>
-<text x="34" y="771" text-anchor="start" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" font-weight="600" fill="#59636e">Each sandbox job</text>
-<rect x="776" y="740" width="408" height="196" rx="14" fill="#fbfcfd" stroke="#d1d9e0" stroke-width="2" stroke-dasharray="3 5" stroke-linecap="round"/>
-<text x="794" y="771" text-anchor="start" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" font-weight="600" fill="#59636e">Telemetry</text>
-<rect x="30" y="60" width="202" height="108" rx="10" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="2"/>
-<text x="131" y="90" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="26" font-weight="600" fill="#1f2328">init</text>
-<text x="131" y="122" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">one-shot</text>
-<text x="131" y="154" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">bootstrap</text>
-<rect x="264" y="60" width="202" height="108" rx="10" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="2"/>
-<text x="366" y="90" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="26" font-weight="600" fill="#1f2328">db</text>
-<text x="366" y="122" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">Postgres 17</text>
-<text x="366" y="154" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">and pgvector</text>
-<rect x="499" y="60" width="202" height="108" rx="10" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="2"/>
-<text x="600" y="90" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="26" font-weight="600" fill="#1f2328">app</text>
-<text x="600" y="122" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">FastAPI app</text>
-<text x="600" y="154" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">port 8000</text>
-<rect x="734" y="60" width="202" height="108" rx="10" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="2"/>
-<text x="834" y="90" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="26" font-weight="600" fill="#1f2328">sandboxd</text>
-<text x="834" y="122" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">holds the</text>
-<text x="834" y="154" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">Docker socket</text>
-<rect x="968" y="60" width="202" height="108" rx="10" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="2"/>
-<text x="1069" y="90" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="26" font-weight="600" fill="#1f2328">sandbox</text>
-<text x="1069" y="122" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">one container</text>
-<text x="1069" y="154" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">per job</text>
-<rect x="30" y="264" width="210" height="168" rx="10" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="2"/>
-<text x="135" y="292" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#1f2328">Adjusters</text>
-<text x="135" y="324" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="23" fill="#59636e">u_adj_north</text>
-<text x="135" y="356" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="23" fill="#59636e">u_adj_south</text>
-<text x="135" y="388" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="23" fill="#59636e">u_adj_east</text>
-<text x="135" y="420" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="23" fill="#59636e">u_adj_west</text>
-<rect x="30" y="448" width="210" height="72" rx="10" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="2"/>
-<text x="135" y="476" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#1f2328">Supervisor</text>
-<text x="135" y="508" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="23" fill="#59636e">u_supervisor</text>
-<rect x="30" y="568" width="210" height="72" rx="10" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="2"/>
-<text x="135" y="596" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#1f2328">Analyst</text>
-<text x="135" y="628" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="23" fill="#59636e">u_analyst</text>
-<rect x="277" y="296" width="270" height="104" rx="10" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="2"/>
-<text x="412" y="324" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="26" font-weight="600" fill="#1f2328">chat_adjuster</text>
-<text x="412" y="356" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">core and rag,</text>
-<text x="412" y="388" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">no PII columns</text>
-<rect x="277" y="448" width="270" height="72" rx="10" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="2"/>
-<text x="412" y="476" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="26" font-weight="600" fill="#1f2328">chat_supervisor</text>
-<text x="412" y="508" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">same grants</text>
-<rect x="277" y="568" width="270" height="72" rx="10" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="2"/>
-<text x="412" y="596" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="26" font-weight="600" fill="#1f2328">chat_analyst</text>
-<text x="412" y="628" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">no claim rows</text>
-<rect x="583" y="284" width="290" height="216" rx="10" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="2"/>
-<text x="728" y="352" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#1f2328">Row security</text>
-<text x="728" y="384" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">forced, every table</text>
-<text x="728" y="416" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="23" fill="#59636e">visible_regions()</text>
-<text x="728" y="448" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="23" fill="#59636e">session_user</text>
-<rect x="583" y="520" width="290" height="168" rx="10" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="2"/>
-<text x="728" y="548" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="26" font-weight="600" fill="#1f2328">agg.metric()</text>
-<text x="728" y="580" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">runs as agg_owner,</text>
-<text x="728" y="612" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">withholds cells</text>
-<text x="728" y="644" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">under 10 claims or</text>
-<text x="728" y="676" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">one claim over half</text>
-<rect x="910" y="340" width="260" height="104" rx="10" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="2"/>
-<text x="1040" y="368" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#1f2328">Views</text>
-<text x="1040" y="400" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="23" fill="#59636e">security_invoker</text>
-<text x="1040" y="432" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">so RLS applies</text>
-<rect x="910" y="552" width="260" height="104" rx="10" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="2"/>
-<text x="1040" y="580" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#1f2328">Core tables</text>
-<text x="1040" y="612" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">claims, payments,</text>
-<text x="1040" y="644" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">premium, policies</text>
-<rect x="30" y="784" width="224" height="136" rx="10" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="2"/>
-<text x="142" y="812" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#1f2328">Isolation</text>
-<text x="142" y="844" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">no network</text>
-<text x="142" y="876" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">read-only root</text>
-<text x="142" y="908" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">uid 65534</text>
-<rect x="274" y="784" width="224" height="136" rx="10" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="2"/>
-<text x="386" y="812" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#1f2328">Resources</text>
-<text x="386" y="844" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">512 MB memory</text>
-<text x="386" y="876" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">1 CPU</text>
-<text x="386" y="908" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">64 processes</text>
-<rect x="518" y="784" width="224" height="136" rx="10" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="2"/>
-<text x="630" y="812" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#1f2328">Time, output</text>
-<text x="630" y="844" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">10 s, killed</text>
-<text x="630" y="876" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">1 MiB output</text>
-<text x="630" y="908" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">2 jobs a login</text>
-<rect x="790" y="784" width="380" height="136" rx="10" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="2"/>
-<text x="980" y="812" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#1f2328">Spans and logs</text>
-<text x="980" y="844" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">OpenTelemetry, OTLP</text>
-<text x="980" y="876" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">request, audit rows</text>
-<text x="980" y="908" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">operator dashboard</text>
+<defs><marker id="head" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7B8492"/></marker></defs>
+<rect width="1200" height="952" fill="#10161D"/>
+<rect x="1" y="1" width="1198" height="950" fill="none" stroke="#475569" stroke-width="2"/>
+<rect x="16" y="16" width="1168" height="168" rx="14" fill="#141B23" stroke="#475569" stroke-width="2" stroke-dasharray="3 5" stroke-linecap="round"/>
+<text x="34" y="47" text-anchor="start" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" font-weight="600" fill="#BCC7D2">Compose services, on an internal backend network</text>
+<path d="M232,114 L264,114" fill="none" stroke="#7B8492" stroke-width="2" marker-end="url(#head)"/>
+<path d="M499,114 L466,114" fill="none" stroke="#7B8492" stroke-width="2" marker-end="url(#head)"/>
+<path d="M701,114 L734,114" fill="none" stroke="#7B8492" stroke-width="2" marker-end="url(#head)"/>
+<path d="M936,114 L968,114" fill="none" stroke="#7B8492" stroke-width="2" marker-end="url(#head)"/>
+<rect x="16" y="220" width="1168" height="484" rx="14" fill="#141B23" stroke="#475569" stroke-width="2" stroke-dasharray="3 5" stroke-linecap="round"/>
+<text x="34" y="251" text-anchor="start" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" font-weight="600" fill="#BCC7D2">Postgres logins, read-only with a 4 s statement timeout</text>
+<path d="M240,348 L277,348" fill="none" stroke="#7B8492" stroke-width="2" marker-end="url(#head)"/>
+<path d="M240,484 L277,484" fill="none" stroke="#7B8492" stroke-width="2" marker-end="url(#head)"/>
+<path d="M240,604 L277,604" fill="none" stroke="#7B8492" stroke-width="2" marker-end="url(#head)"/>
+<path d="M547,348 L583,348" fill="none" stroke="#7B8492" stroke-width="2" marker-end="url(#head)"/>
+<path d="M547,484 L583,484" fill="none" stroke="#7B8492" stroke-width="2" marker-end="url(#head)"/>
+<path d="M547,604 L583,604" fill="none" stroke="#7B8492" stroke-width="2" marker-end="url(#head)"/>
+<path d="M873,392 L910,392" fill="none" stroke="#7B8492" stroke-width="2" marker-end="url(#head)"/>
+<path d="M1040,444 L1040,552" fill="none" stroke="#7B8492" stroke-width="2" marker-end="url(#head)"/>
+<path d="M873,604 L910,604" fill="none" stroke="#7B8492" stroke-width="2" marker-end="url(#head)"/>
+<rect x="16" y="740" width="740" height="196" rx="14" fill="#141B23" stroke="#475569" stroke-width="2" stroke-dasharray="3 5" stroke-linecap="round"/>
+<text x="34" y="771" text-anchor="start" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" font-weight="600" fill="#BCC7D2">Each sandbox job</text>
+<rect x="776" y="740" width="408" height="196" rx="14" fill="#141B23" stroke="#475569" stroke-width="2" stroke-dasharray="3 5" stroke-linecap="round"/>
+<text x="794" y="771" text-anchor="start" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" font-weight="600" fill="#BCC7D2">Telemetry</text>
+<rect x="30" y="60" width="202" height="108" rx="10" fill="#1D2733" stroke="#475569" stroke-width="2"/>
+<text x="131" y="90" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="26" font-weight="600" fill="#E9EEF3">init</text>
+<text x="131" y="122" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#BCC7D2">one-shot</text>
+<text x="131" y="154" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#BCC7D2">bootstrap</text>
+<rect x="264" y="60" width="202" height="108" rx="10" fill="#1D2733" stroke="#475569" stroke-width="2"/>
+<text x="366" y="90" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="26" font-weight="600" fill="#E9EEF3">db</text>
+<text x="366" y="122" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#BCC7D2">Postgres 17</text>
+<text x="366" y="154" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#BCC7D2">and pgvector</text>
+<rect x="499" y="60" width="202" height="108" rx="10" fill="#1D2733" stroke="#475569" stroke-width="2"/>
+<text x="600" y="90" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="26" font-weight="600" fill="#E9EEF3">app</text>
+<text x="600" y="122" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#BCC7D2">FastAPI app</text>
+<text x="600" y="154" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#BCC7D2">port 8000</text>
+<rect x="734" y="60" width="202" height="108" rx="10" fill="#1D2733" stroke="#475569" stroke-width="2"/>
+<text x="834" y="90" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="26" font-weight="600" fill="#E9EEF3">sandboxd</text>
+<text x="834" y="122" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#BCC7D2">holds the</text>
+<text x="834" y="154" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#BCC7D2">Docker socket</text>
+<rect x="968" y="60" width="202" height="108" rx="10" fill="#1D2733" stroke="#475569" stroke-width="2"/>
+<text x="1069" y="90" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="26" font-weight="600" fill="#E9EEF3">sandbox</text>
+<text x="1069" y="122" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#BCC7D2">one container</text>
+<text x="1069" y="154" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#BCC7D2">per job</text>
+<rect x="30" y="264" width="210" height="168" rx="10" fill="#1D2733" stroke="#475569" stroke-width="2"/>
+<text x="135" y="292" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#E9EEF3">Adjusters</text>
+<text x="135" y="324" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="23" fill="#BCC7D2">u_adj_north</text>
+<text x="135" y="356" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="23" fill="#BCC7D2">u_adj_south</text>
+<text x="135" y="388" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="23" fill="#BCC7D2">u_adj_east</text>
+<text x="135" y="420" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="23" fill="#BCC7D2">u_adj_west</text>
+<rect x="30" y="448" width="210" height="72" rx="10" fill="#1D2733" stroke="#475569" stroke-width="2"/>
+<text x="135" y="476" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#E9EEF3">Supervisor</text>
+<text x="135" y="508" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="23" fill="#BCC7D2">u_supervisor</text>
+<rect x="30" y="568" width="210" height="72" rx="10" fill="#1D2733" stroke="#475569" stroke-width="2"/>
+<text x="135" y="596" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#E9EEF3">Analyst</text>
+<text x="135" y="628" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="23" fill="#BCC7D2">u_analyst</text>
+<rect x="277" y="296" width="270" height="104" rx="10" fill="#1D2733" stroke="#475569" stroke-width="2"/>
+<text x="412" y="324" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="26" font-weight="600" fill="#E9EEF3">chat_adjuster</text>
+<text x="412" y="356" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#BCC7D2">core and rag,</text>
+<text x="412" y="388" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#BCC7D2">no PII columns</text>
+<rect x="277" y="448" width="270" height="72" rx="10" fill="#1D2733" stroke="#475569" stroke-width="2"/>
+<text x="412" y="476" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="26" font-weight="600" fill="#E9EEF3">chat_supervisor</text>
+<text x="412" y="508" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#BCC7D2">same grants</text>
+<rect x="277" y="568" width="270" height="72" rx="10" fill="#1D2733" stroke="#475569" stroke-width="2"/>
+<text x="412" y="596" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="26" font-weight="600" fill="#E9EEF3">chat_analyst</text>
+<text x="412" y="628" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#BCC7D2">no claim rows</text>
+<rect x="583" y="284" width="290" height="216" rx="10" fill="#1D2733" stroke="#8CB4DF" stroke-width="2"/>
+<text x="728" y="352" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#E9EEF3">Row security</text>
+<text x="728" y="384" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#BCC7D2">forced, every table</text>
+<text x="728" y="416" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="23" fill="#BCC7D2">visible_regions()</text>
+<text x="728" y="448" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="23" fill="#BCC7D2">session_user</text>
+<rect x="583" y="520" width="290" height="168" rx="10" fill="#1D2733" stroke="#E5B567" stroke-width="2"/>
+<text x="728" y="548" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="26" font-weight="600" fill="#E9EEF3">agg.metric()</text>
+<text x="728" y="580" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#BCC7D2">runs as agg_owner,</text>
+<text x="728" y="612" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#E5B567">withholds cells</text>
+<text x="728" y="644" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#E5B567">under 10 claims or</text>
+<text x="728" y="676" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#E5B567">one claim over half</text>
+<rect x="910" y="340" width="260" height="104" rx="10" fill="#1D2733" stroke="#475569" stroke-width="2"/>
+<text x="1040" y="368" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#E9EEF3">Views</text>
+<text x="1040" y="400" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="23" fill="#BCC7D2">security_invoker</text>
+<text x="1040" y="432" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#BCC7D2">so RLS applies</text>
+<rect x="910" y="552" width="260" height="104" rx="10" fill="#1D2733" stroke="#475569" stroke-width="2"/>
+<text x="1040" y="580" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#E9EEF3">Core tables</text>
+<text x="1040" y="612" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#BCC7D2">claims, payments,</text>
+<text x="1040" y="644" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#BCC7D2">premium, policies</text>
+<rect x="30" y="784" width="224" height="136" rx="10" fill="#1D2733" stroke="#475569" stroke-width="2"/>
+<text x="142" y="812" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#E9EEF3">Isolation</text>
+<text x="142" y="844" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#BCC7D2">no network</text>
+<text x="142" y="876" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#BCC7D2">read-only root</text>
+<text x="142" y="908" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#BCC7D2">uid 65534</text>
+<rect x="274" y="784" width="224" height="136" rx="10" fill="#1D2733" stroke="#475569" stroke-width="2"/>
+<text x="386" y="812" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#E9EEF3">Resources</text>
+<text x="386" y="844" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#BCC7D2">512 MB memory</text>
+<text x="386" y="876" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#BCC7D2">1 CPU</text>
+<text x="386" y="908" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#BCC7D2">64 processes</text>
+<rect x="518" y="784" width="224" height="136" rx="10" fill="#1D2733" stroke="#475569" stroke-width="2"/>
+<text x="630" y="812" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#E9EEF3">Time, output</text>
+<text x="630" y="844" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#BCC7D2">10 s, killed</text>
+<text x="630" y="876" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#BCC7D2">1 MiB output</text>
+<text x="630" y="908" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#BCC7D2">2 jobs a login</text>
+<rect x="790" y="784" width="380" height="136" rx="10" fill="#1D2733" stroke="#475569" stroke-width="2"/>
+<text x="980" y="812" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#E9EEF3">Spans and logs</text>
+<text x="980" y="844" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#BCC7D2">OpenTelemetry, OTLP</text>
+<text x="980" y="876" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#BCC7D2">request, audit rows</text>
+<text x="980" y="908" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#BCC7D2">operator dashboard</text>
 </svg>

@@ -1,8 +1,8 @@
 <a href="#numbers"><img src="docs/figures/hero.svg" alt="Claims Q&amp;A answers questions about claims, policies and scanned forms for a made-up home insurer. Scored with no API key, it found {{n dev.permissions.leaks}} leaks in {{n dev.permissions.runs}} dev runs, {{n shared.hostile_sql.harmful}} harmful SQL executions in {{n shared.hostile_sql.executions}}, caught {{n shared.verifier.caught}} of {{n shared.verifier.planted}} planted errors, and gave {{n heldout.abstention.wrong_answer.hits}} wrong answers in {{n heldout.abstention.wrong_answer.n}} held-out answers." width="100%"></a>
 
-[![checks](https://github.com/jameswniu/insurance-claims-rag-search-retrieval/actions/workflows/checks.yml/badge.svg?branch=main)](https://github.com/jameswniu/insurance-claims-rag-search-retrieval/actions/workflows/checks.yml)
-[![tests](https://github.com/jameswniu/insurance-claims-rag-search-retrieval/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/jameswniu/insurance-claims-rag-search-retrieval/actions/workflows/tests.yml)
-[![license](https://img.shields.io/badge/license-Apache%202.0-blue)](LICENSE)
+[![checks](https://img.shields.io/github/actions/workflow/status/jameswniu/insurance-claims-rag-search-retrieval/checks.yml?branch=main&style=flat-square&label=checks&labelColor=18212B)](https://github.com/jameswniu/insurance-claims-rag-search-retrieval/actions/workflows/checks.yml)
+[![tests](https://img.shields.io/github/actions/workflow/status/jameswniu/insurance-claims-rag-search-retrieval/tests.yml?branch=main&style=flat-square&label=tests&labelColor=18212B)](https://github.com/jameswniu/insurance-claims-rag-search-retrieval/actions/workflows/tests.yml)
+[![license](https://img.shields.io/badge/license-Apache%202.0-365C7D?style=flat-square&labelColor=18212B)](LICENSE)
 
 ## Run it
 
@@ -59,7 +59,7 @@ Click any GIF on this page, or a clip below, to play the full video with caption
 <img src="docs/figures/system-map.svg" alt="A question goes from the browser to the FastAPI app, where the gate refuses injection and off-topic questions and the router asks back, says the period is outside the data, or picks the lookup, figures, documents or why path, each reading Postgres as the asker, before the verifier checks the answer and it streams back." width="100%">
 
 ```mermaid
-%%{init: {'flowchart': {'curve': 'linear', 'nodeSpacing': 30, 'rankSpacing': 34, 'padding': 8}, 'themeVariables': {'fontSize': '18px'}}}%%
+%%{init: {"theme":"base","flowchart":{"curve":"linear","nodeSpacing":30,"rankSpacing":34,"padding":8},"themeVariables":{"darkMode":true,"background":"#10161D","fontFamily":"BlinkMacSystemFont,Segoe UI,Noto Sans,Helvetica,Arial","fontSize":"18px","primaryColor":"#1D2733","primaryTextColor":"#E9EEF3","primaryBorderColor":"#475569","secondaryColor":"#172D27","secondaryTextColor":"#E9EEF3","secondaryBorderColor":"#74C3A1","tertiaryColor":"#141B23","tertiaryTextColor":"#BCC7D2","tertiaryBorderColor":"#475569","textColor":"#E9EEF3","nodeTextColor":"#E9EEF3","mainBkg":"#1D2733","nodeBorder":"#475569","clusterBkg":"#141B23","clusterBorder":"#475569","titleColor":"#BCC7D2","lineColor":"#7B8492","defaultLinkColor":"#7B8492","arrowheadColor":"#7B8492","edgeLabelBackground":"#18212B"}}}%%
 flowchart TD
     Q["Question · POST /ask as the signed-in user"]
     GATE["Gate · refuses injection and off-topic"]
@@ -85,14 +85,19 @@ flowchart TD
     Q --> GATE --> ROUTE --> PATHS --> VER --> ANS
     PATHS --> STORE
 
-    classDef step fill:#f6f8fa,stroke:#59636e,color:#1f2328
-    classDef path fill:#ddf4ff,stroke:#54aeff,color:#1f2328
-    classDef check fill:#dafbe1,stroke:#4ac26b,color:#1f2328
+    classDef step fill:#1D2733,stroke:#475569,color:#E9EEF3,stroke-width:2px,rx:10px,ry:10px
+    classDef path fill:#1D2733,color:#E9EEF3,stroke-width:2px,rx:10px,ry:10px
+    classDef check fill:#172D27,stroke:#74C3A1,color:#E9EEF3,stroke-width:2px,rx:10px,ry:10px
     class Q,GATE,ROUTE,ANS,RLS,AGG step
     class LOOK,FIG,DOCS,WHY path
     class VER check
-    style PATHS fill:#fbfcfd,stroke:#54aeff,color:#1f2328
-    style STORE fill:#fbfcfd,stroke:#d1d9e0,color:#1f2328
+    style LOOK stroke:#8CB4DF
+    style FIG stroke:#79B8C8
+    style DOCS stroke:#B4A7D6
+    style WHY stroke:#C5BBA4
+    style PATHS fill:#141B23,stroke:#475569,color:#BCC7D2,stroke-width:2px,stroke-dasharray:3 5,rx:14px,ry:14px
+    style STORE fill:#141B23,stroke:#475569,color:#BCC7D2,stroke-width:2px,stroke-dasharray:3 5,rx:14px,ry:14px
+    linkStyle default stroke:#7B8492,stroke-width:2px
 ```
 
 - Analysts get totals only, from `agg.metric()`, which runs as its owner and withholds any group with fewer than 10 claims or one claim over half the total.

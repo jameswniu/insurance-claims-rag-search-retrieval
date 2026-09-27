@@ -1,126 +1,127 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 924" width="1200" height="924" role="img" aria-labelledby="title desc">
 <title id="title">System paths, mid level: the steps inside each path</title>
 <desc id="desc">Four columns show each path&#x27;s steps. Lookup reads one claim row or its scanned form, checks a scan&#x27;s total against payments, and answers a hidden claim as a missing one. Figures fill a typed query from the semantic layer, check the period against the data, compile SQL through an AST allow-list and run it on the asker&#x27;s login. Documents read the policy edition in force on the loss date, fuse full-text and vector search, rerank, and cite a chunk for every line. Why fetches both periods, splits the change by driver with a sandbox template, finds a memo or bulletin from within 92 days, and builds its sentences from the rows. The verifier traces figures and citations and checks comparative words. Live mode adds a fast model, a main model, an orchestrator with three tools and a Gemini checker.</desc>
-<defs><marker id="head" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#59636e"/></marker></defs>
-<rect width="1200" height="924" fill="#ffffff"/>
-<path d="M165,88 L165,112" fill="none" stroke="#59636e" stroke-width="2" marker-end="url(#head)"/>
-<path d="M165,184 L165,208" fill="none" stroke="#59636e" stroke-width="2" marker-end="url(#head)"/>
-<path d="M165,280 L165,304" fill="none" stroke="#59636e" stroke-width="2" marker-end="url(#head)"/>
-<path d="M165,376 L165,400" fill="none" stroke="#59636e" stroke-width="2" marker-end="url(#head)"/>
-<path d="M455,88 L455,112" fill="none" stroke="#59636e" stroke-width="2" marker-end="url(#head)"/>
-<path d="M455,184 L455,208" fill="none" stroke="#59636e" stroke-width="2" marker-end="url(#head)"/>
-<path d="M455,280 L455,304" fill="none" stroke="#59636e" stroke-width="2" marker-end="url(#head)"/>
-<path d="M455,376 L455,400" fill="none" stroke="#59636e" stroke-width="2" marker-end="url(#head)"/>
-<path d="M745,88 L745,112" fill="none" stroke="#59636e" stroke-width="2" marker-end="url(#head)"/>
-<path d="M745,184 L745,208" fill="none" stroke="#59636e" stroke-width="2" marker-end="url(#head)"/>
-<path d="M745,280 L745,304" fill="none" stroke="#59636e" stroke-width="2" marker-end="url(#head)"/>
-<path d="M745,376 L745,400" fill="none" stroke="#59636e" stroke-width="2" marker-end="url(#head)"/>
-<path d="M1035,88 L1035,112" fill="none" stroke="#59636e" stroke-width="2" marker-end="url(#head)"/>
-<path d="M1035,184 L1035,208" fill="none" stroke="#59636e" stroke-width="2" marker-end="url(#head)"/>
-<path d="M1035,280 L1035,304" fill="none" stroke="#59636e" stroke-width="2" marker-end="url(#head)"/>
-<path d="M1035,376 L1035,400" fill="none" stroke="#59636e" stroke-width="2" marker-end="url(#head)"/>
-<rect x="16" y="508" width="1168" height="168" rx="14" fill="#fbfcfd" stroke="#d1d9e0" stroke-width="2" stroke-dasharray="3 5" stroke-linecap="round"/>
-<text x="34" y="539" text-anchor="start" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" font-weight="600" fill="#59636e">Verifier, on every sentence of every answer</text>
-<path d="M165,472 L165,508" fill="none" stroke="#59636e" stroke-width="2" marker-end="url(#head)"/>
-<path d="M455,472 L455,508" fill="none" stroke="#59636e" stroke-width="2" marker-end="url(#head)"/>
-<path d="M745,472 L745,508" fill="none" stroke="#59636e" stroke-width="2" marker-end="url(#head)"/>
-<path d="M1035,472 L1035,508" fill="none" stroke="#59636e" stroke-width="2" marker-end="url(#head)"/>
-<rect x="16" y="712" width="1168" height="196" rx="14" fill="#fbfcfd" stroke="#d1d9e0" stroke-width="2" stroke-dasharray="3 5" stroke-linecap="round"/>
-<text x="34" y="743" text-anchor="start" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" font-weight="600" fill="#59636e">Live mode, when LLM_BACKEND names a backend</text>
-<rect x="30" y="16" width="270" height="72" rx="10" fill="#ddf4ff" stroke="#54aeff" stroke-width="2"/>
-<text x="165" y="44" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#1f2328">Lookup</text>
-<text x="165" y="76" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">one claim by id</text>
-<rect x="30" y="112" width="270" height="72" rx="10" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="2"/>
-<text x="165" y="140" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#1f2328">Claim number</text>
-<text x="165" y="172" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">from the question</text>
-<rect x="30" y="208" width="270" height="72" rx="10" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="2"/>
-<text x="165" y="236" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#1f2328">Claim row</text>
-<text x="165" y="268" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">or its scan fields</text>
-<rect x="30" y="304" width="270" height="72" rx="10" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="2"/>
-<text x="165" y="332" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#1f2328">Scan total</text>
-<text x="165" y="364" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">matched to paid</text>
-<rect x="30" y="400" width="270" height="72" rx="10" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="2"/>
-<text x="165" y="428" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#1f2328">Hidden claim</text>
-<text x="165" y="460" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">reads as missing</text>
-<rect x="320" y="16" width="270" height="72" rx="10" fill="#ddf4ff" stroke="#54aeff" stroke-width="2"/>
-<text x="455" y="44" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#1f2328">Figures</text>
-<text x="455" y="76" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">typed query to SQL</text>
-<rect x="320" y="112" width="270" height="72" rx="10" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="2"/>
-<text x="455" y="140" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#1f2328">Typed query</text>
-<text x="455" y="172" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">semantic layer</text>
-<rect x="320" y="208" width="270" height="72" rx="10" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="2"/>
-<text x="455" y="236" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#1f2328">Period check</text>
-<text x="455" y="268" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">inside the data</text>
-<rect x="320" y="304" width="270" height="72" rx="10" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="2"/>
-<text x="455" y="332" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#1f2328">Compiled SQL</text>
-<text x="455" y="364" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">AST allow-list</text>
-<rect x="320" y="400" width="270" height="72" rx="10" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="2"/>
-<text x="455" y="428" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#1f2328">Asker&#x27;s login</text>
-<text x="455" y="460" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">4 s, 500 rows</text>
-<rect x="610" y="16" width="270" height="72" rx="10" fill="#ddf4ff" stroke="#54aeff" stroke-width="2"/>
-<text x="745" y="44" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#1f2328">Documents</text>
-<text x="745" y="76" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">hybrid, reranked</text>
-<rect x="610" y="112" width="270" height="72" rx="10" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="2"/>
-<text x="745" y="140" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#1f2328">Policy edition</text>
-<text x="745" y="172" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">on the loss date</text>
-<rect x="610" y="208" width="270" height="72" rx="10" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="2"/>
-<text x="745" y="236" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#1f2328">Two searches</text>
-<text x="745" y="268" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">full text, vectors</text>
-<rect x="610" y="304" width="270" height="72" rx="10" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="2"/>
-<text x="745" y="332" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#1f2328">Fused, reranked</text>
-<text x="745" y="364" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">RRF, cross-encoder</text>
-<rect x="610" y="400" width="270" height="72" rx="10" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="2"/>
-<text x="745" y="428" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#1f2328">Cited lines</text>
-<text x="745" y="460" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">each names a chunk</text>
-<rect x="900" y="16" width="270" height="72" rx="10" fill="#ddf4ff" stroke="#54aeff" stroke-width="2"/>
-<text x="1035" y="44" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#1f2328">Why</text>
-<text x="1035" y="76" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">drivers + memos</text>
-<rect x="900" y="112" width="270" height="72" rx="10" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="2"/>
-<text x="1035" y="140" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#1f2328">Both periods</text>
-<text x="1035" y="172" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">this vs the last</text>
-<rect x="900" y="208" width="270" height="72" rx="10" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="2"/>
-<text x="1035" y="236" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#1f2328">Driver split</text>
-<text x="1035" y="268" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">sandbox template</text>
-<rect x="900" y="304" width="270" height="72" rx="10" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="2"/>
-<text x="1035" y="332" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#1f2328">Memo, bulletin</text>
-<text x="1035" y="364" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">within 92 days</text>
-<rect x="900" y="400" width="270" height="72" rx="10" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="2"/>
-<text x="1035" y="428" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#1f2328">Sentences</text>
-<text x="1035" y="460" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">built from rows</text>
-<rect x="30" y="552" width="270" height="108" rx="10" fill="#dafbe1" stroke="#4ac26b" stroke-width="2"/>
-<text x="165" y="582" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#1f2328">Figures</text>
-<text x="165" y="614" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">traced to rows or</text>
-<text x="165" y="646" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">sandbox output</text>
-<rect x="320" y="552" width="270" height="108" rx="10" fill="#dafbe1" stroke="#4ac26b" stroke-width="2"/>
-<text x="455" y="582" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#1f2328">Citations</text>
-<text x="455" y="614" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">retrieved for you,</text>
-<text x="455" y="646" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">in your regions</text>
-<rect x="610" y="552" width="270" height="108" rx="10" fill="#dafbe1" stroke="#4ac26b" stroke-width="2"/>
-<text x="745" y="582" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#1f2328">Wording</text>
-<text x="745" y="614" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">rose, highest and</text>
-<text x="745" y="646" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">doubled must hold</text>
-<rect x="900" y="552" width="270" height="108" rx="10" fill="#dafbe1" stroke="#4ac26b" stroke-width="2"/>
-<text x="1035" y="582" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#1f2328">One retry</text>
-<text x="1035" y="614" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">for live writers,</text>
-<text x="1035" y="646" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">then failures cut</text>
-<rect x="30" y="756" width="270" height="136" rx="10" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="2"/>
-<text x="165" y="784" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#1f2328">Fast model</text>
-<text x="165" y="816" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="23" fill="#59636e">claude-haiku-4-5</text>
-<text x="165" y="848" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">routes, and fills</text>
-<text x="165" y="880" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">a typed query</text>
-<rect x="320" y="756" width="270" height="136" rx="10" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="2"/>
-<text x="455" y="784" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#1f2328">Main model</text>
-<text x="455" y="816" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="23" fill="#59636e">claude-sonnet-5</text>
-<text x="455" y="848" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">writes cited</text>
-<text x="455" y="880" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">document answers</text>
-<rect x="610" y="756" width="270" height="136" rx="10" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="2"/>
-<text x="745" y="784" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#1f2328">Orchestrator</text>
-<text x="745" y="816" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="23" fill="#59636e">query_metric</text>
-<text x="745" y="848" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="23" fill="#59636e">analyze</text>
-<text x="745" y="880" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="23" fill="#59636e">find_documents</text>
-<rect x="900" y="756" width="270" height="136" rx="10" fill="#f6f8fa" stroke="#d1d9e0" stroke-width="2"/>
-<text x="1035" y="784" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#1f2328">Checker</text>
-<text x="1035" y="816" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="23" fill="#59636e">gemini-3.8-flash</text>
-<text x="1035" y="848" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">or the fast model,</text>
-<text x="1035" y="880" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#59636e">reads cited lines</text>
+<defs><marker id="head" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#7B8492"/></marker></defs>
+<rect width="1200" height="924" fill="#10161D"/>
+<rect x="1" y="1" width="1198" height="922" fill="none" stroke="#475569" stroke-width="2"/>
+<path d="M165,88 L165,112" fill="none" stroke="#7B8492" stroke-width="2" marker-end="url(#head)"/>
+<path d="M165,184 L165,208" fill="none" stroke="#7B8492" stroke-width="2" marker-end="url(#head)"/>
+<path d="M165,280 L165,304" fill="none" stroke="#7B8492" stroke-width="2" marker-end="url(#head)"/>
+<path d="M165,376 L165,400" fill="none" stroke="#7B8492" stroke-width="2" marker-end="url(#head)"/>
+<path d="M455,88 L455,112" fill="none" stroke="#7B8492" stroke-width="2" marker-end="url(#head)"/>
+<path d="M455,184 L455,208" fill="none" stroke="#7B8492" stroke-width="2" marker-end="url(#head)"/>
+<path d="M455,280 L455,304" fill="none" stroke="#7B8492" stroke-width="2" marker-end="url(#head)"/>
+<path d="M455,376 L455,400" fill="none" stroke="#7B8492" stroke-width="2" marker-end="url(#head)"/>
+<path d="M745,88 L745,112" fill="none" stroke="#7B8492" stroke-width="2" marker-end="url(#head)"/>
+<path d="M745,184 L745,208" fill="none" stroke="#7B8492" stroke-width="2" marker-end="url(#head)"/>
+<path d="M745,280 L745,304" fill="none" stroke="#7B8492" stroke-width="2" marker-end="url(#head)"/>
+<path d="M745,376 L745,400" fill="none" stroke="#7B8492" stroke-width="2" marker-end="url(#head)"/>
+<path d="M1035,88 L1035,112" fill="none" stroke="#7B8492" stroke-width="2" marker-end="url(#head)"/>
+<path d="M1035,184 L1035,208" fill="none" stroke="#7B8492" stroke-width="2" marker-end="url(#head)"/>
+<path d="M1035,280 L1035,304" fill="none" stroke="#7B8492" stroke-width="2" marker-end="url(#head)"/>
+<path d="M1035,376 L1035,400" fill="none" stroke="#7B8492" stroke-width="2" marker-end="url(#head)"/>
+<rect x="16" y="508" width="1168" height="168" rx="14" fill="#141B23" stroke="#475569" stroke-width="2" stroke-dasharray="3 5" stroke-linecap="round"/>
+<text x="34" y="539" text-anchor="start" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" font-weight="600" fill="#BCC7D2">Verifier, on every sentence of every answer</text>
+<path d="M165,472 L165,508" fill="none" stroke="#7B8492" stroke-width="2" marker-end="url(#head)"/>
+<path d="M455,472 L455,508" fill="none" stroke="#7B8492" stroke-width="2" marker-end="url(#head)"/>
+<path d="M745,472 L745,508" fill="none" stroke="#7B8492" stroke-width="2" marker-end="url(#head)"/>
+<path d="M1035,472 L1035,508" fill="none" stroke="#7B8492" stroke-width="2" marker-end="url(#head)"/>
+<rect x="16" y="712" width="1168" height="196" rx="14" fill="#141B23" stroke="#475569" stroke-width="2" stroke-dasharray="3 5" stroke-linecap="round"/>
+<text x="34" y="743" text-anchor="start" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" font-weight="600" fill="#BCC7D2">Live mode, when LLM_BACKEND names a backend</text>
+<rect x="30" y="16" width="270" height="72" rx="10" fill="#1D2733" stroke="#8CB4DF" stroke-width="2"/>
+<text x="165" y="44" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#8CB4DF">Lookup</text>
+<text x="165" y="76" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#BCC7D2">one claim by id</text>
+<rect x="30" y="112" width="270" height="72" rx="10" fill="#1D2733" stroke="#475569" stroke-width="2"/>
+<text x="165" y="140" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#E9EEF3">Claim number</text>
+<text x="165" y="172" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#BCC7D2">from the question</text>
+<rect x="30" y="208" width="270" height="72" rx="10" fill="#1D2733" stroke="#475569" stroke-width="2"/>
+<text x="165" y="236" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#E9EEF3">Claim row</text>
+<text x="165" y="268" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#BCC7D2">or its scan fields</text>
+<rect x="30" y="304" width="270" height="72" rx="10" fill="#1D2733" stroke="#475569" stroke-width="2"/>
+<text x="165" y="332" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#E9EEF3">Scan total</text>
+<text x="165" y="364" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#BCC7D2">matched to paid</text>
+<rect x="30" y="400" width="270" height="72" rx="10" fill="#1D2733" stroke="#475569" stroke-width="2"/>
+<text x="165" y="428" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#E9EEF3">Hidden claim</text>
+<text x="165" y="460" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#BCC7D2">reads as missing</text>
+<rect x="320" y="16" width="270" height="72" rx="10" fill="#1D2733" stroke="#79B8C8" stroke-width="2"/>
+<text x="455" y="44" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#79B8C8">Figures</text>
+<text x="455" y="76" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#BCC7D2">typed query to SQL</text>
+<rect x="320" y="112" width="270" height="72" rx="10" fill="#1D2733" stroke="#475569" stroke-width="2"/>
+<text x="455" y="140" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#E9EEF3">Typed query</text>
+<text x="455" y="172" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#BCC7D2">semantic layer</text>
+<rect x="320" y="208" width="270" height="72" rx="10" fill="#1D2733" stroke="#475569" stroke-width="2"/>
+<text x="455" y="236" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#E9EEF3">Period check</text>
+<text x="455" y="268" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#BCC7D2">inside the data</text>
+<rect x="320" y="304" width="270" height="72" rx="10" fill="#1D2733" stroke="#475569" stroke-width="2"/>
+<text x="455" y="332" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#E9EEF3">Compiled SQL</text>
+<text x="455" y="364" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#BCC7D2">AST allow-list</text>
+<rect x="320" y="400" width="270" height="72" rx="10" fill="#1D2733" stroke="#475569" stroke-width="2"/>
+<text x="455" y="428" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#E9EEF3">Asker&#x27;s login</text>
+<text x="455" y="460" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#BCC7D2">4 s, 500 rows</text>
+<rect x="610" y="16" width="270" height="72" rx="10" fill="#1D2733" stroke="#B4A7D6" stroke-width="2"/>
+<text x="745" y="44" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#B4A7D6">Documents</text>
+<text x="745" y="76" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#BCC7D2">hybrid, reranked</text>
+<rect x="610" y="112" width="270" height="72" rx="10" fill="#1D2733" stroke="#475569" stroke-width="2"/>
+<text x="745" y="140" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#E9EEF3">Policy edition</text>
+<text x="745" y="172" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#BCC7D2">on the loss date</text>
+<rect x="610" y="208" width="270" height="72" rx="10" fill="#1D2733" stroke="#475569" stroke-width="2"/>
+<text x="745" y="236" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#E9EEF3">Two searches</text>
+<text x="745" y="268" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#BCC7D2">full text, vectors</text>
+<rect x="610" y="304" width="270" height="72" rx="10" fill="#1D2733" stroke="#475569" stroke-width="2"/>
+<text x="745" y="332" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#E9EEF3">Fused, reranked</text>
+<text x="745" y="364" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#BCC7D2">RRF, cross-encoder</text>
+<rect x="610" y="400" width="270" height="72" rx="10" fill="#1D2733" stroke="#475569" stroke-width="2"/>
+<text x="745" y="428" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#E9EEF3">Cited lines</text>
+<text x="745" y="460" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#BCC7D2">each names a chunk</text>
+<rect x="900" y="16" width="270" height="72" rx="10" fill="#1D2733" stroke="#C5BBA4" stroke-width="2"/>
+<text x="1035" y="44" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#C5BBA4">Why</text>
+<text x="1035" y="76" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#BCC7D2">drivers + memos</text>
+<rect x="900" y="112" width="270" height="72" rx="10" fill="#1D2733" stroke="#475569" stroke-width="2"/>
+<text x="1035" y="140" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#E9EEF3">Both periods</text>
+<text x="1035" y="172" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#BCC7D2">this vs the last</text>
+<rect x="900" y="208" width="270" height="72" rx="10" fill="#1D2733" stroke="#475569" stroke-width="2"/>
+<text x="1035" y="236" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#E9EEF3">Driver split</text>
+<text x="1035" y="268" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#BCC7D2">sandbox template</text>
+<rect x="900" y="304" width="270" height="72" rx="10" fill="#1D2733" stroke="#475569" stroke-width="2"/>
+<text x="1035" y="332" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#E9EEF3">Memo, bulletin</text>
+<text x="1035" y="364" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#BCC7D2">within 92 days</text>
+<rect x="900" y="400" width="270" height="72" rx="10" fill="#1D2733" stroke="#475569" stroke-width="2"/>
+<text x="1035" y="428" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#E9EEF3">Sentences</text>
+<text x="1035" y="460" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#BCC7D2">built from rows</text>
+<rect x="30" y="552" width="270" height="108" rx="10" fill="#172D27" stroke="#74C3A1" stroke-width="2"/>
+<text x="165" y="582" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#74C3A1">Figures</text>
+<text x="165" y="614" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#BCC7D2">traced to rows or</text>
+<text x="165" y="646" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#BCC7D2">sandbox output</text>
+<rect x="320" y="552" width="270" height="108" rx="10" fill="#172D27" stroke="#74C3A1" stroke-width="2"/>
+<text x="455" y="582" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#74C3A1">Citations</text>
+<text x="455" y="614" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#BCC7D2">retrieved for you,</text>
+<text x="455" y="646" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#BCC7D2">in your regions</text>
+<rect x="610" y="552" width="270" height="108" rx="10" fill="#172D27" stroke="#74C3A1" stroke-width="2"/>
+<text x="745" y="582" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#74C3A1">Wording</text>
+<text x="745" y="614" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#BCC7D2">rose, highest and</text>
+<text x="745" y="646" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#BCC7D2">doubled must hold</text>
+<rect x="900" y="552" width="270" height="108" rx="10" fill="#172D27" stroke="#74C3A1" stroke-width="2"/>
+<text x="1035" y="582" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#74C3A1">One retry</text>
+<text x="1035" y="614" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#BCC7D2">for live writers,</text>
+<text x="1035" y="646" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#BCC7D2">then failures cut</text>
+<rect x="30" y="756" width="270" height="136" rx="10" fill="#1D2733" stroke="#475569" stroke-width="2"/>
+<text x="165" y="784" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#E9EEF3">Fast model</text>
+<text x="165" y="816" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="23" fill="#BCC7D2">claude-haiku-4-5</text>
+<text x="165" y="848" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#BCC7D2">routes, and fills</text>
+<text x="165" y="880" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#BCC7D2">a typed query</text>
+<rect x="320" y="756" width="270" height="136" rx="10" fill="#1D2733" stroke="#475569" stroke-width="2"/>
+<text x="455" y="784" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#E9EEF3">Main model</text>
+<text x="455" y="816" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="23" fill="#BCC7D2">claude-sonnet-5</text>
+<text x="455" y="848" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#BCC7D2">writes cited</text>
+<text x="455" y="880" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#BCC7D2">document answers</text>
+<rect x="610" y="756" width="270" height="136" rx="10" fill="#1D2733" stroke="#475569" stroke-width="2"/>
+<text x="745" y="784" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#E9EEF3">Orchestrator</text>
+<text x="745" y="816" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="23" fill="#BCC7D2">query_metric</text>
+<text x="745" y="848" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="23" fill="#BCC7D2">analyze</text>
+<text x="745" y="880" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="23" fill="#BCC7D2">find_documents</text>
+<rect x="900" y="756" width="270" height="136" rx="10" fill="#1D2733" stroke="#475569" stroke-width="2"/>
+<text x="1035" y="784" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#E9EEF3">Checker</text>
+<text x="1035" y="816" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace" font-size="23" fill="#BCC7D2">gemini-3.8-flash</text>
+<text x="1035" y="848" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#BCC7D2">or the fast model,</text>
+<text x="1035" y="880" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="23" fill="#BCC7D2">reads cited lines</text>
 </svg>

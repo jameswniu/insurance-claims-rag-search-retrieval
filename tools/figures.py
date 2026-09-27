@@ -18,7 +18,7 @@ import html
 import json
 import re
 import sys
-from collections.abc import Iterable
+from collections.abc import Iterable, Mapping
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -36,11 +36,21 @@ PAD = 14
 STEP = 32
 WIDTH = 1200
 
-INK, MUTED, EDGE = "#1f2328", "#59636e", "#d1d9e0"
-CANVAS, SUBTLE = "#ffffff", "#f6f8fa"
-BLUE_BG, BLUE_EDGE = "#ddf4ff", "#54aeff"
-GREEN_BG, GREEN_EDGE = "#dafbe1", "#4ac26b"
-GROUP_BG = "#fbfcfd"
+# One dark palette for every figure: charcoal surfaces, steel blue for the repo, a color per path, green for checks.
+CANVAS, PANEL, NODE_BG, GROUP_BG = "#10161D", "#18212B", "#1D2733", "#141B23"
+EDGE, CONNECTOR, TINT, BADGE_BLUE = "#475569", "#7B8492", "#25394A", "#365C7D"
+PRIMARY, SECONDARY, MUTED = "#E9EEF3", "#BCC7D2", "#94A3B8"
+ACCENT = LOOKUP = "#8CB4DF"
+# FIGURES already names the folder the files are written to, so the figures path color takes a suffix.
+FIGURES_EDGE, DOCUMENTS, WHY = "#79B8C8", "#B4A7D6", "#C5BBA4"
+SUCCESS, GREEN_BG, WARNING = "#74C3A1", "#172D27", "#E5B567"
+
+INK = PRIMARY
+SUBTLE = NODE_BG
+BLUE_BG = NODE_BG
+BLUE_EDGE = LOOKUP
+GREEN_EDGE = SUCCESS
+PATH_EDGES = (LOOKUP, FIGURES_EDGE, DOCUMENTS, WHY)
 
 # What a label may not carry: dashes and arrows are drawn as lines, never typed, and these words say nothing. The
 # marks are built from their code points, so this file holds none of them.
@@ -122,7 +132,8 @@ def rate(report: Report, path: str) -> Rate:
 
 @dataclass(frozen=True)
 class Box:
-    """A rounded box with a bold title and smaller lines under it. Lines listed in mono are code identifiers."""
+    """A rounded box with a bold title and smaller lines under it. Lines listed in mono are code identifiers.
+    title_fill colors the title, and line_fills colors a line by its index, ahead of title_fill."""
 
     x: float
     y: float
@@ -132,6 +143,8 @@ class Box:
     fill: str = SUBTLE
     edge: str = EDGE
     mono: frozenset[int] = field(default_factory=frozenset)
+    title_fill: str | None = None
+    line_fills: Mapping[int, str] = field(default_factory=dict, hash=False)
 
     @property
     def cx(self) -> float:
@@ -163,7 +176,8 @@ class Box:
             need = width(line, size, bold, mono)
             if need > self.w - 2 * PAD:
                 raise SystemExit(f"{line!r} needs {need:.0f} units in a {self.w:.0f}-unit box")
-            out.append(text(self.cx, top + i * STEP, line, size, INK if bold else MUTED, bold, mono=mono))
+            ink = self.line_fills.get(i, (self.title_fill or PRIMARY) if bold else SECONDARY)
+            out.append(text(self.cx, top + i * STEP, line, size, ink, bold, mono=mono))
         return out
 
 
@@ -175,7 +189,7 @@ def group(x: float, y: float, w: float, h: float, name: str, name_x: float | Non
     return [
         f'<rect x="{x:.0f}" y="{y:.0f}" width="{w:.0f}" height="{h:.0f}" rx="14" fill="{GROUP_BG}" '
         f'stroke="{EDGE}" stroke-width="2" stroke-dasharray="3 5" stroke-linecap="round"/>',
-        text(at, y + 31, name, BODY, MUTED, bold=True, anchor=anchor),
+        text(at, y + 31, name, BODY, SECONDARY, bold=True, anchor=anchor),
     ]
 
 
@@ -188,7 +202,7 @@ def path(points: Iterable[tuple[float, float]], dashed: bool = False, arrow: boo
     d = " ".join(f"{'M' if i == 0 else 'L'}{x:.0f},{y:.0f}" for i, (x, y) in enumerate(pts))
     dash = ' stroke-dasharray="7 6"' if dashed else ""
     head = ' marker-end="url(#head)"' if arrow else ""
-    return f'<path d="{d}" fill="none" stroke="{MUTED}" stroke-width="2"{dash}{head}/>'
+    return f'<path d="{d}" fill="none" stroke="{CONNECTOR}" stroke-width="2"{dash}{head}/>'
 
 
 def label(
@@ -209,13 +223,14 @@ def frame(height: float, edge: str) -> str:
 
 
 def document(title: str, description: str, height: float, parts: Iterable[str], canvas: str = CANVAS) -> str:
-    """The figure as a file: its title and description for screen readers, the arrowhead and the canvas."""
+    """The figure as a file: its title and description for screen readers, the arrowhead, the canvas and its frame.
+    The frame goes under the parts, so anything drawn on the edge, like the hero's top stripe, stays on top."""
     for words in (title, description):
         if BANNED.search(words):
             raise SystemExit(f"{words!r} carries a dash, an arrow or a banned word")
     defs = (
         '<defs><marker id="head" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" '
-        f'orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="{MUTED}"/></marker></defs>'
+        f'orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="{CONNECTOR}"/></marker></defs>'
     )
     return "\n".join(
         [
@@ -225,6 +240,7 @@ def document(title: str, description: str, height: float, parts: Iterable[str], 
             f'<desc id="desc">{html.escape(description)}</desc>',
             defs,
             f'<rect width="{WIDTH}" height="{height:.0f}" fill="{canvas}"/>',
+            frame(height, EDGE),
             *parts,
             "</svg>",
             "",

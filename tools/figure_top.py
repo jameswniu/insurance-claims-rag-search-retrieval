@@ -37,22 +37,24 @@ def columns() -> list[float]:
 def draw() -> str:
     gx, rx, lx, vx, ax = columns()
     gw, rw, lw, vw, aw = WIDTHS
+    heads = [
+        ("Lookup", "one claim by id"),
+        ("Figures", "typed query to SQL"),
+        ("Documents", "hybrid, reranked"),
+        ("Why", "drivers + memos"),
+    ]
+    # Each path keeps one color, in its outline and its heading.
     lanes = [
-        f.Box(lx, LANES_Y + i * (LANE_H + LANE_GAP), lw, LANE_H, lines, f.BLUE_BG, f.BLUE_EDGE)
-        for i, lines in enumerate(
-            [
-                ("Lookup", "one claim by id"),
-                ("Figures", "typed query to SQL"),
-                ("Documents", "hybrid, reranked"),
-                ("Why", "drivers + memos"),
-            ]
-        )
+        f.Box(lx, LANES_Y + i * (LANE_H + LANE_GAP), lw, LANE_H, lines, f.NODE_BG, edge, title_fill=edge)
+        for i, (lines, edge) in enumerate(zip(heads, f.PATH_EDGES, strict=True))
     ]
     mid = (lanes[0].cy + lanes[-1].cy) / 2
     lanes_bottom = lanes[-1].bottom
     gate = f.Box(gx, mid - 40, gw, 80, ("Gate",))
     router = f.Box(rx, mid - 40, rw, 80, ("Router", "keyword rules"))
-    verifier = f.Box(vx, mid - 55, vw, 110, ("Verifier", "numbers and", "citations"), f.GREEN_BG, f.GREEN_EDGE)
+    verifier = f.Box(
+        vx, mid - 55, vw, 110, ("Verifier", "numbers and", "citations"), f.GREEN_BG, f.SUCCESS, title_fill=f.SUCCESS
+    )
     answer = f.Box(ax, mid - 40, aw, 80, ("Answer", "and evidence"))
     refused = f.Box(gx, lanes_bottom - 108, gw, 108, ("Refused", "injection,", "off-topic"))
     clarify = f.Box(rx, lanes_bottom - 108, rw, 108, ("Clarify", "one question,", "with options"))

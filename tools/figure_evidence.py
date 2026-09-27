@@ -15,9 +15,9 @@ except ModuleNotFoundError:  # run as a script from tools/, where the repository
 OUT = f.FIGURES / "eval-comparison.svg"
 HEIGHT = 624
 
-# The light palette the README's other figures share.
-CANVAS, PRIMARY, SECONDARY, BORDER = "#FFFFFF", "#202B36", "#435363", "#D1D9E0"
-DEV_INK, HELD_INK = "#5D6B79", "#245B85"
+# The dark palette every README figure shares.
+CANVAS, PRIMARY, SECONDARY, BORDER = f.CANVAS, f.PRIMARY, f.SECONDARY, f.EDGE
+DEV_INK, HELD_INK = f.MUTED, f.ACCENT
 
 M = 48
 RIGHT = f.WIDTH - M
@@ -92,7 +92,6 @@ def draw(report: f.Report) -> str:
         parts.append(f.fitted(M, top + 50, label, 28, PRIMARY, M, LABEL_END, bold=True))
         for (_, left, _, ink, hollow), r in zip(PLOTS, (dev, held), strict=True):
             parts += plot(left, top, r, ink, hollow)
-    parts.append(f.frame(HEIGHT, BORDER))
     title = f"{NAME}, eval results with no API key"
     lines = [f"{label}: dev {said(dev)}, held-out {said(held)}." for label, dev, held in rows]
     description = f"{NAME} with no API key, each check a rate with its Wilson interval. {' '.join(lines)} {FOOTER}"

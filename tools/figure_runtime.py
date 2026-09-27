@@ -3,6 +3,8 @@ the sandbox job's limits, and the telemetry."""
 
 from __future__ import annotations
 
+from dataclasses import replace
+
 try:
     from tools import figures as f
 except ModuleNotFoundError:  # run as a script from tools/, where the repository root may not be on the path
@@ -82,8 +84,13 @@ def database(y: float) -> tuple[list[str], list[f.Box]]:
     )
     sup_group = centred(x2, supervisor.cy, 270, ("chat_supervisor", "same grants"), mono=frozenset({0}))
     ana_group = centred(x2, analyst.cy, 270, ("chat_analyst", "no claim rows"), mono=frozenset({0}))
-    rows = f.Box(x3, top + 20, 290, 216, ROW_SECURITY, mono=frozenset({2, 3}))
-    metric = centred(x3, analyst.cy, 290, METRIC, mono=frozenset({0}))
+    rows = f.Box(x3, top + 20, 290, 216, ROW_SECURITY, edge=f.ACCENT, mono=frozenset({2, 3}))
+    # Amber marks the metric's suppression conditions, its last three lines.
+    metric = replace(
+        centred(x3, analyst.cy, 290, METRIC, mono=frozenset({0})),
+        edge=f.WARNING,
+        line_fills={2: f.WARNING, 3: f.WARNING, 4: f.WARNING},
+    )
     views = centred(x4, rows.cy, 260, ("Views", "security_invoker", "so RLS applies"), mono=frozenset({1}))
     tables = centred(x4, metric.cy, 260, ("Core tables", "claims, payments,", "premium, policies"))
     if metric.y < rows.bottom + 16 or metric.bottom > top + 424:

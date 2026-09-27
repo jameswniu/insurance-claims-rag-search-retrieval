@@ -74,8 +74,8 @@ def draw() -> str:
     parts: list[str] = []
     boxes: list[f.Box] = []
     last_bottom = 0.0
-    for x, (head, steps) in zip(xs, LANES, strict=True):
-        header = f.Box(x, M, COLUMN_W, BOX_H, head, f.BLUE_BG, f.BLUE_EDGE)
+    for x, (head, steps), edge in zip(xs, LANES, f.PATH_EDGES, strict=True):
+        header = f.Box(x, M, COLUMN_W, BOX_H, head, f.NODE_BG, edge, title_fill=edge)
         column = [header]
         for i, lines in enumerate(steps):
             column.append(f.Box(x, header.bottom + GAP + i * (BOX_H + GAP), COLUMN_W, BOX_H, lines))
@@ -86,7 +86,7 @@ def draw() -> str:
     check_y = last_bottom + 36
     parts += f.group(M, check_y, f.WIDTH - 2 * M, 168, "Verifier, on every sentence of every answer")
     for x, check in zip(xs, CHECKS, strict=True):
-        boxes.append(f.Box(x, check_y + 44, COLUMN_W, 108, check, f.GREEN_BG, f.GREEN_EDGE))
+        boxes.append(f.Box(x, check_y + 44, COLUMN_W, 108, check, f.GREEN_BG, f.SUCCESS, title_fill=f.SUCCESS))
     parts += [f.path([(x + COLUMN_W / 2, last_bottom), (x + COLUMN_W / 2, check_y)]) for x in xs]
 
     live_y = check_y + 168 + 36
