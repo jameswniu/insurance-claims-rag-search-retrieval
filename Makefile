@@ -6,6 +6,9 @@ ROLES := $(shell sed -n 's/^  \(u_[a-z_]*\):.*/\1/p' data/users.yaml)
 SECRET_KEYS := POSTGRES_PASSWORD APP_WRITER_PASSWORD GOLD_READER_PASSWORD SESSION_SECRET \
 	$(foreach role,$(ROLES),PGPASS_$(shell echo $(role) | tr a-z A-Z))
 
+# The app's host port, 8000 unless something else holds it. tools/app-port.sh says how it is chosen.
+export APP_PORT := $(shell bash tools/app-port.sh)
+
 help: ## List targets
 	@awk 'BEGIN {FS = ":.*## "} /^[a-z-]+:.*## / {printf "  %-18s %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
@@ -15,10 +18,12 @@ secrets: ## Mint any missing password in var/secrets.env
 		grep -q "^$$key=" var/secrets.env || echo "$$key=$$(openssl rand -hex 16)" >> var/secrets.env; \
 	done
 
-up: secrets ## Build and start everything, then wait until it is healthy
+up: secrets ## Build and start everything, then print the address to open
 	docker compose --profile sandbox-image build sandbox
 	docker compose up -d --build --wait
-	@echo "Open http://$$(docker compose port app 8000 | sed s/127.0.0.1/localhost/)"
+	@echo ""
+	@echo "Claims Q&A is running at http://localhost:$$(docker compose port app 8000 | sed 's/.*://')"
+	@echo "Pick a user, then ask. make logs follows the logs, and make down stops it."
 
 # Live mode reads LLM_BACKEND and its settings from .env or the shell, and mounts the gcloud credentials for vertex.
 # gcloud's credentials file, which Claude on Vertex and the Gemini checker sign in with. Without one the live overlay
@@ -29,7 +34,9 @@ export GCLOUD_ADC ?= $(if $(wildcard $(ADC)),$(ADC),$(CURDIR)/var/no-gcloud-cred
 up-live: secrets ## Start everything as up does, with live mode's model settings layered on
 	docker compose --profile sandbox-image build sandbox
 	docker compose -f compose.yaml -f compose.live.yaml up -d --build --wait
-	@echo "Open http://$$(docker compose port app 8000 | sed s/127.0.0.1/localhost/)"
+	@echo ""
+	@echo "Claims Q&A is running at http://localhost:$$(docker compose port app 8000 | sed 's/.*://')"
+	@echo "Pick a user, then ask. make logs follows the logs, and make down stops it."
 
 live-check: ## Ask each live model for one token, with the settings in .env or the shell, and say which answered
 	uv run $(if $(wildcard .env),--env-file .env) python tools/live_check.py
