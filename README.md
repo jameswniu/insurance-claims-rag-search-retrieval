@@ -25,17 +25,17 @@ Dana, a West adjuster, asks what was paid on Colorado hail claims in Q2 2025. Th
 
 | Demo | Length |
 |---|---|
-| [A figure and its SQL](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@814c1a5a0c037fc1b6d878267ee1201e227c2243/docs/demo/ask.mp4) | 23 s |
-| [A policy answer and its source](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@814c1a5a0c037fc1b6d878267ee1201e227c2243/docs/demo/policy.mp4) | 33 s |
-| [A total read from a scan](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@814c1a5a0c037fc1b6d878267ee1201e227c2243/docs/demo/scan.mp4) | 26 s |
-| [Why losses rose](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@814c1a5a0c037fc1b6d878267ee1201e227c2243/docs/demo/why.mp4) | 43 s |
-| [One claim, three users](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@814c1a5a0c037fc1b6d878267ee1201e227c2243/docs/demo/permissions.mp4) | 37 s |
-| [Withheld small groups](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@814c1a5a0c037fc1b6d878267ee1201e227c2243/docs/demo/suppression.mp4) | 36 s |
-| [A question with no period](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@814c1a5a0c037fc1b6d878267ee1201e227c2243/docs/demo/clarify.mp4) | 30 s |
-| [An instruction override](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@814c1a5a0c037fc1b6d878267ee1201e227c2243/docs/demo/injection.mp4) | 13 s |
-| [An off-topic question](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@814c1a5a0c037fc1b6d878267ee1201e227c2243/docs/demo/off-topic.mp4) | 11 s |
-| [A year outside the data](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@814c1a5a0c037fc1b6d878267ee1201e227c2243/docs/demo/out-of-range.mp4) | 11 s |
-| [The dashboard by source](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@814c1a5a0c037fc1b6d878267ee1201e227c2243/docs/demo/dashboard.mp4) | 43 s |
+| [A figure and its SQL](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@4b26a834f742b4d39297b240321fdc8dfb98bce4/docs/demo/ask.mp4) | 23 s |
+| [A policy answer and its source](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@4b26a834f742b4d39297b240321fdc8dfb98bce4/docs/demo/policy.mp4) | 33 s |
+| [A total read from a scan](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@4b26a834f742b4d39297b240321fdc8dfb98bce4/docs/demo/scan.mp4) | 26 s |
+| [Why losses rose](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@4b26a834f742b4d39297b240321fdc8dfb98bce4/docs/demo/why.mp4) | 43 s |
+| [One claim, three users](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@4b26a834f742b4d39297b240321fdc8dfb98bce4/docs/demo/permissions.mp4) | 37 s |
+| [Withheld small groups](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@4b26a834f742b4d39297b240321fdc8dfb98bce4/docs/demo/suppression.mp4) | 36 s |
+| [A question with no period](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@4b26a834f742b4d39297b240321fdc8dfb98bce4/docs/demo/clarify.mp4) | 30 s |
+| [An instruction override](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@4b26a834f742b4d39297b240321fdc8dfb98bce4/docs/demo/injection.mp4) | 13 s |
+| [An off-topic question](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@4b26a834f742b4d39297b240321fdc8dfb98bce4/docs/demo/off-topic.mp4) | 11 s |
+| [A year outside the data](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@4b26a834f742b4d39297b240321fdc8dfb98bce4/docs/demo/out-of-range.mp4) | 11 s |
+| [The dashboard by source](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@4b26a834f742b4d39297b240321fdc8dfb98bce4/docs/demo/dashboard.mp4) | 43 s |
 
 ## How it works
 
@@ -84,9 +84,9 @@ Live mode, scored 2026-09-25 over 3 runs for $4.50 with claude-sonnet-5, claude-
 
 ## Who sees what
 
-Two adjusters and the analyst ask about the same West claim in [this clip](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@814c1a5a0c037fc1b6d878267ee1201e227c2243/docs/demo/permissions.mp4).
+Two adjusters and the analyst ask about the same West claim in [this clip](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@4b26a834f742b4d39297b240321fdc8dfb98bce4/docs/demo/permissions.mp4).
 
-[<img src="docs/demo/permissions.gif" alt="Dana, the West adjuster, asks for the status of claim 105964, reads that it is open, a fire loss in Colorado with $33,474 paid, and opens the evidence to the login the query ran on. Omar, the East adjuster, then asks the same and is told the claim can't be found, and Sam, the analyst, is told analysts see aggregates only." width="100%">](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@814c1a5a0c037fc1b6d878267ee1201e227c2243/docs/demo/permissions.mp4)
+[<img src="docs/demo/permissions.gif" alt="Dana, the West adjuster, asks for the status of claim 105964, reads that it is open, a fire loss in Colorado with $33,474 paid, and opens the evidence to the login the query ran on. Omar, the East adjuster, then asks the same and is told the claim can't be found, and Sam, the analyst, is told analysts see aggregates only." width="100%">](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@4b26a834f742b4d39297b240321fdc8dfb98bce4/docs/demo/permissions.mp4)
 
 | Who asks | What they get |
 |---|---|
@@ -98,9 +98,9 @@ Two adjusters and the analyst ask about the same West claim in [this clip](https
 
 `/dashboard`, for operators only, charts the request log beside the latest eval scores.
 
-[<img src="docs/demo/dashboard.gif" alt="Priya opens the operator dashboard and reads its request, answer rate, first event and rating tiles and a route's latency against its p95 budget, then filters to eval, replayed and browser requests in turn and reads which route each browser request took and how it ended." width="100%">](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@814c1a5a0c037fc1b6d878267ee1201e227c2243/docs/demo/dashboard.mp4)
+[<img src="docs/demo/dashboard.gif" alt="Priya opens the operator dashboard and reads its request, answer rate, first event and rating tiles and a route's latency against its p95 budget, then filters to eval, replayed and browser requests in turn and reads which route each browser request took and how it ended." width="100%">](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@4b26a834f742b4d39297b240321fdc8dfb98bce4/docs/demo/dashboard.mp4)
 
-[The dashboard clip](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@814c1a5a0c037fc1b6d878267ee1201e227c2243/docs/demo/dashboard.mp4) filters it by where each request came from.
+[The dashboard clip](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@4b26a834f742b4d39297b240321fdc8dfb98bce4/docs/demo/dashboard.mp4) filters it by where each request came from.
 
 ## What it doesn't do
 
