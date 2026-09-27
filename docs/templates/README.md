@@ -56,20 +56,47 @@ Click any GIF on this page, or a clip below, to play the full video with caption
 
 ## How it works
 
-### Top level, how a question flows
-
 <img src="docs/figures/system-map.svg" alt="A question goes from the browser to the FastAPI app, where the gate refuses injection and off-topic questions and the router asks back, says the period is outside the data, or picks the lookup, figures, documents or why path, each reading Postgres as the asker, before the verifier checks the answer and it streams back." width="100%">
+
+```mermaid
+%%{init: {'flowchart': {'curve': 'linear', 'nodeSpacing': 30, 'rankSpacing': 34, 'padding': 8}, 'themeVariables': {'fontSize': '18px'}}}%%
+flowchart TD
+    Q["Question · POST /ask as the signed-in user"]
+    GATE["Gate · refuses injection and off-topic"]
+    ROUTE["Router · keyword rules · asks back when a slot is missing"]
+
+    subgraph PATHS["Paths · each queries Postgres as the asker's own login"]
+        direction LR
+        LOOK["Lookup · one claim by id"]
+        FIG["Figures · semantic layer · AST allow-list"]
+        DOCS["Documents · full text + vectors · reranked"]
+        WHY["Why · driver split in the sandbox · memos"]
+    end
+
+    subgraph STORE["Postgres 17 with pgvector"]
+        direction LR
+        RLS["Claims and chunks · row-level security"]
+        AGG["agg.metric() · runs as its owner · totals only for analysts"]
+    end
+
+    VER["Verifier · every figure and citation traced to evidence"]
+    ANS["Answer · streamed with its evidence"]
+
+    Q --> GATE --> ROUTE --> PATHS --> VER --> ANS
+    PATHS --> STORE
+
+    classDef step fill:#f6f8fa,stroke:#59636e,color:#1f2328
+    classDef path fill:#ddf4ff,stroke:#54aeff,color:#1f2328
+    classDef check fill:#dafbe1,stroke:#4ac26b,color:#1f2328
+    class Q,GATE,ROUTE,ANS,RLS,AGG step
+    class LOOK,FIG,DOCS,WHY path
+    class VER check
+    style PATHS fill:#fbfcfd,stroke:#54aeff,color:#1f2328
+    style STORE fill:#fbfcfd,stroke:#d1d9e0,color:#1f2328
+```
 
 - Analysts get totals only, from `agg.metric()`, which runs as its owner and withholds any group with fewer than 10 claims or one claim over half the total.
 - No step needs a language model. `LLM_BACKEND` turns on live mode, which adds Claude, and optionally Gemini as the checker.
-
-### Mid level, inside each path
-
-<img src="docs/figures/system-paths.svg" alt="Four columns show the steps inside each path, feeding a verifier that traces every figure and citation and checks wording, over a band showing the models and orchestrator tools that live mode adds." width="100%">
-
-### Low level, what runs where
-
-<img src="docs/figures/system-runtime.svg" alt="The five compose services, how each Postgres login reaches data through its group, forced row security or the analyst's aggregate function, and the sandbox job limits beside the telemetry." width="100%">
 
 ## What could go wrong, and what stops it
 

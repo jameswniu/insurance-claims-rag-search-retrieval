@@ -39,6 +39,12 @@ The README is the short version. This is the long one, with each decision and wh
 7. The stream sends the route, the evidence and the answer, and a closed connection cancels whatever is still running. The evidence panel shows the SQL, rows and passages behind each answer ([app/events.py](../app/events.py), [app/web/static/evidence.js](../app/web/static/evidence.js)).
 8. Every answered or refused question writes one request-log row and one audit row, with the question redacted, and emits OpenTelemetry spans ([app/requestlog.py](../app/requestlog.py), [app/telemetry.py](../app/telemetry.py)).
 
+## Inside each path, and what runs where
+
+<img src="figures/system-paths.svg" alt="Four columns show the steps inside each path, feeding a verifier that traces every figure and citation and checks wording, over a band showing the models and orchestrator tools that live mode adds." width="100%">
+
+<img src="figures/system-runtime.svg" alt="The five compose services, how each Postgres login reaches data through its group, forced row security or the analyst's aggregate function, and the sandbox job limits beside the telemetry." width="100%">
+
 ## Failure modes
 
 This is the whole table the README shortens, with what each row measured. The tables after it list every failure mode by where it happens, with the test that shows it.
