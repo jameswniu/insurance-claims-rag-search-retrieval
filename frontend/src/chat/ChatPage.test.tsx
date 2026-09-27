@@ -53,8 +53,11 @@ describe("the chat page", () => {
     expect(container.querySelector(".turn .answer-text")).toHaveTextContent("We paid $4,108,453");
     expect(container.querySelector(".turn details.evidence")).toBeInTheDocument();
     expect(footer).toHaveTextContent("Finished in 62 ms");
-    expect(footer).toHaveTextContent("Request 5b0c1f3e");
-    expect(footer).toHaveTextContent("Route quantitative");
+    // The request id and the route are dev mode's, with the console, so the light page leaves them out.
+    expect(footer).not.toHaveTextContent("Request");
+    expect(footer).not.toHaveTextContent("Route");
+    expect(screen.queryByRole("region", { name: "Dev console" })).toBeNull();
+    expect(document.documentElement).not.toHaveAttribute("data-mode");
     expect(box).toHaveValue("");
   });
 

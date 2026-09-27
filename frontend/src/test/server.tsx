@@ -4,6 +4,7 @@ import type { ReactElement } from "react";
 import { vi } from "vitest";
 
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { DevModeProvider } from "@/devmode/DevModeProvider";
 
 type Reply = (request: { url: string; method: string; body: unknown }) => Response | Promise<Response>;
 
@@ -33,7 +34,9 @@ export function renderWithQueries(element: ReactElement) {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   return render(
     <QueryClientProvider client={client}>
-      <TooltipProvider>{element}</TooltipProvider>
+      <DevModeProvider>
+        <TooltipProvider>{element}</TooltipProvider>
+      </DevModeProvider>
     </QueryClientProvider>,
   );
 }

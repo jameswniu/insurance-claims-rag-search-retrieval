@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 
 import { BrandMark } from "@/components/BrandMark";
+import { DevModeSwitch } from "@/devmode/DevModeSwitch";
 import { cn } from "@/lib/cn";
 
 export type Page = "chat" | "dashboard";
@@ -11,12 +12,13 @@ const PAGES: { page: Page; href: string; label: string }[] = [
 ];
 
 /**
- * The sticky header: the product on the left, the pages an operator can open, and who is asking on the right. Only an
- * operator sees the pages, since the dashboard is theirs alone.
+ * The sticky header: the product on the left, the pages an operator can open, and who is asking on the right, beside
+ * the Dev mode switch. Only an operator sees the pages, since the dashboard is theirs alone. The header is opaque, so
+ * its text keeps its contrast over whatever scrolls under it.
  */
 export function TopBar({ page, ops, identity }: { page: Page; ops: boolean; identity?: ReactNode }) {
   return (
-    <header className="topbar sticky top-0 z-30 border-b border-border bg-background/85 backdrop-blur-md">
+    <header className="topbar sticky top-0 z-30 border-b border-border bg-background">
       <div className="topbar-grid mx-auto max-w-[1200px] px-4 py-2.5 sm:px-6">
         <a href="/" className="brand flex min-w-0 items-center gap-2.5 rounded-md font-semibold tracking-tight">
           <BrandMark />
@@ -38,7 +40,10 @@ export function TopBar({ page, ops, identity }: { page: Page; ops: boolean; iden
               </a>
             ))}
         </nav>
-        {identity && <div className="identity min-w-0">{identity}</div>}
+        <div className="identity session min-w-0">
+          {identity}
+          <DevModeSwitch />
+        </div>
       </div>
     </header>
   );

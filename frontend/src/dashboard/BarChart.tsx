@@ -1,6 +1,7 @@
 import { Table2 } from "lucide-react";
 import { useEffect, useId, useLayoutEffect, useRef, useState, type RefObject } from "react";
 
+import { TableBox } from "@/components/TableBox";
 import { Hint } from "@/components/ui/tooltip";
 import { BAR, barPath, FALLBACK_WIDTH, LABEL_GAP, layout, ROW, VALUE_GAP } from "@/dashboard/chartLayout";
 import { fitText, rootPx, textWidth } from "@/dashboard/measure";
@@ -43,8 +44,8 @@ function useFontsReady(): boolean {
 
 /**
  * A horizontal bar chart drawn at its container's width, so its text keeps one size on any screen. Every bar is
- * labelled with its value; hovering one lifts it and names it in full. The chart's title and description read every
- * bar out to a screen reader.
+ * labelled with its value; hovering one puts its row on the accent tint and names it in full, and every label stays
+ * readable. The chart's title and description read every bar out to a screen reader.
  */
 export function BarChart({ chart }: { chart: Chart }) {
   const id = useId();
@@ -75,6 +76,9 @@ export function BarChart({ chart }: { chart: Chart }) {
       >
         <title id={`${id}-title`}>{chart.title}</title>
         <desc id={`${id}-desc`}>{chart.description}</desc>
+        {active !== null && (
+          <rect className="c-band" x={0} y={shape.top + active * ROW} width={width} height={ROW} rx={4} />
+        )}
         {chart.ticks.map((tick, index) => {
           const at = shape.x(tick.value);
           return (
@@ -118,7 +122,26 @@ export function BarChart({ chart }: { chart: Chart }) {
             </g>
           );
         })}
-        {/* The budget line crosses the bars, so a bar past its budget shows it, and stops at each value's label. */}
+        {/* The budget line crosses the bars, so a bar past its budget shows it, and stops at each value's label. Where
+            it crosses a bar, a band of the surface on each side keeps the dashes clear of the bar's colour. */}
+        {chart.budget && (
+          <g className="c-budget-halos">
+            {chart.bars.map((bar, index) => {
+              const middle = shape.top + index * ROW + ROW / 2;
+              return barEnd(bar.value) > budgetX ? (
+                <line
+                  key={`halo-${index}`}
+                  className="c-budget-halo"
+                  x1={budgetX}
+                  x2={budgetX}
+                  y1={middle - BAR / 2}
+                  y2={middle + BAR / 2}
+                  strokeWidth={5}
+                />
+              ) : null;
+            })}
+          </g>
+        )}
         {chart.budget && (
           <line
             className="c-budget"
@@ -187,7 +210,7 @@ export function BarChart({ chart }: { chart: Chart }) {
 /** The chart's numbers as a table, the same values its bars show. */
 export function ChartTable({ chart }: { chart: Chart }) {
   return (
-    <div className="table-wrap w-full">
+    <TableBox label={chart.title} className="w-full">
       <table className="chart-table">
         <caption className="sr-only">{chart.title}</caption>
         <thead>
@@ -218,7 +241,7 @@ export function ChartTable({ chart }: { chart: Chart }) {
           )}
         </tbody>
       </table>
-    </div>
+    </TableBox>
   );
 }
 

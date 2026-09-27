@@ -33,7 +33,7 @@ function CopyButton({ text }: { text: string }) {
             }, 1500);
           });
         }}
-        className="absolute top-2 right-2 grid size-7 cursor-pointer place-items-center rounded-md border border-border bg-surface text-subtle opacity-80 shadow-xs transition hover:text-foreground hover:opacity-100"
+        className="absolute top-2 right-2 grid size-7 cursor-pointer place-items-center rounded-md border border-border bg-surface text-subtle shadow-xs transition-colors hover:text-foreground"
       >
         {copied ? <Check className="size-3.5" aria-hidden="true" /> : <Copy className="size-3.5" aria-hidden="true" />}
       </button>

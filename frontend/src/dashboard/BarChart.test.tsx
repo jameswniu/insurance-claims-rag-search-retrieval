@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 
@@ -43,6 +43,28 @@ describe("a dashboard chart", () => {
     expect(values).toEqual(["90 ms", "300 ms", "420 ms", "1.60 s"]);
     expect(svg?.querySelector("text.c-budget-label")?.textContent).toBe("p95 budget 2 s");
     expect(svg?.querySelector("line.c-budget")).toHaveAttribute("stroke-dasharray", "5 4");
+  });
+
+  it("puts a hovered bar's row on the tint and keeps every label, and clears the budget line where it crosses a bar", () => {
+    const over: Chart = {
+      ...latency,
+      ticks: [0, 1, 2, 3].map((value) => ({ value, label: `${value} s` })),
+      bars: [...latency.bars.slice(0, 3), { label: "Total, p95", value: 2.6, text: "2.60 s", tone: "accent" }],
+    };
+    const { container } = renderFigure(over);
+    const svg = container.querySelector("svg.chart");
+    // Only the bar past the 2 s budget gets the halo.
+    expect(svg?.querySelectorAll("line.c-budget-halo")).toHaveLength(1);
+    expect(svg?.querySelector("rect.c-band")).toBeNull();
+    const rows = svg?.querySelectorAll("g.c-row:not(.c-values g)") ?? [];
+    fireEvent.pointerEnter(rows[1]!);
+    const band = svg?.querySelector("rect.c-band");
+    expect(band).toHaveAttribute("y", String(Number(rows[1]?.querySelector("rect.c-hit")?.getAttribute("y"))));
+    expect(svg?.querySelectorAll('[data-active=""].c-row')).toHaveLength(2);
+    // Nothing is faded: the other rows' labels keep their colour.
+    expect(container.querySelector('[style*="opacity"], [opacity]')).toBeNull();
+    fireEvent.pointerLeave(svg!);
+    expect(svg?.querySelector("rect.c-band")).toBeNull();
   });
 
   it("draws no bar for a zero, and still labels it", () => {

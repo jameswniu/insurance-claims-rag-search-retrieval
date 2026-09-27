@@ -15,8 +15,8 @@ interface ComposerProps {
 }
 
 /**
- * The question box, fixed under the thread. Enter sends and Shift+Enter starts a new line. While an answer streams
- * the button stops it instead.
+ * The question box, fixed under the thread, and above the console in dev mode. Enter sends and Shift+Enter starts a
+ * new line. While an answer streams the button stops it instead. Focus draws the page's ring around the whole box.
  */
 export function Composer({ value, onChange, onAsk, onStop, busy, focusKey }: ComposerProps) {
   const box = useRef<HTMLTextAreaElement>(null);
@@ -34,7 +34,7 @@ export function Composer({ value, onChange, onAsk, onStop, busy, focusKey }: Com
   return (
     <form
       id="composer"
-      className="composer fixed inset-x-0 bottom-0 z-20 px-4 pt-6 pb-4 sm:px-6"
+      className="composer fixed inset-x-0 z-20 px-4 pt-6 pb-4 sm:px-6"
       autoComplete="off"
       onSubmit={(event) => {
         event.preventDefault();
@@ -48,7 +48,7 @@ export function Composer({ value, onChange, onAsk, onStop, busy, focusKey }: Com
         onAsk(question);
       }}
     >
-      <div className="composer-inner mx-auto flex max-w-[768px] items-end gap-2 rounded-2xl border border-control bg-surface p-2 pl-4 shadow-md transition-[border-color,box-shadow] focus-within:border-accent focus-within:ring-4 focus-within:ring-accent/15">
+      <div className="composer-inner mx-auto flex max-w-[768px] items-end gap-2 rounded-2xl border border-control bg-surface p-2 pl-4 shadow-md transition-[border-color] focus-within:border-focus-ring focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-focus-ring">
         <label htmlFor="q" className="sr-only">
           Your question
         </label>

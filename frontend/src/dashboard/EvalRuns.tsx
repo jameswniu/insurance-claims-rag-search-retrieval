@@ -1,9 +1,10 @@
+import { TableBox } from "@/components/TableBox";
 import type { EvalTable } from "@/dashboard/types";
 
 /** The latest eval run for each split, one column per run and one row per metric. */
 export function EvalRuns({ evals }: { evals: EvalTable }) {
   return (
-    <div className="table-wrap w-full">
+    <TableBox label="Latest eval runs" className="w-full">
       <table className="metrics">
         <thead>
           <tr>
@@ -38,6 +39,6 @@ export function EvalRuns({ evals }: { evals: EvalTable }) {
           ))}
         </tbody>
       </table>
-    </div>
+    </TableBox>
   );
 }

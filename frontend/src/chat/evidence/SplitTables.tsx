@@ -11,6 +11,7 @@ import {
   type SplitLine,
   type SplitRun,
 } from "@/chat/evidence/model";
+import { TableBox } from "@/components/TableBox";
 import { cn } from "@/lib/cn";
 
 const percent = new Intl.NumberFormat("en-US", {
@@ -69,7 +70,7 @@ function SplitTable({ run, dimension }: { run: SplitRun; dimension: string | nul
     );
   };
   return (
-    <div className="table-wrap">
+    <TableBox label={dimension ? `Driver split by ${words(dimension)}` : "Driver split"}>
       <table className="split">
         {dimension && <caption>By {words(dimension)}</caption>}
         <thead>
@@ -87,7 +88,7 @@ function SplitTable({ run, dimension }: { run: SplitRun; dimension: string | nul
         </tbody>
         {groups.length > 0 && <tfoot>{line(whole, "total")}</tfoot>}
       </table>
-    </div>
+    </TableBox>
   );
 }
 

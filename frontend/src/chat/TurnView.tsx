@@ -31,7 +31,8 @@ function Progress({ turn }: { turn: Turn }) {
   );
 }
 
-function Footer({ turn }: { turn: Turn }) {
+/** How long the answer took and the thumbs. Dev mode adds the request id and the route, which the console also shows. */
+function Footer({ turn, dev }: { turn: Turn; dev: boolean }) {
   if (!turn.done) return null;
   const total = turn.done.total_ms ?? (turn.finishedAt ?? turn.startedAt) - turn.startedAt;
   const requestId = turn.done.request_id;
@@ -42,10 +43,12 @@ function Footer({ turn }: { turn: Turn }) {
         <Timer className="size-3.5" aria-hidden="true" />
         Finished in {fmtMs(total)}
       </span>
-      <span>
-        Request <code>{requestId.slice(0, 8)}</code>
-      </span>
-      {route && (
+      {dev && (
+        <span>
+          Request <code>{requestId.slice(0, 8)}</code>
+        </span>
+      )}
+      {dev && route && (
         <span>
           Route <code>{route}</code>
         </span>
@@ -56,7 +59,17 @@ function Footer({ turn }: { turn: Turn }) {
 }
 
 /** One question and its reply: the answer as it streams, then its evidence and a footer once it is done. */
-export function TurnView({ turn, me, onFill }: { turn: Turn; me: Me; onFill: (text: string) => void }) {
+export function TurnView({
+  turn,
+  me,
+  onFill,
+  dev = false,
+}: {
+  turn: Turn;
+  me: Me;
+  onFill: (text: string) => void;
+  dev?: boolean;
+}) {
   const article = useRef<HTMLElement>(null);
   useEffect(() => {
     article.current?.scrollIntoView({ block: "start" });
@@ -85,7 +98,7 @@ export function TurnView({ turn, me, onFill }: { turn: Turn; me: Me; onFill: (te
             numbers={answer?.numbers ?? new Map<string, number>()}
           />
         )}
-        {turn.finished && <Footer turn={turn} />}
+        {turn.finished && <Footer turn={turn} dev={dev} />}
       </section>
     </article>
   );

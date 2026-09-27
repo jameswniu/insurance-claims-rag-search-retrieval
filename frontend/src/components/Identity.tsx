@@ -1,12 +1,14 @@
 import { useState } from "react";
 
+import { devLog } from "@/devmode/log";
 import { switchUser } from "@/lib/api";
 import { initials } from "@/lib/format";
 import type { SessionView } from "@/lib/types";
 
 /**
  * Who the questions run as. In demo mode anyone may pick a user, which starts a new session and reloads the page; it
- * stands in for signing in. Behind the sign-in proxy the page only names the user.
+ * stands in for signing in, and empties the console, which belongs to the user before. Behind the sign-in proxy the
+ * page only names the user.
  */
 export function IdentityPicker({ session }: { session: SessionView }) {
   const [switching, setSwitching] = useState(false);
@@ -35,8 +37,10 @@ export function IdentityPicker({ session }: { session: SessionView }) {
           const chosen = event.currentTarget.value;
           setSwitching(true);
           void switchUser(chosen).then((ok) => {
-            if (ok) location.reload();
-            else setSwitching(false);
+            if (ok) {
+              devLog.reset();
+              location.reload();
+            } else setSwitching(false);
           });
         }}
         className="select-native h-9 w-full min-w-0 cursor-pointer truncate rounded-lg border border-control pl-3 text-sm font-medium text-foreground shadow-xs transition-colors hover:border-subtle disabled:cursor-progress md:w-auto md:max-w-[420px]"

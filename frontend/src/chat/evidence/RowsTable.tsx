@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import { cellText, columnsOf, numeric, record, rowsOf } from "@/chat/evidence/model";
+import { TableBox } from "@/components/TableBox";
 
 const SHOWN = 20;
 
@@ -21,7 +22,7 @@ export function RowsTable({ payload }: { payload: unknown }) {
   const legend = (shown: number) => `Showing ${shown} of ${total}${truncated ? " or more" : ""} rows.`;
   return (
     <>
-      <div className="table-wrap">
+      <TableBox label="Rows">
         <table className="rows">
           <thead>
             <tr>
@@ -48,7 +49,7 @@ export function RowsTable({ payload }: { payload: unknown }) {
             ))}
           </tbody>
         </table>
-      </div>
+      </TableBox>
       {(total > SHOWN || truncated) && (
         <p className="legend">
           {legend(folded ? SHOWN : rows.length)}

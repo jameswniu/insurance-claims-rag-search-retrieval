@@ -31,7 +31,7 @@ export function SourceFilter({
           }}
           className={cn(
             "rounded-md px-3 py-1 text-sm font-medium text-muted transition-colors hover:text-foreground",
-            "aria-[current=page]:bg-surface-raised aria-[current=page]:font-semibold aria-[current=page]:text-foreground aria-[current=page]:shadow-xs aria-[current=page]:ring-1 aria-[current=page]:ring-border",
+            "aria-[current=page]:bg-surface aria-[current=page]:font-semibold aria-[current=page]:text-foreground aria-[current=page]:shadow-xs aria-[current=page]:ring-1 aria-[current=page]:ring-control",
           )}
         >
           {filter.label}
