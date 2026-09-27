@@ -170,7 +170,7 @@ The Dev mode switch in the header turns the page dark and docks a console that l
 |---|---|
 | A Postgres login per job and region, under row-level security | The user's sign-in token traded for a short-lived login to that role, so no password sits in the app |
 | The demo's user picker | Single sign-on through an identity-aware proxy |
-| Analysis jobs in Docker, started by `sandboxd` | Firecracker microVMs or gVisor |
+| Analysis code in a throwaway Docker container that the `sandboxd` service starts | Firecracker microVMs or gVisor |
 | Exact vector search over a few hundred chunks | An HNSW index with iterative scan |
 | Small groups withheld from analysts | Query auditing as well, which refuses a total that could be subtracted from another to reveal a withheld group |
 | Request and audit logs in Postgres, with spans exported over OTLP when an endpoint is set | An OpenTelemetry collector at that endpoint, and a tracing backend |
