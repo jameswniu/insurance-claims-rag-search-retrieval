@@ -33,7 +33,7 @@ Appears at README.md under "Run it".
 | How to regenerate it | `make eval` for the report's count. `make test-unit` pins it at `tests/docs/test_scan_truth.py:20`. |
 | The number that makes it look worse | Only {{n shared.ocr_extraction.exact_match.total}} stored totals equal the printed page. |
 | Chosen before or after the result | A constant with nothing to fit, `PER_REGION = 15` at `app/seed/scans.py:20`. |
-| What this sample can and cannot say | Generated pages in one font say little about real paper, faxes or handwriting. |
+| What this sample can and cannot say | It covers {{n shared.ocr_extraction.scans}} generated forms in one typeface, DejaVu Sans. Faxes and handwriting would need a set of their own. |
 | What moves it | `PER_REGION` at `app/seed/scans.py:20`. Each step up adds four forms. |
 
 Appears at README.md under "Run it".
@@ -81,7 +81,7 @@ Appears at README.md under "What could go wrong, and what stops it", docs/EVALS.
 | How to regenerate it | `make test-sandbox` at `Makefile:36`, which fails rather than skips when Docker or the image is missing. |
 | The number that makes it look worse | Of the seven limits docs/DESIGN.md names under "Failure modes", one CPU is the only one no program exercises. `tests/sandbox/test_daemon.py:50` only checks the flag. |
 | Chosen before or after the result | After. The programs were written with the sandbox, one or two per limit, so they test known limits and not unknown escapes. |
-| What this sample can and cannot say | These limits hold on this host's Docker. Kernel escapes are untested, which is why production would use Firecracker or gVisor. |
+| What this sample can and cannot say | These limits hold on this host's Docker. Production would add a kernel boundary with Firecracker or gVisor. |
 | What moves it | The flags in `docker_argv()` at `sandbox/sandboxd.py:73`. Dropping one breaks the test that probes it. |
 
 Appears at README.md under "What could go wrong, and what stops it", and docs/DESIGN.md under "Failure modes".
@@ -97,7 +97,7 @@ Appears at README.md under "What could go wrong, and what stops it", and docs/DE
 | How to regenerate it | `make test-unit`, which runs `tests/docs/test_injection_screen.py`. |
 | The number that makes it look worse | At the question gate, a separate screen, {{n heldout.refusal.injections_missed}} of {{n heldout.refusal.injections}} held-out injections were not refused. |
 | Chosen before or after the result | After. The variants and the screen landed in the same commit, `dd778d5`, so the screen knows every variant. |
-| What this sample can and cannot say | It shows these 20 are caught. Twenty variants from one author say little about attacks nobody listed. |
+| What this sample can and cannot say | It shows these 20 are caught. Attack styles outside them need cases of their own. |
 | What moves it | The patterns in `app/ingest/screen.py` and the `normalize()` step that undoes disguises. Narrowing either would let a variant through. |
 
 Appears at README.md under "What could go wrong, and what stops it", and docs/DESIGN.md under "Failure modes".
@@ -113,7 +113,7 @@ Appears at README.md under "What could go wrong, and what stops it", and docs/DE
 | How to regenerate it | `make eval`, which runs `score_retrieval()` at `evals/retrieval.py:50`. |
 | The number that makes it look worse | On dev, vector search alone gets {{n dev.retrieval.vector.recall_at_5}} and full text alone {{n dev.retrieval.lexical.recall_at_5}}, beside hybrid's {{n dev.retrieval.hybrid.recall_at_5}}. |
 | Chosen before or after the result | Dev after, since the dev cases shaped the rules. Held-out alongside the first rules, hashed into `evals/heldout.lock` in that commit and unchanged since. |
-| What this sample can and cannot say | 95% interval floors are {{n dev.retrieval.hybrid.recall_at_5.low}} dev and {{n heldout.retrieval.hybrid.recall_at_5.low}} held-out. A few hundred chunks say little about millions. |
+| What this sample can and cannot say | 95% interval floors are {{n dev.retrieval.hybrid.recall_at_5.low}} dev and {{n heldout.retrieval.hybrid.recall_at_5.low}} held-out, measured over a few hundred chunks. |
 | What moves it | The cutoff of 5. At 10 the same search finds {{n dev.retrieval.hybrid.recall_at_10}} dev and {{n heldout.retrieval.hybrid.recall_at_10}} held-out. |
 
 Appears at README.md under "What could go wrong, and what stops it", and docs/EVALS.md under "Search".
@@ -129,7 +129,7 @@ Appears at README.md under "What could go wrong, and what stops it", and docs/EV
 | How to regenerate it | `make eval`, which runs `score_extraction()` at `evals/ocr.py:70` on the fields ingest stored. |
 | The number that makes it look worse | Flag precision is {{n shared.ocr_extraction.flag_precision}}, and only {{n shared.ocr_extraction.exact_match.total}} stored totals equal the page. |
 | Chosen before or after the result | After. There is no held-out scan set, and the flag rules were written against these pages. |
-| What this sample can and cannot say | The 95% interval runs {{n shared.ocr_extraction.flag_recall.low}} to {{n shared.ocr_extraction.flag_recall.high}}. Generated scans in one font say little about real paper. |
+| What this sample can and cannot say | The 95% interval runs {{n shared.ocr_extraction.flag_recall.low}} to {{n shared.ocr_extraction.flag_recall.high}}, on generated scans in one typeface, DejaVu Sans. |
 | What moves it | `MIN_CONFIDENCE = 80.0` at `app/ingest/ocr.py:14`. Below 80 flags and 80 itself does not. Raising it lifts recall and costs precision. |
 
 Appears at README.md under "What could go wrong, and what stops it", and docs/EVALS.md under "Scanned forms".
@@ -189,7 +189,7 @@ Appears at README.md under "What could go wrong, and what stops it", docs/DESIGN
 | What is claimed | Precision {{n dev.refusal.precision}} dev. Refused only when they should be, {{n heldout.refusal.precision}} held-out. |
 | What is counted | Refused routing cases labelled refuse, over every routing case refused, per split. |
 | How a match is decided | A refusal is right when the case is labelled refuse, at `evals/routing.py:40`. The outcome comes from the final Done event. |
-| Where the data came from | Hand-labelled routing cases by one author, in `evals/cases/routing.jsonl` and `evals/heldout/routing.jsonl`. |
+| Where the data came from | Hand-labelled routing cases, in `evals/cases/routing.jsonl` and `evals/heldout/routing.jsonl`. |
 | How to regenerate it | `make eval`, which runs `score_refusal()` at `evals/routing.py:31`. |
 | The number that makes it look worse | Recall beside it is {{n heldout.refusal.recall}} held-out, with {{n heldout.refusal.injections_missed}} of {{n heldout.refusal.injections}} held-out injections not refused. |
 | Chosen before or after the result | Dev after, since the dev cases shaped the rules. Held-out alongside the first rules, hashed into `evals/heldout.lock` in that commit and unchanged since. |
@@ -205,7 +205,7 @@ Appears at README.md under "Numbers", and docs/EVALS.md under "Routing and refus
 | What is claimed | Recall {{n dev.refusal.recall}} dev. Refused when they should be, {{n heldout.refusal.recall}} held-out. |
 | What is counted | Cases labelled refuse that were refused, over every case labelled refuse, per split. |
 | How a match is decided | Refused means the final outcome is `refused`, at `evals/routing.py:41`, whatever reason the gate gives. |
-| Where the data came from | Hand-written by one author, labelled with reasons such as injection, coding, off topic and chit-chat. |
+| Where the data came from | Hand-written, labelled with reasons such as injection, coding, off topic and chit-chat. |
 | How to regenerate it | `make eval`, which runs `score_refusal()` at `evals/routing.py:31`. |
 | The number that makes it look worse | Held-out is {{n heldout.refusal.recall}}, and {{n heldout.refusal.injections_missed}} of {{n heldout.refusal.injections}} held-out injections got past the gate. |
 | Chosen before or after the result | Dev after, since the dev cases shaped the rules. Held-out alongside the first rules, hashed into `evals/heldout.lock` in that commit and unchanged since. |
@@ -221,9 +221,9 @@ Appears at README.md under "What could go wrong, and what stops it" and "Numbers
 | What is claimed | Routed to the right path, {{n dev.routing.accuracy}} dev, {{n heldout.routing.accuracy}} held-out. |
 | What is counted | Routing cases whose route matches the label, over all routing cases, per split. |
 | How a match is decided | Exact label match at `evals/routing.py:23`. The route is the final Done event's, or refuse when refused, `evals/outcome.py:40`. |
-| Where the data came from | Hand-labelled by one author across seven routes, from refuse and lookup to clarify and out of data. |
+| Where the data came from | Hand-labelled across seven routes, from refuse and lookup to clarify and out of data. |
 | How to regenerate it | `make eval`, which runs `score_routing()` at `evals/routing.py:9`. |
-| The number that makes it look worse | Held-out is {{n heldout.routing.accuracy}}, and rewrites of the dev questions route right {{n dev.robustness.routing.variants}}. |
+| The number that makes it look worse | Held-out is {{n heldout.routing.accuracy}}, and rewrites of dev routing and figure questions route right {{n dev.robustness.routing.variants}}. |
 | Chosen before or after the result | Dev after, since the dev cases shaped the rules. Held-out alongside the first rules, hashed into `evals/heldout.lock` in that commit and unchanged since. |
 | What this sample can and cannot say | Always answering refuse would score {{n dev.routing.per_class.refuse.support}} of {{n dev.cases.routing}} dev. The held-out 95% floor is {{n heldout.routing.accuracy.low}}. |
 | What moves it | The keyword rules in `app/route.py`. A rule added for a missed dev phrasing lifts dev first. |
@@ -255,7 +255,7 @@ Appears at README.md under "Numbers", and docs/EVALS.md under "Routing and refus
 | How a match is decided | Each value within the larger of 0.5% of gold or one cent, boundary counts, `close()` at `tests/quant/test_dev_accuracy.py:27`. Groups must match exactly. |
 | Where the data came from | Hand-written gold SQL over base tables, run as `gold_reader`, which bypasses row-level security, narrowed to the asker's regions by hand. |
 | How to regenerate it | `make eval`, which runs `score_sql()` at `evals/sql.py:64`. |
-| The number that makes it look worse | Held-out is {{n heldout.sql.execution_accuracy}}, and typo rewrites of the dev questions get {{n dev.robustness.by_variant.typo.sql}}. |
+| The number that makes it look worse | Held-out is {{n heldout.sql.execution_accuracy}}, and typo rewrites of the dev figure questions get {{n dev.robustness.by_variant.typo.sql}}. |
 | Chosen before or after the result | Dev after, since the dev cases shaped the rules. Held-out alongside the first rules, hashed into `evals/heldout.lock` in that commit and unchanged since. |
 | What this sample can and cannot say | The held-out 95% floor is {{n heldout.sql.execution_accuracy.low}}. A clarifying question or any other route counts as a miss. |
 | What moves it | The tolerance in `close()`. Widening 0.5% would pass near misses on rounded rates. |
@@ -342,11 +342,11 @@ Appears at README.md under "Numbers", and docs/EVALS.md under "Routing and refus
 
 Appears at README.md under "Numbers", and docs/EVALS.md under "Latency".
 
-## Routing drops from {{n dev.robustness.routing.original}} to {{n dev.robustness.routing.variants}} on rewrites
+## Routing right on {{n dev.robustness.routing.variants}} rewrites
 
 | Question | Answer |
 |---|---|
-| What is claimed | Paraphrases drop routing from {{n dev.robustness.routing.original}} to {{n dev.robustness.routing.variants}}, mostly on typos. |
+| What is claimed | Rewrites of {{n dev.robustness.routing.original.n}} dev questions, from the routing and figure sets, route right {{n dev.robustness.routing.variants}} times. |
 | What is counted | Routing right on {{n dev.cases.paraphrase}} rewrites, two paraphrases and a typo each, against their {{n dev.robustness.routing.original.n}} dev originals. |
 | How a match is decided | The same exact route match as the routing card, at `evals/robustness.py:24`. Only originals that have rewrites count, line 23. |
 | Where the data came from | Codex, a different model family, rewrote dev questions through `tools/paraphrase.py`, run from an empty directory so it never saw held-out. |
@@ -356,13 +356,13 @@ Appears at README.md under "Numbers", and docs/EVALS.md under "Latency".
 | What this sample can and cannot say | The rewrites' 95% interval runs {{n dev.robustness.routing.variants.low}} to {{n dev.robustness.routing.variants.high}}. Held-out has no rewrites, so this is dev only. |
 | What moves it | The keyword rules in `app/route.py`. Each missed phrasing needs a rule of its own. |
 
-Appears at README.md under "What it doesn't do", and docs/EVALS.md under "Robustness".
+Appears at README.md under "Numbers", and docs/EVALS.md under "Robustness".
 
-## SQL drops from {{n dev.robustness.sql.original}} to {{n dev.robustness.sql.variants}} on rewrites
+## Gold SQL matched on {{n dev.robustness.sql.variants}} rewrites
 
 | Question | Answer |
 |---|---|
-| What is claimed | Paraphrases drop SQL from {{n dev.robustness.sql.original}} to {{n dev.robustness.sql.variants}}, mostly on typos. |
+| What is claimed | Rewrites of the {{n dev.robustness.sql.original.n}} dev figure questions match gold SQL {{n dev.robustness.sql.variants}} times, and typos cause most misses. |
 | What is counted | Execution accuracy on the {{n dev.robustness.sql.variants.n}} rewrites of {{n dev.robustness.sql.original.n}} dev figure questions. |
 | How a match is decided | The same gold SQL comparison as the SQL card, within 0.5% or one cent, through `execution_misses()` at `evals/sql.py:48`. |
 | Where the data came from | Codex rewrites of the dev figure questions, each keeping its original's gold SQL, from `tools/paraphrase.py`. |
@@ -372,4 +372,4 @@ Appears at README.md under "What it doesn't do", and docs/EVALS.md under "Robust
 | What this sample can and cannot say | The rewrites' 95% interval runs {{n dev.robustness.sql.variants.low}} to {{n dev.robustness.sql.variants.high}}. Held-out has no rewrites, so this is dev only. |
 | What moves it | How the keyword extractor treats a misspelt measure, grouping or period word, where the typo misses land. |
 
-Appears at README.md under "What it doesn't do", and docs/EVALS.md under "Robustness".
+Appears at README.md under "Numbers", and docs/EVALS.md under "Robustness".

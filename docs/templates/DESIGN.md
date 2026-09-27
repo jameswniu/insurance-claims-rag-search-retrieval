@@ -1,6 +1,6 @@
 # Design
 
-The README is the short version. This is the long one, with each decision and what it cost, one request followed through the code, every failure mode I could think of with what stops it and the test that shows it, what it doesn't do and why, and the running and demo details the README leaves out.
+The README is the short version. This is the long one, with each decision and what it cost, one request followed through the code, each failure mode it guards against, with what stops it and the test or eval that shows it, the tradeoffs, the running and demo details the README leaves out, and what changes in production.
 
 ## Decisions
 
@@ -15,12 +15,12 @@ The README is the short version. This is the long one, with each decision and wh
 | Search ranking | Full-text and exact vector search fused by reciprocal rank, then a cross-encoder | Either retriever alone | Full text finds exact terms like "HO-2025", vectors find paraphrases, and the reranker reads both | Two small models in the image and about half a second per question |
 | Chunking | On headings, with long tables split into row groups that repeat the header | Fixed-size windows | A citation points at a section a person can find. Each row group still says what its columns mean | Uneven chunk sizes |
 | Instructions hidden in notes | Screened at ingest and quarantined, and in live mode read only by models that hold no tools | Filtering at question time only | Even an injection the screen misses can't reach a tool | The live orchestrator plans from ids and labels and gets no document text |
-| Reading scans | Tesseract in the image, with every amount checked against the claim's payments | A vision model on every page | The costly error is a dropped decimal, which fails the payment check. Tesseract also reads a page the same way every run | Confidence isn't calibrated, and the scans are synthetic |
+| Reading scans | Tesseract in the image, with each total checked for currency format and against the claim's payments | A vision model on every page | The costly error is a dropped decimal, which fails the currency check. Tesseract also reads a page the same way every run | Confidence isn't calibrated, so the checks carry the trust, and handwriting would need a vision model |
 | Where analysis code runs | A throwaway container per job, started by `sandboxd` | The app process, or a Python sandbox library | In-process Python sandboxes keep getting escaped. A container gets the kernel's limits on network, memory and processes | The Docker socket is root on the host |
 | Checking answers | Tracing every figure and citation to the evidence, then cutting what doesn't trace | An LLM judge alone | Tracing is deterministic and takes milliseconds. A judge from the writer's model family isn't independent | Plain prose with no figure is checked only in live mode |
 | Why questions | A fixed workflow that splits the change by driver, then finds the memo | An agent for every why question | It always takes the same three steps, fetching both periods, splitting by driver and finding the memo. An agent would pick them again on every question | It explains only the drivers the semantic layer names |
 | Streaming | Server-sent events over POST, cancelled when the client goes away | WebSockets, or polling | The answer only flows one way, over plain HTTP. A closed tab stops the query and the sandbox job | Nothing can be sent from the browser mid-answer |
-| Measuring quality | Hand-labelled cases with a held-out split hashed alongside the first rules, scored by execution accuracy, recall@k and Wilson intervals | BLEU or ROUGE, or an LLM judge on one set | String overlap can't tell whether SQL returned the right number. With a few dozen cases, a rate means little without its interval | One author wrote the cases, the rules and the gold SQL |
+| Measuring quality | Hand-labelled cases with a held-out split hashed alongside the first rules, scored by execution accuracy, recall@k and Wilson intervals | BLEU or ROUGE, or an LLM judge on one set | String overlap can't tell whether SQL returned the right number. With a few dozen cases, a rate means little without its interval | Hand labels come slowly, so the sets stay small and their intervals wide |
 | Who checks a written sentence | Gemini on Vertex, set by `LLM_CHECK_BACKEND` | Claude's fast model, the writer's own family | A reader from the writer's family can share its blind spots, and a Gemini reading costs a fraction of a cent | A second provider to configure, and Gemini's response time on the global endpoint varies |
 | Caching | No cache | Caching answers | Answers depend on who asks. A cache keyed wrong would leak between roles | A repeated question pays the full cost |
 
@@ -73,7 +73,7 @@ This is the whole table the README shortens, with what each row measured. The ta
 | The analyst reads a claim row | The analyst has no grant on any claims table or view, only on `agg.metric()` and the general documents | `test_analyst_cannot_read_rows_at_all` |
 | The analyst lowers the suppression threshold | The threshold and the dominance share live in a settings table only the function's owner can read | `test_analyst_cannot_lower_the_suppression_threshold` in [tests/integration/test_aggregates.py](../tests/integration/test_aggregates.py) |
 | The analyst isolates one payment with periods a day apart | Periods must be whole months | `test_period_bounds_a_day_apart_cannot_isolate_one_payment` |
-| The analyst subtracts two totals, such as a region minus its other states, to recover a withheld cell | Nothing yet. It needs query auditing or noise | `test_known_gap_complementary_filters_can_still_difference`, `test_known_gap_overlapping_month_ranges_can_still_difference` |
+| The analyst subtracts two totals, such as a region minus its other states, to recover a withheld cell | Nothing here yet. Query auditing would close it | `test_known_gap_complementary_filters_can_still_difference`, `test_known_gap_overlapping_month_ranges_can_still_difference` |
 | A claim number or scan id confirms that something exists in another region | A hidden item and a missing one get the same reply | `test_a_missing_claim_and_a_hidden_claim_read_the_same`, `test_another_regions_scan_gets_the_same_404_as_a_missing_one` |
 | A client sets the identity header itself | Behind the proxy, a request without the proxy's shared secret is refused before the header is read | [tests/web/test_proxy_secret.py](../tests/web/test_proxy_secret.py) |
 | One user's follow-up picks up another user's last question | Memory is kept per user and session, and switching user starts a new session | [tests/test_memory.py](../tests/test_memory.py), [tests/web/test_session.py](../tests/web/test_session.py) |
@@ -139,19 +139,16 @@ This is the whole table the README shortens, with what each row measured. The ta
 |---|---|---|
 | The rules get tuned on the test set | The held-out files were hashed in the same commit as the first rules, and CI refuses to run the evals if one has changed. One scan label was fixed in both splits since, as [EVALS.md](EVALS.md) explains | [tests/harness/test_heldout_lock.py](../tests/harness/test_heldout_lock.py) |
 | The page drifts from the real numbers | The README and EVALS.md are rendered from `evals/report.json`, and CI fails when they differ | [tests/recount/](../tests/recount/) |
-| The author's own phrasing flatters the rules | A model from a different family rewrote the dev questions with rewordings and typos, and the drop is reported. Typos hit SQL hardest, {{n dev.robustness.by_variant.typo.sql}} right against {{n dev.robustness.by_variant.paraphrase.sql}} for rewordings, because the keyword extractor needs a measure, grouping or period word spelled the way it knows, and "loss raito" isn't | [evals/cases/paraphrase.jsonl](../evals/cases/paraphrase.jsonl) |
+| The scores flatter the rules, because the dev questions share the phrasing the rules were written for | A model from a different family rewrote the dev routing and figure questions with rewordings and typos, and their scores are reported. Typos hit SQL hardest, {{n dev.robustness.by_variant.typo.sql}} right against {{n dev.robustness.by_variant.paraphrase.sql}} for rewordings, because the keyword extractor needs a measure, grouping or period word spelled the way it knows, and "loss raito" isn't | [evals/cases/paraphrase.jsonl](../evals/cases/paraphrase.jsonl) |
 
-## What it doesn't do
+## Tradeoffs
 
-The README lists these limits without their reasons.
-
-- Subtracting two published totals can still recover a withheld cell, and two tests show it.
+- Two published totals can still be subtracted to recover a withheld cell, and two tests pin that down. Query auditing would close it. Noise would only blur it, and the decision above passed on differential privacy because analysts need exact totals.
 - Lexical search is Postgres full-text search ranked by `ts_rank_cd`, which isn't BM25.
-- Row-level security keeps chat logins off the text index, so lexical search is slow at millions of chunks.
-- Vector search is exact, because an HNSW index under row-level security returns fewer than k rows unless iterative scan is on.
+- Row-level security keeps chat logins off the text index, so lexical search scans every chunk the login can see. That's quick at a few hundred chunks and would be slow at millions.
+- Vector search is exact, since at a few hundred chunks an index buys nothing. An HNSW index would need iterative scan on, or row-level security leaves it short of k rows.
 - `sandboxd` holds the Docker socket, which is root on the host. Production would run jobs in Firecracker or gVisor.
-- OCR confidence isn't calibrated, and the scans are generated, so the OCR numbers say little about real paper.
-- One person wrote the questions, the labels, the gold SQL and the rules. Rewordings and typos from another model family drop routing from {{n dev.robustness.routing.original}} to {{n dev.robustness.routing.variants}} and SQL from {{n dev.robustness.sql.original}} to {{n dev.robustness.sql.variants}}.
+- OCR confidence isn't calibrated, so it isn't trusted alone. A total must also look like currency, which catches a dropped decimal point, and match what was paid on the claim, which catches swapped digits. Line items must add up to it, and a total that fails any check comes back flagged.
 - The gate and the router are English keyword rules, so a reworded injection can get past the gate.
 - Comparative wording the verifier doesn't list, such as "twice" or "a majority", goes unchecked.
 - There's no knowledge graph, because the relationships already live in SQL, and no answer cache, because answers depend on who asks.
@@ -205,10 +202,12 @@ The README links each clip. Every clip runs without an API key except the live o
 
 | This repo | In production |
 |---|---|
-| One Postgres login per job and region, with row-level security | A warehouse that takes the user's own token through on-behalf-of exchange, so the query still runs as them |
+| One Postgres login per job and region, with row-level security | Each user's sign-in token traded for a short-lived login to the same role, so no password sits in the app |
 | The demo user picker | Single sign-on through an identity-aware proxy that signs its assertion |
 | Documents copied into the image and ingested at start | An object store whose access lists are copied onto the chunks, and ingest triggered on each write |
 | `sandboxd` on the Docker socket | Firecracker microVMs or gVisor |
-| Spans and logs in Postgres | An OpenTelemetry collector and a tracing backend |
+| Exact vector search over a few hundred chunks | An HNSW index with iterative scan on, so row-level security still returns k rows |
+| Small-cell rules in `agg.metric()` | Query auditing on top, which refuses a total that could be subtracted from another to reveal a withheld cell |
+| Request and audit logs in Postgres, with spans exported over OTLP when an endpoint is set | An OpenTelemetry collector at that endpoint, and a tracing backend |
 | `var/secrets.env` | A secret manager |
 | Live mode through Vertex AI or the Anthropic API | The same, behind an allow-list of models |

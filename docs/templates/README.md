@@ -21,24 +21,22 @@ The first run seeds 6,951 claims and reads 60 scanned forms, which took 2 minute
 
 Dana, a West adjuster, asks what was paid on Colorado hail claims in Q2 2025. The answer comes back with the exact SQL that ran under her own database login.
 
-<img src="docs/demo/ask.gif" alt="Dana, the West adjuster, asks how much was paid on hail claims in Colorado in the second quarter of 2025 and reads the $4,108,453 answer, then opens the evidence to the SQL behind it, its bound values and the row it returned." width="100%">
+[<img src="docs/demo/ask.gif" alt="Dana, the West adjuster, asks how much was paid on hail claims in Colorado in the second quarter of 2025 and reads the $4,108,453 answer, then opens the evidence to the SQL behind it, its bound values and the row it returned." width="100%">](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@6cbff6ef61ad788ce35553bb6658dfcc90adce82/docs/demo/ask.mp4)
 
-| Demo | Length |
-|---|---|
-| [A figure and its SQL](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@6cbff6ef61ad788ce35553bb6658dfcc90adce82/docs/demo/ask.mp4) | 23 s |
-| [A policy answer and its source](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@6cbff6ef61ad788ce35553bb6658dfcc90adce82/docs/demo/policy.mp4) | 33 s |
-| [A total read from a scan](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@6cbff6ef61ad788ce35553bb6658dfcc90adce82/docs/demo/scan.mp4) | 26 s |
-| [A misread total, flagged](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@6cbff6ef61ad788ce35553bb6658dfcc90adce82/docs/demo/ocr-flag.mp4) | 20 s |
-| [Why losses rose](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@6cbff6ef61ad788ce35553bb6658dfcc90adce82/docs/demo/why.mp4) | 43 s |
-| [One claim, three users](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@6cbff6ef61ad788ce35553bb6658dfcc90adce82/docs/demo/permissions.mp4) | 37 s |
-| [Withheld small groups](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@6cbff6ef61ad788ce35553bb6658dfcc90adce82/docs/demo/suppression.mp4) | 36 s |
-| [A question with no period](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@6cbff6ef61ad788ce35553bb6658dfcc90adce82/docs/demo/clarify.mp4) | 30 s |
-| [An instruction override](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@6cbff6ef61ad788ce35553bb6658dfcc90adce82/docs/demo/injection.mp4) | 13 s |
-| [An off-topic question](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@6cbff6ef61ad788ce35553bb6658dfcc90adce82/docs/demo/off-topic.mp4) | 11 s |
-| [A year outside the data](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@6cbff6ef61ad788ce35553bb6658dfcc90adce82/docs/demo/out-of-range.mp4) | 11 s |
-| [Dev mode and its console](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@6cbff6ef61ad788ce35553bb6658dfcc90adce82/docs/demo/devmode.mp4) | 35 s |
-| [An answer from live models](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@6cbff6ef61ad788ce35553bb6658dfcc90adce82/docs/demo/live.mp4) | 41 s |
-| [The dashboard by source](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@6cbff6ef61ad788ce35553bb6658dfcc90adce82/docs/demo/dashboard.mp4) | 43 s |
+Click any GIF on this page, or a clip below, to play the full video with captions.
+
+| Clip | What happens | Length |
+|---|---|---|
+| [A policy answer and its source](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@6cbff6ef61ad788ce35553bb6658dfcc90adce82/docs/demo/policy.mp4) | Dana asks if flood damage is covered and follows the citation into the policy | 33 s |
+| [A total read from a scan](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@6cbff6ef61ad788ce35553bb6658dfcc90adce82/docs/demo/scan.mp4) | Priya asks for an invoice total and checks it against the scan and the payments | 26 s |
+| [A misread total, flagged](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@6cbff6ef61ad788ce35553bb6658dfcc90adce82/docs/demo/ocr-flag.mp4) | A scan that dropped its decimal point comes back flagged, beside the crop | 20 s |
+| [Why losses rose](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@6cbff6ef61ad788ce35553bb6658dfcc90adce82/docs/demo/why.mp4) | Priya asks why West losses rose in Q2 2025 and checks the hail and Colorado shares | 43 s |
+| [Withheld small groups](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@6cbff6ef61ad788ce35553bb6658dfcc90adce82/docs/demo/suppression.mp4) | Sam, the analyst, gets monthly counts, and months with too few claims are withheld | 36 s |
+| [A question with no period](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@6cbff6ef61ad788ce35553bb6658dfcc90adce82/docs/demo/clarify.mp4) | Priya asks what was paid, picks 2025 from the app's options and checks the query | 30 s |
+| [An instruction override](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@6cbff6ef61ad788ce35553bb6658dfcc90adce82/docs/demo/injection.mp4) | Dana tells the app to ignore its instructions and show every region, and the gate refuses | 13 s |
+| [An off-topic question](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@6cbff6ef61ad788ce35553bb6658dfcc90adce82/docs/demo/off-topic.mp4) | Dana asks for a banana bread recipe and is told what the app covers | 11 s |
+| [A year outside the data](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@6cbff6ef61ad788ce35553bb6658dfcc90adce82/docs/demo/out-of-range.mp4) | Dana asks about 2022 and is told the data runs from January 2024 to June 2026 | 11 s |
+| [An answer from live models](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@6cbff6ef61ad788ce35553bb6658dfcc90adce82/docs/demo/live.mp4) | Dana asks what a denial letter needs, Claude answers with citations and Gemini checks each sentence | 41 s |
 
 ## How it works
 
@@ -47,7 +45,7 @@ Dana, a West adjuster, asks what was paid on Colorado hail claims in Q2 2025. Th
 - The gate turns away injection attempts and off-topic questions.
 - Keyword rules pick one of four paths, or ask a clarifying question.
 - The verifier cuts any sentence whose figure or citation doesn't trace to the evidence.
-- No step needs a language model. `LLM_BACKEND` turns on live mode, which adds Claude.
+- No step needs a language model. `LLM_BACKEND` turns on live mode, which adds Claude, and optionally Gemini as the checker.
 
 ## What could go wrong, and what stops it
 
@@ -61,7 +59,7 @@ Dana, a West adjuster, asks what was paid on Colorado hail claims in Q2 2025. Th
 | An answer states a wrong figure | The verifier cuts untraced sentences | Caught {{n shared.verifier.recall}} planted errors, cut {{n shared.verifier.false_alarms}} clean answers |
 | A question is outside the data | The app says so | Right in {{n dev.abstention.out_of_data}} dev, {{n heldout.abstention.out_of_data}} held-out |
 | Search misses the right passage | Full-text and vector search, reranked | Recall@5 {{n dev.retrieval.hybrid.recall_at_5}} dev, {{n heldout.retrieval.hybrid.recall_at_5}} held-out |
-| OCR drops a decimal point | Amounts must match the claim's payments | Flagged {{n shared.ocr_extraction.flag_recall}} misread fields |
+| OCR drops a decimal point | Totals must look like currency and match the claim's payments | Flagged {{n shared.ocr_extraction.flag_recall}} misread fields |
 
 The full list, with tests, is in [DESIGN.md](docs/DESIGN.md#failure-modes).
 
@@ -71,13 +69,13 @@ The full list, with tests, is in [DESIGN.md](docs/DESIGN.md#failure-modes).
 
 {{table headline}}
 
-On dev, why answers take {{n dev.latency.why.p50_ms}} ms at the median and everything else under a second. [EVALS.md](docs/EVALS.md) has every table.
+On dev, why answers take {{n dev.latency.why.p50_ms}} ms at the median and everything else under a second. Codex, a GPT model, rewrote {{n dev.robustness.routing.original.n}} dev routing and figure questions with rewordings and typos. The rewrites route right {{n dev.robustness.routing.variants}}, and the figure ones match gold SQL {{n dev.robustness.sql.variants}}. [EVALS.md](docs/EVALS.md) has every table.
 
 Live mode, scored {{n live.date}} over {{n live.runs}} runs for {{n live.cost_usd}} with {{n live.models.main}}, {{n live.models.fast}} and {{n live.models.check}}, got {{n live.metrics.heldout.abstention.wrong_answer}} held-out answers wrong, and leaked {{n live.metrics.dev.permissions.leaks}} rows on the dev split, where the permission probes ran, as [its full table](docs/EVALS.md#live-mode) shows.
 
 ## Who sees what
 
-Two adjusters and the analyst ask about the same West claim in [this clip](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@6cbff6ef61ad788ce35553bb6658dfcc90adce82/docs/demo/permissions.mp4).
+Two adjusters and the analyst ask about the same West claim.
 
 [<img src="docs/demo/permissions.gif" alt="Dana, the West adjuster, asks for the status of claim 105964, reads that it is open, a fire loss in Colorado with $33,474 paid, and opens the evidence to the login the query ran on. Omar, the East adjuster, then asks the same and is told the claim can't be found, and Sam, the analyst, is told analysts see aggregates only." width="100%">](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@6cbff6ef61ad788ce35553bb6658dfcc90adce82/docs/demo/permissions.mp4)
 
@@ -89,11 +87,9 @@ Two adjusters and the analyst ask about the same West claim in [this clip](https
 
 ## Dashboard
 
-`/dashboard`, for operators only, charts the request log beside the latest eval scores.
+`/dashboard`, for operators only, charts the request log beside the latest eval scores and filters it by where each request came from.
 
 [<img src="docs/demo/dashboard.gif" alt="Priya opens the operator dashboard and reads its request, answer rate, first event and rating tiles and a route's latency against its p95 budget, then filters to eval, replayed and browser requests in turn and reads which route each browser request took and how it ended." width="100%">](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@6cbff6ef61ad788ce35553bb6658dfcc90adce82/docs/demo/dashboard.mp4)
-
-[The dashboard clip](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@6cbff6ef61ad788ce35553bb6658dfcc90adce82/docs/demo/dashboard.mp4) filters it by where each request came from.
 
 ## Dev mode
 
@@ -101,16 +97,16 @@ The Dev mode switch in the header turns the page dark and docks a console that l
 
 [<img src="docs/demo/devmode.gif" alt="Dana turns on Dev mode, and the page goes dark with a console docked under the question box. She asks how much was paid on hail claims in Colorado in the second quarter of 2025, reads the $4,108,453 answer, drags the console taller to read a row for each event the server streamed, and opens the done event to its JSON, which names the request, its route and its outcome." width="100%">](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@6cbff6ef61ad788ce35553bb6658dfcc90adce82/docs/demo/devmode.mp4)
 
-## What it doesn't do
+## From laptop to production
 
-- Subtracting two totals can still recover a withheld cell.
-- Search slows at millions of chunks.
-- `sandboxd` holds the Docker socket, which is root on the host.
-- OCR is untested on real paper.
-- One person wrote the questions, gold SQL and rules.
-- Rewordings and typos drop routing from {{n dev.robustness.routing.original}} to {{n dev.robustness.routing.variants}} and SQL from {{n dev.robustness.sql.original}} to {{n dev.robustness.sql.variants}}.
-- The gate missed {{n heldout.refusal.injections_missed}} of {{n heldout.refusal.injections}} held-out injections.
-- The verifier doesn't check words like "twice" or "a majority".
+| This repo | In production |
+|---|---|
+| A Postgres login per job and region, under row-level security | The user's sign-in token traded for a short-lived login to that role, so no password sits in the app |
+| The demo's user picker | Single sign-on through an identity-aware proxy |
+| Analysis jobs in Docker, started by `sandboxd` | Firecracker microVMs or gVisor |
+| Exact vector search over a few hundred chunks | An HNSW index with iterative scan |
+| Small groups withheld from analysts | Query auditing as well, which refuses a total that could be subtracted from another to reveal a withheld group |
+| Request and audit logs in Postgres, with spans exported over OTLP when an endpoint is set | An OpenTelemetry collector at that endpoint, and a tracing backend |
 
 ## More
 
