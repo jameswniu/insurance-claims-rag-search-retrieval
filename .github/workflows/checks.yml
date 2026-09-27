@@ -41,6 +41,9 @@ jobs:
       - name: Numbers in the docs match evals/report.json
         run: uv run python tools/recount.py --check
 
+      - name: Figures match their generators
+        run: uv run python tools/figures.py --check
+
       - name: Scrub
         env:
           SCRUB_TERMS: ${{ secrets.SCRUB_TERMS }}

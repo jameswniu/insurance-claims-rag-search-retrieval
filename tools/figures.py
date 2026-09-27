@@ -1,5 +1,8 @@
-"""Draws the three architecture figures in docs/figures. Run `uv run python tools/figures.py`, and add --check to fail
-when a file on disk is stale.
+"""Draws the five figures in docs/figures. Run `uv run python tools/figures.py`, and add --check to fail when a file
+on disk is stale.
+
+hero.svg opens the README with four measured results, and eval-comparison.svg sets dev against held-out. Both read
+every number they show from evals/report.json when they are drawn, and stop on a missing key or an invalid interval.
 
 system-map.svg is the top level, a question end to end. system-paths.svg is the middle, what each path does inside.
 system-runtime.svg is the bottom, what runs where. Each figure lives in its own module beside this one, which holds
@@ -12,14 +15,18 @@ Every label is measured before it is drawn. GitHub shows a README image in a col
 from __future__ import annotations
 
 import html
+import json
 import re
 import sys
 from collections.abc import Iterable
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 FIGURES = ROOT / "docs" / "figures"
+REPORT = ROOT / "evals" / "report.json"
+Report = dict[str, Any]
 
 SANS = "-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif"
 MONO = "ui-monospace,SFMono-Regular,'SF Mono',Menlo,Consolas,'Liberation Mono',monospace"
@@ -61,6 +68,56 @@ def text(
         f'<text x="{x:.0f}" y="{y:.0f}" text-anchor="{anchor}" font-family="{MONO if mono else SANS}" '
         f'font-size="{size}"{weight} fill="{fill}">{html.escape(s)}</text>'
     )
+
+
+def fitted(
+    x: float, y: float, s: str, size: int, fill: str, lo: float, hi: float, bold: bool = False, anchor: str = "start"
+) -> str:
+    """Text measured against the span it has to stay inside, lo to hi, before it is drawn. It is never shrunk."""
+    need = width(s, size, bold)
+    left = x - need if anchor == "end" else x - need / 2 if anchor == "middle" else x
+    if left < lo or left + need > hi:
+        raise SystemExit(f"{s!r} at {size} runs from {left:.0f} to {left + need:.0f}, outside {lo:.0f} to {hi:.0f}")
+    return text(x, y, s, size, fill, bold, anchor)
+
+
+@dataclass(frozen=True)
+class Rate:
+    """A rate from evals/report.json: hits of n, its value, and its Wilson interval from low to high."""
+
+    hits: int
+    n: int
+    value: float
+    low: float
+    high: float
+
+
+def need(report: Report, path: str) -> Any:
+    """The value at a dotted path in the report. A figure never draws a default, so a missing key stops it."""
+    node: Any = report
+    for key in path.split("."):
+        if not isinstance(node, dict) or key not in node:
+            raise SystemExit(f"evals/report.json has no {path}")
+        node = node[key]
+    return node
+
+
+def count(report: Report, path: str) -> int:
+    value = need(report, path)
+    if isinstance(value, bool) or not isinstance(value, int) or value < 0:
+        raise SystemExit(f"evals/report.json holds {value!r} at {path}, not a count")
+    return value
+
+
+def rate(report: Report, path: str) -> Rate:
+    """A rate with every part checked: n above 0, hits within n, the value equal to hits over n, inside its interval."""
+    hits, n = count(report, f"{path}.hits"), count(report, f"{path}.n")
+    value, low, high = (need(report, f"{path}.{key}") for key in ("value", "low", "high"))
+    if any(isinstance(v, bool) or not isinstance(v, int | float) for v in (value, low, high)):
+        raise SystemExit(f"evals/report.json has a value or bound at {path} that is not a number")
+    if not (n > 0 and hits <= n and 0 <= low <= value <= high <= 1 and abs(value - hits / n) < 1e-3):
+        raise SystemExit(f"evals/report.json has an invalid rate at {path}: {hits} of {n}, {value} in {low} to {high}")
+    return Rate(hits, n, float(value), float(low), float(high))
 
 
 @dataclass(frozen=True)
@@ -145,8 +202,14 @@ def label(
     return text(x, y, s, BODY, MUTED, anchor=anchor, mono=mono)
 
 
-def document(title: str, description: str, height: float, parts: Iterable[str]) -> str:
-    """The figure as a file: its title and description for screen readers, the arrowhead and the white canvas."""
+def frame(height: float, edge: str) -> str:
+    """A square two-unit border just inside the canvas."""
+    size = f'width="{WIDTH - 2}" height="{height - 2:.0f}"'
+    return f'<rect x="1" y="1" {size} fill="none" stroke="{edge}" stroke-width="2"/>'
+
+
+def document(title: str, description: str, height: float, parts: Iterable[str], canvas: str = CANVAS) -> str:
+    """The figure as a file: its title and description for screen readers, the arrowhead and the canvas."""
     for words in (title, description):
         if BANNED.search(words):
             raise SystemExit(f"{words!r} carries a dash, an arrow or a banned word")
@@ -161,7 +224,7 @@ def document(title: str, description: str, height: float, parts: Iterable[str]) 
             f'<title id="title">{html.escape(title)}</title>',
             f'<desc id="desc">{html.escape(description)}</desc>',
             defs,
-            f'<rect width="{WIDTH}" height="{height:.0f}" fill="{CANVAS}"/>',
+            f'<rect width="{WIDTH}" height="{height:.0f}" fill="{canvas}"/>',
             *parts,
             "</svg>",
             "",
@@ -170,14 +233,19 @@ def document(title: str, description: str, height: float, parts: Iterable[str]) 
 
 
 def drawn() -> dict[Path, str]:
-    """Every figure, by the file it is written to."""
+    """Every figure, by the file it is written to. The hero and the eval comparison read evals/report.json, which
+    is loaded once for both."""
     try:
-        from tools import figure_paths, figure_runtime, figure_top
+        from tools import figure_evidence, figure_hero, figure_paths, figure_runtime, figure_top
     except ModuleNotFoundError:  # run as a script from tools/, where the repository root may not be on the path
+        import figure_evidence  # type: ignore[import-not-found, no-redef]
+        import figure_hero  # type: ignore[import-not-found, no-redef]
         import figure_paths  # type: ignore[import-not-found, no-redef]
         import figure_runtime  # type: ignore[import-not-found, no-redef]
         import figure_top  # type: ignore[import-not-found, no-redef]
-    return {module.OUT: module.draw() for module in (figure_top, figure_paths, figure_runtime)}
+    report: Report = json.loads(REPORT.read_text())
+    figures = {module.OUT: module.draw(report) for module in (figure_hero, figure_evidence)}
+    return figures | {module.OUT: module.draw() for module in (figure_top, figure_paths, figure_runtime)}
 
 
 def main() -> None:

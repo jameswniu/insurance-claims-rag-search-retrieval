@@ -1,22 +1,8 @@
-# Claims Q&A
-
-Ask a made-up home insurer a question in plain English, and get an answer from its claims, policy documents or scanned invoices. Every query runs as the asker's own database login, so a West adjuster never sees an East claim, whatever the question says.
+<a href="#numbers"><img src="docs/figures/hero.svg" alt="Claims Q&amp;A answers questions about claims, policies and scanned forms for a made-up home insurer. Scored with no API key, it found {{n dev.permissions.leaks}} leaks in {{n dev.permissions.runs}} dev runs, {{n shared.hostile_sql.harmful}} harmful SQL executions in {{n shared.hostile_sql.executions}}, caught {{n shared.verifier.caught}} of {{n shared.verifier.planted}} planted errors, and gave {{n heldout.abstention.wrong_answer.hits}} wrong answers in {{n heldout.abstention.wrong_answer.n}} held-out answers." width="100%"></a>
 
 [![checks](https://github.com/jameswniu/insurance-claims-rag-text-to-sql/actions/workflows/checks.yml/badge.svg?branch=main)](https://github.com/jameswniu/insurance-claims-rag-text-to-sql/actions/workflows/checks.yml)
 [![tests](https://github.com/jameswniu/insurance-claims-rag-text-to-sql/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/jameswniu/insurance-claims-rag-text-to-sql/actions/workflows/tests.yml)
 [![license](https://img.shields.io/badge/license-Apache%202.0-blue)](LICENSE)
-
-## Run it
-
-You need Docker 24 or later and about 1.5 GB of memory, enough for the stack and one analysis job.
-
-```sh
-git clone https://github.com/jameswniu/insurance-claims-rag-text-to-sql
-cd insurance-claims-rag-text-to-sql
-make up
-```
-
-The first run seeds 6,951 claims and reads 60 scanned forms, which took 2 minutes on a GitHub arm runner. Then open http://127.0.0.1:8000, pick a user and ask. No API key is needed. `make test` runs the tests.
 
 Dana, a West adjuster, asks what was paid on Colorado hail claims in Q2 2025. The answer comes back with the exact SQL that ran under her own database login.
 
@@ -37,16 +23,25 @@ Click any GIF on this page, or a clip below, to play the full video with caption
 | [A year outside the data](https://cdn.jsdelivr.net/gh/jameswniu/insurance-claims-rag-text-to-sql@6cbff6ef61ad788ce35553bb6658dfcc90adce82/docs/demo/out-of-range.mp4) | Dana asks about 2022 and is told the data runs from January 2024 to June 2026 | 11 s |
 | [An answer from live models](https://cdn.jsdelivr.net/gh/jameswniu/insurance-claims-rag-text-to-sql@6cbff6ef61ad788ce35553bb6658dfcc90adce82/docs/demo/live.mp4) | Dana asks what a denial letter needs, Claude answers with citations and Gemini checks each sentence | 41 s |
 
+## Run it
+
+You need Docker 24 or later and about 1.5 GB of memory, enough for the stack and one analysis job.
+
+```sh
+git clone https://github.com/jameswniu/insurance-claims-rag-text-to-sql
+cd insurance-claims-rag-text-to-sql
+make up
+```
+
+The first run seeds 6,951 claims and reads 60 scanned forms, which took 2 minutes on a GitHub arm runner. `make up` ends by printing the address to open, http://localhost:8000 unless another program holds that port. Pick a user and ask. No API key is needed. `make test` runs the tests.
+
 ## How it works
 
 ### Top level, how a question flows
 
 <img src="docs/figures/system-map.svg" alt="A question goes from the browser to the FastAPI app, where the gate refuses injection and off-topic questions and the router asks back, says the period is outside the data, or picks the lookup, figures, documents or why path, each reading Postgres as the asker, before the verifier checks the answer and it streams back." width="100%">
 
-- The gate turns away injection attempts and off-topic questions.
-- Keyword rules pick one of four paths, or ask a clarifying question.
 - Analysts get totals only, from `agg.metric()`, which runs as its owner and withholds any group with fewer than 10 claims or one claim over half the total.
-- The verifier cuts any sentence whose figure or citation doesn't trace to the evidence.
 - No step needs a language model. `LLM_BACKEND` turns on live mode, which adds Claude, and optionally Gemini as the checker.
 
 ### Mid level, inside each path
@@ -62,7 +57,7 @@ Click any GIF on this page, or a clip below, to play the full video with caption
 | Risk | What stops it | Measured |
 |---|---|---|
 | An adjuster asks about another region | Their own login, under row-level security | Found {{n dev.permissions.leaks}} leaks in {{n dev.permissions.runs}} runs |
-| Generated SQL writes or reads PII | Read-only logins with no PII grants | Ran {{n shared.hostile_sql.statements}} hostile statements, {{n shared.hostile_sql.harmful}} did harm |
+| Generated SQL writes or reads PII | Read-only logins with no PII grants | {{n shared.hostile_sql.harmful}} harmful executions in {{n shared.hostile_sql.executions}} executions |
 | Analysis code runs wild | A throwaway container with no network | All [13 hostile programs](tests/sandbox/test_limits.py) contained |
 | A stored note hides an instruction | Ingest quarantines it before search | Quarantined [20 of 20 planted notes](tests/docs/test_injection_screen.py) |
 | An injection or off-topic question | The gate refuses it before routing | Refused {{n dev.refusal.recall}} dev, {{n heldout.refusal.recall}} held-out |
@@ -77,11 +72,17 @@ The full list, with tests, is in [DESIGN.md](docs/DESIGN.md#failure-modes).
 
 `make eval` scores these with no API key. Dev cases shaped the rules, held-out cases didn't, and brackets are 95% Wilson intervals.
 
+<img src="docs/figures/eval-comparison.svg" alt="Dev against held-out, scored with no API key, each check a rate with its Wilson interval. Routing was right on {{n dev.routing.accuracy}} dev and {{n heldout.routing.accuracy}} held-out cases, refusals on {{n dev.refusal.recall}} and {{n heldout.refusal.recall}}, SQL results on {{n dev.sql.execution_accuracy}} and {{n heldout.sql.execution_accuracy}}, and cited answers on {{n dev.answers.grounded}} and {{n heldout.answers.grounded}}." width="100%">
+
+<details><summary>Exact counts and intervals</summary>
+
 {{table headline}}
 
 On dev, why answers take {{n dev.latency.why.p50_ms}} ms at the median and everything else under a second. Codex, a GPT model, rewrote {{n dev.robustness.routing.original.n}} dev routing and figure questions with rewordings and typos. The rewrites route right {{n dev.robustness.routing.variants}}, and the figure ones match gold SQL {{n dev.robustness.sql.variants}}. [EVALS.md](docs/EVALS.md) has every table.
 
 Live mode, scored {{n live.date}} over {{n live.runs}} runs for {{n live.cost_usd}} with {{n live.models.main}}, {{n live.models.fast}} and {{n live.models.check}}, got {{n live.metrics.heldout.abstention.wrong_answer}} held-out answers wrong, and leaked {{n live.metrics.dev.permissions.leaks}} rows on the dev split, where the permission probes ran, as [its full table](docs/EVALS.md#live-mode) shows.
+
+</details>
 
 ## Who sees what
 

@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 528" width="1200" height="528" role="img" aria-labelledby="title desc">
+<title id="title">Claims Q&amp;A, eval results with no API key</title>
+<desc id="desc">Claims Q&amp;A answers questions about claims, policies and scanned forms for a made-up home insurer, on synthetic data. Eval results with no API key: 0 leaks found in 84 dev runs, 0 harmful SQL executions in 552, 28 of 28 planted errors caught, 0 wrong answers in 34 held-out answers. A question passes these stages in order: Gate, Route, Query or search, Verify, Stream. Queries use the asker&#x27;s Postgres login under row-level security.</desc>
+<defs><marker id="head" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#59636e"/></marker></defs>
+<rect width="1200" height="528" fill="#141A21"/>
+<style>text{font-variant-numeric:tabular-nums}</style>
+<text x="48" y="60" text-anchor="start" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#8CB4DF">Home insurance · Synthetic data</text>
+<text x="48" y="128" text-anchor="start" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="64" font-weight="600" fill="#E9EEF3">Claims Q&amp;A</text>
+<text x="48" y="174" text-anchor="start" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="28" fill="#BCC7D2">Ask about claims, policies and scanned forms.</text>
+<text x="48" y="218" text-anchor="start" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" fill="#BCC7D2">Eval results · No API key</text>
+<text x="48" y="506" text-anchor="start" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" fill="#BCC7D2">Queries use the asker&#x27;s Postgres login under row-level security.</text>
+<rect x="1032" y="96" width="120" height="34" fill="#25394A"/>
+<line x1="1032" y1="96" x2="1152" y2="96" stroke="#8CB4DF" stroke-width="2"/>
+<line x1="1032" y1="130" x2="1152" y2="130" stroke="#8CB4DF" stroke-width="2"/>
+<line x1="1072" y1="64" x2="1072" y2="164" stroke="#8CB4DF" stroke-width="2"/>
+<rect x="1032" y="64" width="120" height="100" fill="none" stroke="#8CB4DF" stroke-width="2"/>
+<rect x="48" y="238" width="235" height="160" fill="#1D252E" stroke="#43515F" stroke-width="2"/>
+<text x="166" y="296" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="56" font-weight="600" fill="#8CB4DF">0</text>
+<text x="166" y="342" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="28" font-weight="600" fill="#E9EEF3">Leaks found</text>
+<text x="166" y="376" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" fill="#BCC7D2">84 dev runs</text>
+<rect x="299" y="238" width="244" height="160" fill="#1D252E" stroke="#43515F" stroke-width="2"/>
+<text x="421" y="296" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="56" font-weight="600" fill="#8CB4DF">0</text>
+<text x="421" y="342" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="28" font-weight="600" fill="#E9EEF3">Harmful SQL</text>
+<text x="421" y="376" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" fill="#BCC7D2">552 executions</text>
+<rect x="559" y="238" width="258" height="160" fill="#1D252E" stroke="#43515F" stroke-width="2"/>
+<text x="688" y="296" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="56" font-weight="600" fill="#8CB4DF">28/28</text>
+<text x="688" y="342" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="28" font-weight="600" fill="#E9EEF3">Errors caught</text>
+<text x="688" y="376" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" fill="#BCC7D2">Planted errors</text>
+<rect x="833" y="238" width="319" height="160" fill="#1D252E" stroke="#43515F" stroke-width="2"/>
+<text x="992" y="296" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="56" font-weight="600" fill="#8CB4DF">0</text>
+<text x="992" y="342" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="28" font-weight="600" fill="#E9EEF3">Wrong answers</text>
+<text x="992" y="376" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" fill="#BCC7D2">34 held-out answers</text>
+<rect x="48" y="424" width="144" height="44" rx="22" fill="#1D252E" stroke="#43515F" stroke-width="2"/>
+<text x="120" y="454" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#BCC7D2">Gate</text>
+<rect x="208" y="424" width="152" height="44" rx="22" fill="#1D252E" stroke="#43515F" stroke-width="2"/>
+<text x="284" y="454" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#BCC7D2">Route</text>
+<rect x="376" y="424" width="312" height="44" rx="22" fill="#1D252E" stroke="#43515F" stroke-width="2"/>
+<text x="532" y="454" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#BCC7D2">Query or search</text>
+<rect x="704" y="424" width="208" height="44" rx="22" fill="#8CB4DF" stroke="#8CB4DF" stroke-width="2"/>
+<text x="808" y="454" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#141A21">Verify</text>
+<rect x="928" y="424" width="224" height="44" rx="22" fill="#1D252E" stroke="#43515F" stroke-width="2"/>
+<text x="1040" y="454" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','Noto Sans',Helvetica,Arial,sans-serif" font-size="26" font-weight="600" fill="#BCC7D2">Stream</text>
+<rect x="1" y="1" width="1198" height="526" fill="none" stroke="#43515F" stroke-width="2"/>
+<rect width="1200" height="4" fill="#8CB4DF"/>
+</svg>
