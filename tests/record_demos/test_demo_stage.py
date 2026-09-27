@@ -195,12 +195,6 @@ def test_the_mode_label_is_on_the_stage_and_in_the_gif_footer() -> None:
     assert stage.ADDRESS in stage.stage_html(None, "No API key") and stage.ADDRESS in stage.gif_bar_html()
 
 
-def test_a_still_is_framed_like_the_gif() -> None:
-    page = stage.still_html("iVBORw0KGgo=", "Priya opens the operator dashboard", "No API key")
-    assert page.index('class="gif-bar"') < page.index('class="still"') < page.index('class="gif-footer"')
-    assert "data:image/png;base64,iVBORw0KGgo=" in page and ">Priya opens the operator dashboard<" in page
-
-
 def test_the_cutout_covers_its_rect_with_rounded_anti_aliased_corners() -> None:
     cover = render.rounded_cover(100, 80, (20.0, 10.0, 80.0, 70.0), 12.0)
     assert cover[40, 50] == 1 and cover[5, 50] == 0 and cover[40, 90] == 0

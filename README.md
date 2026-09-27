@@ -86,7 +86,7 @@ Live mode, scored 2026-09-25 over 3 runs for $4.50 with claude-sonnet-5, claude-
 
 Two adjusters and the analyst ask about the same West claim in [this clip](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@814c1a5a0c037fc1b6d878267ee1201e227c2243/docs/demo/permissions.mp4).
 
-[<img src="docs/demo/permissions.poster.png" alt="Dana, the West adjuster, asks for the status of claim 105964 and reads that it is open, a fire loss in Colorado with $33,474 paid." width="100%">](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@814c1a5a0c037fc1b6d878267ee1201e227c2243/docs/demo/permissions.mp4)
+[<img src="docs/demo/permissions.gif" alt="Dana, the West adjuster, asks for the status of claim 105964, reads that it is open, a fire loss in Colorado with $33,474 paid, and opens the evidence to the login the query ran on. Omar, the East adjuster, then asks the same and is told the claim can't be found, and Sam, the analyst, is told analysts see aggregates only." width="100%">](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@814c1a5a0c037fc1b6d878267ee1201e227c2243/docs/demo/permissions.mp4)
 
 | Who asks | What they get |
 |---|---|
@@ -98,7 +98,7 @@ Two adjusters and the analyst ask about the same West claim in [this clip](https
 
 `/dashboard`, for operators only, charts the request log beside the latest eval scores.
 
-<img src="docs/demo/dashboard.png" alt="The operator dashboard's request, answer rate, first event and rating tiles, above two routes' latency against their p95 budgets." width="100%">
+[<img src="docs/demo/dashboard.gif" alt="Priya opens the operator dashboard and reads its request, answer rate, first event and rating tiles and a route's latency against its p95 budget, then filters to eval, replayed and browser requests in turn and reads which route each browser request took and how it ended." width="100%">](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@814c1a5a0c037fc1b6d878267ee1201e227c2243/docs/demo/dashboard.mp4)
 
 [The dashboard clip](https://cdn.jsdelivr.net/gh/jameswniu/questions-to-sql-intent-router@814c1a5a0c037fc1b6d878267ee1201e227c2243/docs/demo/dashboard.mp4) filters it by where each request came from.
 

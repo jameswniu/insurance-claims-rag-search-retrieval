@@ -1392,7 +1392,7 @@
       }
     },
     "permissions": {
-      "recorded_at": "2026-09-27T00:58:41+00:00",
+      "recorded_at": "2026-09-27T04:21:41+00:00",
       "identity": [
         {
           "user": "dana",
@@ -1438,7 +1438,7 @@
         "selected_by": "LLM_BACKEND unset or off, read by app/config.py"
       },
       "app": {
-        "commit": "3e3680758ddbedffd70d0ee1b0d4f9ab0449d800",
+        "commit": "68b767160804a0045c0c038a2b675377aaed0f88",
         "dirty": false,
         "image": "sha256:172bd3d64235f2464016f734f85863b9821fd8f429b0b1c7dffcdd583a95e668"
       },
@@ -1450,10 +1450,10 @@
           "paid_total": "33474.30"
         }
       },
-      "length_s": 35.98,
+      "length_s": 35.74,
       "beats": [
         {
-          "at": 0.03,
+          "at": 0.02,
           "kind": "read",
           "caption": "Dana is the West adjuster",
           "seconds": 1.85,
@@ -1463,27 +1463,27 @@
           "target": "who is asking"
         },
         {
-          "at": 2.68,
+          "at": 2.65,
           "kind": "type",
           "caption": "Ask about claim 105964",
-          "seconds": 0.96,
+          "seconds": 0.95,
           "text": "What's the status of claim 105964?"
         },
         {
-          "at": 3.64,
+          "at": 3.6,
           "kind": "pause",
           "caption": "Ask about claim 105964",
-          "seconds": 0.63
+          "seconds": 0.61
         },
         {
-          "at": 4.47,
+          "at": 4.38,
           "kind": "wait",
           "caption": "Ask about claim 105964",
-          "seconds": 0.1,
+          "seconds": 0.79,
           "question": "What's the status of claim 105964?"
         },
         {
-          "at": 4.63,
+          "at": 5.19,
           "kind": "read",
           "caption": "Dana can read the claim",
           "seconds": 8.14,
@@ -1493,18 +1493,18 @@
           "target": "the answer"
         },
         {
-          "at": 12.89,
+          "at": 13.35,
           "kind": "click",
           "caption": "Check the database login"
         },
         {
-          "at": 13.78,
+          "at": 14.13,
           "kind": "click-beat",
           "caption": "Check the database login",
           "seconds": 0.37
         },
         {
-          "at": 14.2,
+          "at": 14.52,
           "kind": "read",
           "caption": "The query ran as Dana",
           "seconds": 3.7,
@@ -1514,14 +1514,14 @@
           "target": "the login the query ran on"
         },
         {
-          "at": 17.95,
+          "at": 18.23,
           "kind": "navigate",
           "caption": "Switch to the East adjuster",
-          "seconds": 1.05,
+          "seconds": 0.85,
           "to": "omar"
         },
         {
-          "at": 19.08,
+          "at": 19.1,
           "kind": "read",
           "caption": "Omar is the East adjuster",
           "seconds": 1.85,
@@ -1531,27 +1531,27 @@
           "target": "who is asking"
         },
         {
-          "at": 21.82,
+          "at": 21.8,
           "kind": "type",
           "caption": "Ask about the same claim",
           "seconds": 0.95,
           "text": "What's the status of claim 105964?"
         },
         {
-          "at": 22.77,
+          "at": 22.75,
           "kind": "pause",
           "caption": "Ask about the same claim",
-          "seconds": 0.63
+          "seconds": 0.62
         },
         {
-          "at": 23.61,
+          "at": 23.54,
           "kind": "wait",
           "caption": "Ask about the same claim",
-          "seconds": 0.09,
+          "seconds": 0.08,
           "question": "What's the status of claim 105964?"
         },
         {
-          "at": 23.78,
+          "at": 23.65,
           "kind": "read",
           "caption": "Omar cannot find this claim",
           "seconds": 2.59,
@@ -1561,14 +1561,14 @@
           "target": "the answer"
         },
         {
-          "at": 26.38,
+          "at": 26.26,
           "kind": "navigate",
           "caption": "Switch to the analyst",
-          "seconds": 0.97,
+          "seconds": 0.89,
           "to": "sam"
         },
         {
-          "at": 27.43,
+          "at": 27.17,
           "kind": "read",
           "caption": "Sam sees aggregates only",
           "seconds": 1.74,
@@ -1578,27 +1578,27 @@
           "target": "who is asking"
         },
         {
-          "at": 30.05,
+          "at": 29.76,
           "kind": "type",
           "caption": "Ask about the same claim",
           "seconds": 0.95,
           "text": "What's the status of claim 105964?"
         },
         {
-          "at": 31.01,
+          "at": 30.72,
           "kind": "pause",
           "caption": "Ask about the same claim",
           "seconds": 0.63
         },
         {
-          "at": 31.82,
+          "at": 31.54,
           "kind": "wait",
           "caption": "Ask about the same claim",
           "seconds": 0.03,
           "question": "What's the status of claim 105964?"
         },
         {
-          "at": 31.9,
+          "at": 31.66,
           "kind": "read",
           "caption": "Sam cannot open individual claims",
           "seconds": 3.33,
@@ -1608,17 +1608,17 @@
           "target": "the answer"
         },
         {
-          "at": 35.24,
+          "at": 34.99,
           "kind": "end",
           "caption": "Sam cannot open individual claims",
           "seconds": 0.74
         }
       ],
       "waits_s": [
-        0.1,
-        1.05,
-        0.09,
-        0.97,
+        0.79,
+        0.85,
+        0.08,
+        0.89,
         0.03
       ],
       "holds_s": [
@@ -1877,17 +1877,18 @@
         "omar": "I can't find claim 105964.",
         "sam": "Analysts see aggregates only, so I can't open individual claims."
       },
-      "poster_s": 5.63,
+      "poster_s": 6.19,
       "title_s": 1.0,
       "files": {
-        "permissions.mp4": {
-          "bytes": 1689841,
-          "width": 1920,
-          "seconds": 37.47
+        "permissions.gif": {
+          "bytes": 1465991,
+          "width": 900,
+          "seconds": 35.75
         },
-        "permissions.poster.png": {
-          "bytes": 178263,
-          "width": 900
+        "permissions.mp4": {
+          "bytes": 1691396,
+          "width": 1920,
+          "seconds": 37.23
         }
       }
     },
@@ -3408,7 +3409,7 @@
       }
     },
     "dashboard": {
-      "recorded_at": "2026-09-27T00:58:41+00:00",
+      "recorded_at": "2026-09-27T04:21:41+00:00",
       "identity": [
         {
           "user": "priya",
@@ -3426,18 +3427,18 @@
         "selected_by": "LLM_BACKEND unset or off, read by app/config.py"
       },
       "app": {
-        "commit": "3e3680758ddbedffd70d0ee1b0d4f9ab0449d800",
+        "commit": "68b767160804a0045c0c038a2b675377aaed0f88",
         "dirty": false,
         "image": "sha256:172bd3d64235f2464016f734f85863b9821fd8f429b0b1c7dffcdd583a95e668"
       },
       "preflight": {
         "sources": {
-          "ui": 434,
-          "eval": 4378,
+          "ui": 447,
+          "eval": 8522,
           "replay": 62
         },
         "source_counts": {
-          "read_at": "2026-09-27T00:58:41+00:00",
+          "read_at": "2026-09-27T04:21:41+00:00",
           "rows": [
             {
               "source": "eval",
@@ -3447,7 +3448,7 @@
             {
               "source": "ui",
               "mode": "none",
-              "requests": 434
+              "requests": 447
             },
             {
               "source": "replay",
@@ -3457,15 +3458,15 @@
             {
               "source": "eval",
               "mode": "none",
-              "requests": 3206
+              "requests": 7350
             }
           ]
         }
       },
-      "length_s": 41.51,
+      "length_s": 41.28,
       "beats": [
         {
-          "at": 0.03,
+          "at": 0.01,
           "kind": "read",
           "caption": "Priya opens the operator dashboard",
           "seconds": 2.74,
@@ -3475,7 +3476,7 @@
           "target": "the dashboard's scope"
         },
         {
-          "at": 2.93,
+          "at": 2.79,
           "kind": "read",
           "caption": "Start with all request sources",
           "seconds": 4.07,
@@ -3485,14 +3486,14 @@
           "target": "the All tiles"
         },
         {
-          "at": 7.04,
+          "at": 6.87,
           "kind": "scroll",
           "caption": "Compare latency with its route budget",
           "seconds": 0.62,
           "px": 133
         },
         {
-          "at": 7.67,
+          "at": 7.5,
           "kind": "read",
           "caption": "Compare latency with its route budget",
           "seconds": 5.4,
@@ -3502,34 +3503,34 @@
           "target": "one route's latency and budget"
         },
         {
-          "at": 13.09,
+          "at": 12.91,
           "kind": "scroll",
           "caption": "Filter to evaluation requests",
-          "seconds": 0.63,
+          "seconds": 0.61,
           "px": 21
         },
         {
-          "at": 13.72,
+          "at": 13.52,
           "kind": "navigate",
           "caption": "Filter to evaluation requests",
-          "seconds": 0.85,
+          "seconds": 0.82,
           "to": "http://172.20.0.2:8000/dashboard?source=eval"
         },
         {
-          "at": 14.57,
+          "at": 14.35,
           "kind": "click-beat",
           "caption": "Filter to evaluation requests",
           "seconds": 0.37
         },
         {
-          "at": 14.96,
+          "at": 14.73,
           "kind": "scroll",
           "caption": "Eval counts only evaluation runs",
           "seconds": 0.62,
           "px": 79
         },
         {
-          "at": 15.58,
+          "at": 15.36,
           "kind": "read",
           "caption": "Eval counts only evaluation runs",
           "seconds": 4.18,
@@ -3539,20 +3540,20 @@
           "target": "the Eval tiles"
         },
         {
-          "at": 19.79,
+          "at": 19.56,
           "kind": "navigate",
           "caption": "Filter to replayed questions",
-          "seconds": 0.71,
+          "seconds": 0.7,
           "to": "http://172.20.0.2:8000/dashboard?source=replay"
         },
         {
-          "at": 20.5,
+          "at": 20.26,
           "kind": "click-beat",
           "caption": "Filter to replayed questions",
           "seconds": 0.37
         },
         {
-          "at": 20.89,
+          "at": 20.65,
           "kind": "read",
           "caption": "Replay counts only replayed questions",
           "seconds": 4.18,
@@ -3562,20 +3563,20 @@
           "target": "the Replay tiles"
         },
         {
-          "at": 25.09,
+          "at": 24.85,
           "kind": "navigate",
           "caption": "Filter to browser requests",
-          "seconds": 0.74,
+          "seconds": 0.73,
           "to": "http://172.20.0.2:8000/dashboard?source=ui"
         },
         {
-          "at": 25.83,
+          "at": 25.58,
           "kind": "click-beat",
           "caption": "Filter to browser requests",
           "seconds": 0.37
         },
         {
-          "at": 26.23,
+          "at": 25.97,
           "kind": "read",
           "caption": "UI counts only browser requests",
           "seconds": 4.18,
@@ -3585,14 +3586,14 @@
           "target": "the UI tiles"
         },
         {
-          "at": 30.43,
+          "at": 30.18,
           "kind": "scroll",
           "caption": "See which route each request took",
-          "seconds": 0.61,
+          "seconds": 0.62,
           "px": 863
         },
         {
-          "at": 31.04,
+          "at": 30.81,
           "kind": "read",
           "caption": "See which route each request took",
           "seconds": 4.96,
@@ -3602,7 +3603,7 @@
           "target": "browser requests by route"
         },
         {
-          "at": 36.02,
+          "at": 35.79,
           "kind": "read",
           "caption": "See how those requests ended",
           "seconds": 4.74,
@@ -3612,16 +3613,16 @@
           "target": "browser request outcomes"
         },
         {
-          "at": 40.76,
+          "at": 40.54,
           "kind": "end",
           "caption": "See how those requests ended",
           "seconds": 0.74
         }
       ],
       "waits_s": [
-        0.85,
-        0.71,
-        0.74
+        0.82,
+        0.7,
+        0.73
       ],
       "holds_s": [
         2.74,
@@ -3682,7 +3683,7 @@
         {
           "check": "the All view counts requests",
           "ok": true,
-          "detail": "{'Requests': '4,887', 'Answered': '66%', 'Median first event': '1 ms', 'Rated useful': 'No ratings yet'}"
+          "detail": "{'Requests': '9,034', 'Answered': '57%', 'Median first event': '1 ms', 'Rated useful': 'No ratings yet'}"
         },
         {
           "check": "the All tiles is on the page",
@@ -3716,7 +3717,7 @@
         {
           "check": "the Eval view counts requests",
           "ok": true,
-          "detail": "{'Requests': '4,378', 'Answered': '65%', 'Median first event': '1 ms', 'Rated useful': 'No ratings yet'}"
+          "detail": "{'Requests': '8,522', 'Answered': '56%', 'Median first event': '1 ms', 'Rated useful': 'No ratings yet'}"
         },
         {
           "check": "the Eval tiles is on the page",
@@ -3768,7 +3769,7 @@
         {
           "check": "the UI view counts requests",
           "ok": true,
-          "detail": "{'Requests': '447', 'Answered': '72%', 'Median first event': '3 ms', 'Rated useful': 'No ratings yet'}"
+          "detail": "{'Requests': '450', 'Answered': '71%', 'Median first event': '3 ms', 'Rated useful': 'No ratings yet'}"
         },
         {
           "check": "the UI tiles is on the page",
@@ -3821,18 +3822,18 @@
         }
       ],
       "facts": [
-        "dashboard: tiles {'all': {'Requests': '4,887', 'Answered': '66%', 'Median first event': '1 ms', 'Rated useful': 'No ratings yet'}, 'eval': {'Requests': '4,378', 'Answered': '65%', 'Median first event': '1 ms', 'Rated useful': 'No ratings yet'}, 'replay': {'Requests': '62', 'Answered': '73%', 'Median first event': '1 ms', 'Rated useful': 'No ratings yet'}, 'ui': {'Requests': '447', 'Answered': '72%', 'Median first event': '3 ms', 'Rated useful': 'No ratings yet'}}"
+        "dashboard: tiles {'all': {'Requests': '9,034', 'Answered': '57%', 'Median first event': '1 ms', 'Rated useful': 'No ratings yet'}, 'eval': {'Requests': '8,522', 'Answered': '56%', 'Median first event': '1 ms', 'Rated useful': 'No ratings yet'}, 'replay': {'Requests': '62', 'Answered': '73%', 'Median first event': '1 ms', 'Rated useful': 'No ratings yet'}, 'ui': {'Requests': '450', 'Answered': '71%', 'Median first event': '3 ms', 'Rated useful': 'No ratings yet'}}"
       ],
       "shown": {
         "all": {
-          "Requests": "4,887",
-          "Answered": "66%",
+          "Requests": "9,034",
+          "Answered": "57%",
           "Median first event": "1 ms",
           "Rated useful": "No ratings yet"
         },
         "eval": {
-          "Requests": "4,378",
-          "Answered": "65%",
+          "Requests": "8,522",
+          "Answered": "56%",
           "Median first event": "1 ms",
           "Rated useful": "No ratings yet"
         },
@@ -3843,108 +3844,28 @@
           "Rated useful": "No ratings yet"
         },
         "ui": {
-          "Requests": "447",
-          "Answered": "72%",
+          "Requests": "450",
+          "Answered": "71%",
           "Median first event": "3 ms",
           "Rated useful": "No ratings yet"
         }
       },
-      "poster_s": 3.93,
+      "poster_s": 3.79,
       "title_s": 1.0,
       "files": {
+        "dashboard.gif": {
+          "bytes": 3531575,
+          "width": 900,
+          "seconds": 41.25
+        },
         "dashboard.mp4": {
-          "bytes": 2990747,
+          "bytes": 3061738,
           "width": 1920,
-          "seconds": 43.0
+          "seconds": 42.77
         },
         "dashboard.poster.png": {
-          "bytes": 206744,
+          "bytes": 206934,
           "width": 900
-        }
-      }
-    },
-    "dashboard-still": {
-      "recorded_at": "2026-09-27T00:58:41+00:00",
-      "identity": [
-        {
-          "user": "priya",
-          "name": "Priya Natarajan",
-          "title": "Claims supervisor, all regions",
-          "role": "u_supervisor"
-        }
-      ],
-      "questions": [],
-      "mode": {
-        "label": "No API key",
-        "backend": "none",
-        "live_client": false,
-        "LLM_BACKEND": null,
-        "selected_by": "LLM_BACKEND unset or off, read by app/config.py"
-      },
-      "app": {
-        "commit": "3e3680758ddbedffd70d0ee1b0d4f9ab0449d800",
-        "dirty": false,
-        "image": "sha256:172bd3d64235f2464016f734f85863b9821fd8f429b0b1c7dffcdd583a95e668"
-      },
-      "preflight": {},
-      "length_s": 0.0,
-      "beats": [],
-      "waits_s": [],
-      "holds_s": [],
-      "assertions": [
-        {
-          "check": "POST /session signs in as priya",
-          "ok": true,
-          "detail": "it answered 204"
-        },
-        {
-          "check": "the root font is 18px",
-          "ok": true,
-          "detail": "it is 18px"
-        },
-        {
-          "check": "the page shows the light theme the stage is drawn for",
-          "ok": true,
-          "detail": "it shows [None, '#f5f7f9']"
-        },
-        {
-          "check": "/dashboard shows the service dashboard",
-          "ok": true,
-          "detail": "Service dashboard"
-        },
-        {
-          "check": "the dashboard counts requests",
-          "ok": true,
-          "detail": "{'Requests': '4,887', 'Answered': '66%', 'Median first event': '1 ms', 'Rated useful': 'No ratings yet'}"
-        },
-        {
-          "check": "the first latency chart is drawn",
-          "ok": true
-        },
-        {
-          "check": "the .gif-footer .text text is drawn in Inter-Medium",
-          "ok": true,
-          "detail": "Inter-Medium"
-        }
-      ],
-      "facts": [
-        "dashboard still: tiles {'Requests': '4,887', 'Answered': '66%', 'Median first event': '1 ms', 'Rated useful': 'No ratings yet'}, cropped below the chart 'Lookup, 693 requests'"
-      ],
-      "shown": {
-        "tiles": {
-          "Requests": "4,887",
-          "Answered": "66%",
-          "Median first event": "1 ms",
-          "Rated useful": "No ratings yet"
-        },
-        "chart": "Lookup, 693 requests"
-      },
-      "poster_s": null,
-      "title_s": 1.0,
-      "files": {
-        "dashboard.png": {
-          "bytes": 199316,
-          "width": 1800
         }
       }
     }

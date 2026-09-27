@@ -11,7 +11,7 @@ import pytest
 from tools import demo_stage as stage
 from tools import record_demos as rd
 
-VIDEO_CLIPS = [clip for clip in rd.OUTPUTS if clip != "dashboard-still"]
+VIDEO_CLIPS = list(rd.OUTPUTS)
 HAIL = "How much did we pay on hail claims in Colorado in Q2 2025?"
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -96,23 +96,30 @@ def test_outputs_and_clips_name_the_same_clips() -> None:
     assert len(VIDEO_CLIPS) == 11
 
 
-def test_each_video_clip_writes_an_mp4_and_a_poster_and_only_ask_a_gif() -> None:
+def test_each_clip_writes_an_mp4_and_ask_permissions_and_dashboard_a_gif() -> None:
     for clip in VIDEO_CLIPS:
         files = rd.OUTPUTS[clip]
-        assert f"{clip}.mp4" in files and f"{clip}.poster.png" in files, clip
-        assert any(name.endswith(".gif") for name in files) == (clip == "ask"), clip
-    assert rd.OUTPUTS["dashboard-still"] == ("dashboard.png",)
+        assert f"{clip}.mp4" in files, clip
+        assert set(files) <= {f"{clip}.mp4", f"{clip}.gif", f"{clip}.poster.png"}, clip
+    assert [clip for clip in VIDEO_CLIPS if f"{clip}.gif" in rd.OUTPUTS[clip]] == ["ask", "permissions", "dashboard"]
+
+
+def test_the_readme_plays_every_gif_and_names_only_files_the_recorder_writes() -> None:
+    for readme in (ROOT / "README.md", ROOT / "docs" / "templates" / "README.md"):
+        named = set(re.findall(r"docs/demo/([\w.-]+)", readme.read_text()))
+        assert named <= set(rd.NAMED), f"{readme.name}: {named - set(rd.NAMED)}"
+        assert {name for name in rd.NAMED if name.endswith(".gif")} <= named, readme
 
 
 def test_no_file_is_written_by_two_clips_and_retired_files_are_gone() -> None:
     names = [name for files in rd.OUTPUTS.values() for name in files]
     assert len(names) == len(set(names))
-    assert not {"edges.mp4", "permissions.gif"} & set(names)
+    assert not {"edges.mp4", "dashboard.png", "permissions.poster.png"} & set(names)
 
 
 def test_the_dashboard_is_recorded_after_every_chat_clip() -> None:
-    # Its UI filter counts the chat clips' own requests, so it and its still come last.
-    assert list(rd.OUTPUTS)[-2:] == ["dashboard", "dashboard-still"]
+    # Its UI filter counts the chat clips' own requests, so it comes last.
+    assert list(rd.OUTPUTS)[-1] == "dashboard"
 
 
 def test_every_output_has_a_budget() -> None:
@@ -120,13 +127,14 @@ def test_every_output_has_a_budget() -> None:
 
 
 def test_the_budgets_follow_the_storyboard() -> None:
-    assert rd.BUDGETS["ask.gif"] == rd.Budget(4 * rd.MB, 5 * rd.MB, 52)
+    for clip in ("ask", "permissions", "dashboard"):
+        assert rd.BUDGETS[f"{clip}.gif"] == rd.Budget(4 * rd.MB, 5 * rd.MB, 52)
     assert rd.BUDGETS["ask.mp4"].limit_bytes == 10 * rd.MB
     for clip in rd.BOUNDARY_CLIPS:
         assert rd.BUDGETS[f"{clip}.mp4"] == rd.Budget(3 * rd.MB, 6 * rd.MB, 120)
     for clip in rd.EVIDENCE_CLIPS:
         assert rd.BUDGETS[f"{clip}.mp4"] == rd.Budget(8 * rd.MB, 15 * rd.MB, 120)
-    assert rd.BUDGETS["dashboard.png"].limit_bytes == 1 * rd.MB
+    assert rd.BUDGETS["dashboard.poster.png"] == rd.Budget(rd.POSTER_TARGET_BYTES, 1 * rd.MB, None)
 
 
 def test_a_file_over_its_limit_fails_and_one_over_its_target_warns() -> None:
@@ -184,10 +192,10 @@ def test_on_screen_text_keeps_the_voice_rules() -> None:
 
 
 def test_each_output_comes_out_its_own_width() -> None:
-    # The README's column shows the GIF, the posters and the still, so they share the GIF's framing.
+    # The README's column shows the GIFs, and the posters share their framing.
     assert rd.width_of("ask.mp4") == rd.width_of("policy.mp4") == 1920
-    assert rd.width_of("ask.gif") == rd.width_of("ask.poster.png") == rd.width_of("permissions.poster.png") == 900
-    assert rd.width_of("dashboard.png") == 1800
+    assert rd.width_of("ask.gif") == rd.width_of("permissions.gif") == rd.width_of("dashboard.gif") == 900
+    assert rd.width_of("ask.poster.png") == rd.width_of("dashboard.poster.png") == 900
 
 
 def test_every_token_the_injected_css_reads_is_in_the_app_stylesheet() -> None:

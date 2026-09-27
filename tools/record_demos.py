@@ -1,5 +1,5 @@
-"""Records the README's demo clips, a poster for each and the dashboard still into docs/demo, and checks what each
-one shows.
+"""Records the README's demo clips into docs/demo, each as an mp4 with the GIF or poster OUTPUTS lists for it, and
+checks what each one shows.
 
     make demos                                          # every clip
     uv run python tools/record_demos.py why injection   # only these
@@ -25,10 +25,8 @@ file to record it again. manifest.json, which describes each clip, is the one fi
 """
 
 import argparse
-import base64
 import contextlib
 import json
-import math
 import os
 import re
 import shlex
@@ -62,21 +60,20 @@ PLAYWRIGHT = "1.63.0"
 INTER = "fonts-inter=4.0+ds-1"
 IMAGE = f"claims-qa-demos:{PLAYWRIGHT}"
 
-# The files each clip writes, in the order the clips are recorded. The dashboard comes after the chat clips, so its
-# UI filter counts the requests they just made, and the still comes last for the same reason.
+# The files each clip writes, in the order the clips are recorded. The README plays each GIF inline, linked to its
+# clip's mp4. The dashboard comes after the chat clips, so its UI filter counts the requests they just made.
 OUTPUTS: dict[str, tuple[str, ...]] = {
     "ask": ("ask.gif", "ask.mp4", "ask.poster.png"),
     "policy": ("policy.mp4", "policy.poster.png"),
     "scan": ("scan.mp4", "scan.poster.png"),
     "why": ("why.mp4", "why.poster.png"),
-    "permissions": ("permissions.mp4", "permissions.poster.png"),
+    "permissions": ("permissions.gif", "permissions.mp4"),
     "suppression": ("suppression.mp4", "suppression.poster.png"),
     "clarify": ("clarify.mp4", "clarify.poster.png"),
     "injection": ("injection.mp4", "injection.poster.png"),
     "off-topic": ("off-topic.mp4", "off-topic.poster.png"),
     "out-of-range": ("out-of-range.mp4", "out-of-range.poster.png"),
-    "dashboard": ("dashboard.mp4", "dashboard.poster.png"),
-    "dashboard-still": ("dashboard.png",),
+    "dashboard": ("dashboard.gif", "dashboard.mp4", "dashboard.poster.png"),
 }
 
 # Pacing. A viewer reads 200 to 250 words a minute, so every reading pause is worked out from what is on screen, and
@@ -103,7 +100,7 @@ PRESS_S = 0.15  # between pointer down and up, so the ripple shows before the pa
 SCROLL_MS = 500
 SCROLL_SETTLE_MS = 100
 MAX_CLIP_S = 120
-GIF_MAX_CLIP_S = 52  # the pointer's glides added about a second; the holds are never cut to fit
+GIF_MAX_CLIP_S = 52  # the longest a README GIF may run; its holds are never cut to fit
 GIF_MAX_BYTES = 5_000_000
 # Frames per second and palette colours, tried in turn until the GIF fits its budget: colours go before frame rate.
 GIF_TRIES = ((12, 256), (12, 160), (12, 96), (10, 256), (10, 128), (10, 96))
@@ -127,16 +124,13 @@ class Budget(NamedTuple):
 
 EVIDENCE_CLIPS = ("policy", "scan", "why", "permissions", "suppression", "clarify", "dashboard")
 BOUNDARY_CLIPS = ("injection", "off-topic", "out-of-range")
+NAMED = [name for files in OUTPUTS.values() for name in files]
 BUDGETS: dict[str, Budget] = {
-    "ask.gif": Budget(4 * MB, GIF_MAX_BYTES, GIF_MAX_CLIP_S),
+    **{name: Budget(4 * MB, GIF_MAX_BYTES, GIF_MAX_CLIP_S) for name in NAMED if name.endswith(".gif")},
     "ask.mp4": Budget(10 * MB, 10 * MB, MAX_CLIP_S),
     **{f"{clip}.mp4": Budget(8 * MB, 15 * MB, MAX_CLIP_S) for clip in EVIDENCE_CLIPS},
     **{f"{clip}.mp4": Budget(3 * MB, 6 * MB, MAX_CLIP_S) for clip in BOUNDARY_CLIPS},
-    **{
-        f"{clip}.poster.png": Budget(POSTER_TARGET_BYTES, 1 * MB, None)
-        for clip in ("ask", *EVIDENCE_CLIPS, *BOUNDARY_CLIPS)
-    },
-    "dashboard.png": Budget(1 * MB, 1 * MB, None),
+    **{name: Budget(POSTER_TARGET_BYTES, 1 * MB, None) for name in NAMED if name.endswith(".poster.png")},
 }
 
 # From data/users.yaml: how the user picker names each user a clip asks as.
@@ -641,7 +635,7 @@ class Demo:
         self.cursor_log: list[list[Any]] = []
         self.pointer: stage.Point | None = None
 
-    def open(self, user: str, path: str = "/", *, ready: str = PICKER, video: bool = True, devices: bool = True) -> Any:
+    def open(self, user: str, path: str = "/", *, ready: str = PICKER) -> Any:
         """Opens path as user. The page fetches who is asking, and the dashboard its numbers, after it loads, so the
         clip starts once ready is on screen, never on a page still waiting for them."""
         options: dict[str, Any] = {
@@ -652,9 +646,8 @@ class Demo:
         options["reduced_motion"] = "no-preference"
         self.context = self.browser.new_context(**options)
         self.context.add_init_script(FONT_JS)
-        if devices:
-            self.context.route("**/static/style.css", with_demo_css)
-            self.context.add_init_script(demo_js())
+        self.context.route("**/static/style.css", with_demo_css)
+        self.context.add_init_script(demo_js())
         # Choosing the user before the tab opens starts the clip on that user, instead of on a reload.
         chosen = self.context.request.post(f"{self.base}/session", data={"user": user})
         self.check(chosen.status == 204, f"POST /session signs in as {user}", f"it answered {chosen.status}")
@@ -665,9 +658,8 @@ class Demo:
         self.page.goto(self.base + path)
         self.page.locator(ready).wait_for()
         self.page.evaluate("document.fonts.ready.then(() => true)")
-        if devices:
-            marker = self.page.evaluate("getComputedStyle(document.documentElement).getPropertyValue('--demo-css')")
-            self.check(marker.strip() == "1", "the recorder's CSS reached the page", f"its marker reads {marker!r}")
+        marker = self.page.evaluate("getComputedStyle(document.documentElement).getPropertyValue('--demo-css')")
+        self.check(marker.strip() == "1", "the recorder's CSS reached the page", f"its marker reads {marker!r}")
         size = self.page.evaluate("getComputedStyle(document.documentElement).fontSize")
         self.check(size == "18px", "the root font is 18px", f"it is {size}")
         # The clips show the app's default light theme, the one the stage's spotlight and chrome are drawn in, never
@@ -678,11 +670,9 @@ class Demo:
         )
         light = [None, stage.APP_LIGHT["--background"]]
         self.check(theme == light, "the page shows the light theme the stage is drawn for", f"it shows {theme}")
-        if video:
-            self.capture()
+        self.capture()
         self.t0, self.t0_wall = time.monotonic(), time.time()
-        if devices:
-            self.caption(self.captions["who"])
+        self.caption(self.captions["who"])
         return self.page
 
     def capture(self) -> None:
@@ -1525,49 +1515,6 @@ def check_faces(demo: Demo, page: Any, seen: set[str]) -> None:
         demo.check(drawn == [face], f"the {selector} text is drawn in {face}", ", ".join(drawn) or "no font")
 
 
-def frame_still(demo: Demo, shot: bytes, height: int, caption: str) -> None:
-    """Frames a still of the page the way the GIF is framed, the browser bar above it and the caption strip under it,
-    at the density it was captured at, and writes it as out/dashboard.png."""
-    check_caption(caption)
-    total = stage.GIF_BAR_H + height + stage.GIF_FOOTER_H
-    viewport = {"width": stage.GIF_W, "height": total}
-    context = demo.browser.new_context(viewport=viewport, device_scale_factor=stage.CAPTURE_SCALE)
-    try:
-        page = context.new_page()
-        page.set_content(stage.still_html(base64.b64encode(shot).decode(), caption, demo.mode))
-        page.evaluate("document.fonts.ready.then(() => true)")
-        check_faces(demo, page, set())
-        if not page.evaluate(stage.CAPTION_FITS_JS):
-            raise ClipFailed(f"the caption {caption!r} is wider than the still's caption strip")
-        page.screenshot(path=str(demo.out / "dashboard.png"), clip={"x": 0, "y": 0, **viewport})
-    finally:
-        context.close()
-
-
-def capture_dashboard(demo: Demo, facts: Facts) -> None:
-    """Priya's /dashboard as a still of its tiles and first latency chart, at twice the pixel density so it stays
-    sharp when scaled, framed like the GIF with the dashboard clip's opening caption under it."""
-    page = demo.open("priya", "/dashboard", ready=dashboard_ready("all"), video=False, devices=False)
-    heading = page.locator("h1").inner_text()
-    demo.check(heading == "Service dashboard", "/dashboard shows the service dashboard", heading)
-    labels = page.locator(".tile-label").all_inner_texts()
-    tiles = dict(zip(labels, page.locator(".tile-value").all_inner_texts(), strict=True))
-    requests = int(tiles.get("Requests", "0").replace(",", ""))
-    demo.check(requests > 0, "the dashboard counts requests", str(tiles))
-    latency = page.locator("section.panel", has=page.locator("h2", has_text="Latency by route"))
-    chart = latency.locator("svg.chart").first
-    title = chart.locator("title").text_content()
-    page.evaluate("window.scrollTo(0, 0)")
-    box = chart.bounding_box()
-    demo.check(box is not None, "the first latency chart is drawn")
-    bottom = math.ceil(box["y"] + box["height"] + 16)
-    shot = page.screenshot(full_page=True, clip={"x": 0, "y": 0, "width": VIEW["width"], "height": bottom})
-    frame_still(demo, shot, bottom, CAPTIONS["dashboard"]["who"])
-    demo.note(f"dashboard still: tiles {tiles}, cropped below the chart {title!r}")
-    demo.shown = {"tiles": tiles, "chart": title}
-    demo.abandon()
-
-
 CLIPS: dict[str, Callable[[Demo, Facts], None]] = {
     "ask": clip_ask,
     "policy": clip_policy,
@@ -1580,7 +1527,6 @@ CLIPS: dict[str, Callable[[Demo, Facts], None]] = {
     "off-topic": clip_off_topic,
     "out-of-range": clip_out_of_range,
     "dashboard": clip_dashboard,
-    "dashboard-still": capture_dashboard,
 }
 
 
@@ -1820,9 +1766,6 @@ def render(clip: str, name: str, result: dict[str, Any], raw: Path) -> Path:
 
     target = raw / "rendered" / name
     target.parent.mkdir(exist_ok=True)
-    if name == "dashboard.png":
-        shutil.copyfile(raw / name, target)
-        return target
     plan = demo_render.Plan.load(result["stage"], result["length_s"])
     frames, chrome = raw / "frames" / clip, raw / "chrome" / clip
     try:
@@ -1848,10 +1791,8 @@ def render(clip: str, name: str, result: dict[str, Any], raw: Path) -> Path:
 
 
 def width_of(name: str) -> int:
-    """How wide an output file comes out: the stage for an mp4, the page for the GIF and the posters, which the README
-    shows in the same column, and twice the page for the dashboard still, framed the same way at twice the density."""
-    if name == "dashboard.png":
-        return stage.GIF_W * stage.CAPTURE_SCALE
+    """How wide an output file comes out: the stage for an mp4, and the page for the GIFs and the posters, which the
+    README would show in the same column."""
     return stage.STAGE_W if name.endswith(".mp4") else stage.GIF_W
 
 

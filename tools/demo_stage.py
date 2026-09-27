@@ -435,7 +435,6 @@ GIF_CSS = f"""
 }}
 .gif-footer .text {{ font-size: 22px; font-weight: 500; color: var(--foreground); white-space: nowrap; }}
 .gif-footer .mode {{ font-size: 15px; color: var(--control); white-space: nowrap; }}
-.still {{ display: block; width: {GIF_W}px; }}
 """
 # The pointer: the usual arrow, black with a white edge and a soft shadow, its tip at CURSOR_TIP.
 CURSOR_SIZE = (24, 28)
@@ -490,14 +489,6 @@ def gif_bar_html() -> str:
 
 def gif_footer_html(caption: str, mode: str) -> str:
     return _page(GIF_CSS, f'<div class="gif-footer">{_line(caption, mode)}</div>')
-
-
-def still_html(png_base64: str, caption: str, mode: str) -> str:
-    """A still of a page, framed the way the GIF is: the browser bar above it and the caption strip under it. The
-    picture is shown VIEW_W CSS pixels wide, so one captured at twice the density stays pixel for pixel."""
-    shot = f'<img class="still" alt="" src="data:image/png;base64,{png_base64}">'
-    bar, footer = f'<div class="gif-bar">{_bar()}</div>', f'<div class="gif-footer">{_line(caption, mode)}</div>'
-    return _page(GIF_CSS, bar + shot + footer)
 
 
 def cursor_html() -> str:
